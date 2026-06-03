@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
+import { expect } from "storybook/test"
 import { Button } from "./button"
 import {
   Card,
@@ -69,4 +70,14 @@ export const WithButton: Story = {
       </CardFooter>
     </Card>
   ),
+  // Ramp guard: these elements pass a ramp token AND a color through cn()
+  // (tailwind-merge). If the merge config regresses, the size class gets dropped
+  // and these computed sizes change — failing here. See src/lib/utils.ts.
+  play: async ({ canvasElement }) => {
+    const px = (sel: string) =>
+      getComputedStyle(canvasElement.querySelector(sel)!).fontSize
+    // CardTitle = text-h4 (20px); CardDescription = text-small + text-muted-foreground (14px)
+    await expect(px("[data-slot=card-title]")).toBe("20px")
+    await expect(px("[data-slot=card-description]")).toBe("14px")
+  },
 }
