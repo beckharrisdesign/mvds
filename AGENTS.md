@@ -26,6 +26,10 @@ generate must follow the system, not generic shadcn/Tailwind habits.
 - ✅ **Color via tokens** — `bg-background`, `text-foreground`,
   `text-muted-foreground`, `bg-primary`, `border-border`, etc. ❌ Never
   `text-gray-500` / hardcoded hex / `bg-white`.
+- ✅ **Status / intent via the semantic triad** — `success` (good), `neutral`,
+  `destructive` (bad). Use as text (`text-success`), a tint (`bg-success/10`), or
+  solid with its foreground (`bg-success text-success-foreground`). ❌ Never
+  `text-green-500` / `text-red-500`.
 - ✅ **Add UI components via `npx shadcn@latest add <name>`.** ❌ Never hand-edit
   files in `src/components/ui/` — they are vendored shadcn and must stay updatable.
 - ✅ **Every component/primitive gets a co-located `*.stories.tsx`** (see Storybook
