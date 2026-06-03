@@ -30,6 +30,8 @@ generate must follow the system, not generic shadcn/Tailwind habits.
   `destructive` (bad). Use as text (`text-success`), a tint (`bg-success/10`), or
   solid with its foreground (`bg-success text-success-foreground`). ❌ Never
   `text-green-500` / `text-red-500`.
+- ♿ **Contrast (WCAG AA):** `muted-foreground` meets AA only on `background`/`card`
+  — ❌ don't put it on `bg-muted`. Verify with the a11y gate (below) after UI work.
 - ✅ **Add UI components via `npx shadcn@latest add <name>`.** ❌ Never hand-edit
   files in `src/components/ui/` — they are vendored shadcn and must stay updatable.
 - ✅ **Every component/primitive gets a co-located `*.stories.tsx`** (see Storybook
@@ -91,9 +93,11 @@ Full workflow + constraints: [`docs/SYNC.md`](docs/SYNC.md).
 
 ```bash
 npm run build              # tsc + vite — must pass
-npm run build-storybook    # stories must compile
-npm run storybook          # check a11y panel + light/dark on new stories
+npm test                   # runs every story in headless Chromium + axe a11y — must pass
 ```
+
+`npm test` (`vitest --project storybook run`) is the gate: render + interaction +
+**WCAG color-contrast** checks on every story. Fix violations before shipping.
 
 Then, if you changed tokens or system components, re-run the Figma sync.
 

@@ -15,8 +15,10 @@ export default meta
 type Story = StoryObj
 
 function Box({ children }: { children?: React.ReactNode }) {
+  // text-foreground (not muted-foreground) on bg-muted: muted-foreground only
+  // meets AA contrast on background/card, not on the muted surface itself.
   return (
-    <div className="bg-muted text-muted-foreground flex min-h-12 items-center justify-center rounded-md border px-3 py-2 text-sm">
+    <div className="bg-muted text-foreground flex min-h-12 items-center justify-center rounded-md border px-3 py-2 text-small">
       {children}
     </div>
   )
