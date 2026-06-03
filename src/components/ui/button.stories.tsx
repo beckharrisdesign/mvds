@@ -97,11 +97,12 @@ export const Disabled: Story = {
 export const CssCheck: Story = {
   play: async ({ canvas }) => {
     const button = canvas.getByRole("button", { name: /button/i })
-    // The token layer loaded: --primary resolves to its light-mode value.
-    const primary = getComputedStyle(document.documentElement)
-      .getPropertyValue("--primary")
-      .trim()
-    await expect(primary).toBe("oklch(0.205 0 0)")
+    const root = document.documentElement
+    const isDark = root.classList.contains("dark")
+    // The token layer loaded AND the active mode applied: --primary resolves to
+    // its light- or dark-mode value depending on the `.dark` class.
+    const primary = getComputedStyle(root).getPropertyValue("--primary").trim()
+    await expect(primary).toBe(isDark ? "oklch(0.922 0 0)" : "oklch(0.205 0 0)")
     // ...and the default Button actually consumes it (non-transparent fill).
     await expect(getComputedStyle(button).backgroundColor).not.toBe(
       "rgba(0, 0, 0, 0)"

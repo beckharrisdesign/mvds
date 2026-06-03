@@ -114,11 +114,12 @@ Full workflow + constraints: [`docs/SYNC.md`](docs/SYNC.md).
 
 ```bash
 npm run build              # tsc + vite — must pass
-npm test                   # runs every story in headless Chromium + axe a11y — must pass
+npm test                   # every story in headless Chromium + axe a11y, LIGHT + DARK — must pass
 ```
 
-`npm test` (`vitest --project storybook run`) is the gate: render + interaction +
-**WCAG color-contrast** checks on every story. Fix violations before shipping.
+`npm test` is the gate: render + interaction + **WCAG color-contrast** checks on
+every story, run in **both** modes (`test:light`, then `test:dark` via
+`VITE_SB_THEME=dark`). Fix violations before shipping.
 
 Then, if you changed tokens or system components, re-run the Figma sync.
 

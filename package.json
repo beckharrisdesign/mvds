@@ -11,7 +11,9 @@
     "preview": "vite preview",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "test": "vitest --project storybook run"
+    "test": "npm run test:light && npm run test:dark",
+    "test:light": "vitest --project storybook run",
+    "test:dark": "VITE_SB_THEME=dark vitest --project storybook run"
   },
   "dependencies": {
     "@fontsource-variable/geist": "^5.2.9",
