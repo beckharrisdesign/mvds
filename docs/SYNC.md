@@ -2,7 +2,7 @@
 
 **Code is law. Figma is a generated mirror.**
 
-> **Generated Figma file:** [MVDS-Test](https://www.figma.com/design/C20nU0mROzk3Zr0I9BELJF/MVDS-Test)
+> **Generated Figma file:** [the MVDS Figma file](https://www.figma.com/design/C20nU0mROzk3Zr0I9BELJF/MVDS-Test)
 > (team: Beck Harris Design). Generated from this repo:
 > - `Tokens` variable collection — colors with Light/Dark modes
 > - `Scales` variable collection — spacing + breakpoint numbers

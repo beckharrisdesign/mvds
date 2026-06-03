@@ -1,12 +1,17 @@
-# figma-blank-space
+# MVDS — Minimum Viable Design System
 
-A **Minimum Viable Design System** that proves a strong link between shadcn/ui +
-Tailwind code and Figma components — with **code as the single source of truth**.
+An **agent-first design system** for early startup prototyping with solid
+foundational design strategy. It encodes intent in code — tokens, an 8-point
+spacing grid, a type ramp, and layout primitives — so both people and LLM agents
+generate consistent, on-brand UI from day one.
+
+Under the hood it proves a strong link between shadcn/ui + Tailwind code and Figma
+components, with **code as the single source of truth**.
 
 > Built for a **Figma Pro** plan (not Enterprise). The sync is intentionally
 > **one-way, code → Figma**, and re-runnable. See [`docs/SYNC.md`](docs/SYNC.md).
 >
-> **Live Figma mirror:** [MVDS-Test](https://www.figma.com/design/C20nU0mROzk3Zr0I9BELJF/MVDS-Test)
+> **Live Figma mirror:** [MVDS · Figma](https://www.figma.com/design/C20nU0mROzk3Zr0I9BELJF/MVDS-Test)
 
 ## Stack
 

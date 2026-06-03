@@ -21,11 +21,10 @@ function App() {
   return (
     <main className="bg-background text-foreground flex min-h-svh flex-col items-center justify-center gap-8 p-8">
       <div className="flex flex-col items-center gap-2 text-center">
-        <h1 className="text-2xl font-semibold tracking-tight">
-          figma-blank-space
-        </h1>
-        <p className="text-muted-foreground text-sm">
-          MVP design system · code is the source of truth · synced to Figma
+        <h1 className="text-h2">MVDS</h1>
+        <p className="text-muted-foreground text-small">
+          Minimum Viable Design System — agent-first foundations for startup
+          prototyping
         </p>
         <Button variant="outline" size="sm" onClick={toggleTheme}>
           Toggle {dark ? "light" : "dark"} mode

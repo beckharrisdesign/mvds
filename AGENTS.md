@@ -1,15 +1,18 @@
-# AGENTS.md — house rules for this design system
+# AGENTS.md — house rules for MVDS
 
 > Canonical instructions for any AI agent (and human) working in this repo.
 > `CLAUDE.md` imports this file. Read it before generating UI.
 
 ## What this is
 
-An MVP **design system**. **Code is the single source of truth.** The Figma file
-is a **generated, one-way mirror** (code → Figma) — never the other way. Stack:
-Vite + React + TS, **Tailwind v4** (CSS-first `@theme`), **shadcn/ui**, Storybook.
+**MVDS — Minimum Viable Design System.** An **agent-first** design system for early
+startup prototyping with solid foundational design strategy. **Code is the single
+source of truth.** The Figma file is a **generated, one-way mirror** (code → Figma)
+— never the other way. Stack: Vite + React + TS, **Tailwind v4** (CSS-first
+`@theme`), **shadcn/ui**, Storybook.
 
-The whole point of this repo is that *intent is encoded* — so anything you
+MVDS exists so that *intent is encoded* — its reason for being is that you (an
+agent) and humans both generate consistent, on-brand UI from it. So anything you
 generate must follow the system, not generic shadcn/Tailwind habits.
 
 ## Golden rules (always / never)
@@ -76,9 +79,9 @@ nothing that bypasses the token layer.
 ## Code → Figma sync
 
 One-way, re-runnable, **Figma Pro** (no Code Connect / no Variables REST write).
-The link runs through the Figma MCP (`use_figma`, plugin-API). Target file:
-**MVDS-Test** (`fileKey C20nU0mROzk3Zr0I9BELJF`, team "Beck Harris Design"). Full
-workflow + constraints: [`docs/SYNC.md`](docs/SYNC.md).
+The link runs through the Figma MCP (`use_figma`, plugin-API). Target file: the
+**MVDS** Figma file (`fileKey C20nU0mROzk3Zr0I9BELJF`, team "Beck Harris Design").
+Full workflow + constraints: [`docs/SYNC.md`](docs/SYNC.md).
 
 ## Before you call a change done
 

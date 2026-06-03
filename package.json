@@ -1,7 +1,8 @@
 {
-  "name": "figma-blank-space",
+  "name": "mvds",
   "private": true,
   "version": "0.0.0",
+  "description": "MVDS — Minimum Viable Design System. An agent-first design system for early startup prototyping with solid foundational design strategy.",
   "type": "module",
   "scripts": {
     "dev": "vite",
