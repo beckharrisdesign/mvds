@@ -22,12 +22,12 @@ function Box({ children }: { children?: React.ReactNode }) {
   )
 }
 
-/** Stack — vertical rhythm via the `gap` step. */
+/** Stack — vertical rhythm via the `gap` step (px on the 8-pt grid). */
 export const StackStory: Story = {
   name: "Stack",
   render: () => (
-    <Stack gap={4}>
-      <Box>gap = 4 (16px)</Box>
+    <Stack gap={16}>
+      <Box>gap = 16px</Box>
       <Box>second</Box>
       <Box>third</Box>
     </Stack>
@@ -38,7 +38,7 @@ export const StackStory: Story = {
 export const InlineStory: Story = {
   name: "Inline",
   render: () => (
-    <Inline gap={2}>
+    <Inline gap={8}>
       <Button size="sm">One</Button>
       <Button size="sm" variant="secondary">Two</Button>
       <Button size="sm" variant="outline">Three</Button>
@@ -51,7 +51,7 @@ export const InlineStory: Story = {
 export const GridStory: Story = {
   name: "Grid (responsive)",
   render: () => (
-    <Grid cols={1} md={2} lg={3} gap={4}>
+    <Grid cols={1} md={2} lg={3} gap={16}>
       {Array.from({ length: 6 }, (_, i) => (
         <Box key={i}>cell {i + 1}</Box>
       ))}
@@ -63,11 +63,11 @@ export const GridStory: Story = {
 export const SpacerStory: Story = {
   name: "Spacer",
   render: () => (
-    <Stack gap={6}>
+    <Stack gap={24}>
       <div>
         <Box>above</Box>
-        <Spacer size={8} />
-        <Box>8 steps (32px) below</Box>
+        <Spacer size={32} />
+        <Box>32px below</Box>
       </div>
       <Inline gap={0} className="rounded-md border p-2">
         <Button size="sm">Left</Button>
@@ -83,7 +83,7 @@ export const ContainerStory: Story = {
   name: "Container",
   render: () => (
     <Container size="md" className="bg-muted/40 rounded-lg py-6">
-      <Stack gap={2}>
+      <Stack gap={8}>
         <Box>Container size=&quot;md&quot; (max 48rem)</Box>
         <Box>centered with responsive px-4 / sm:px-6 / lg:px-8</Box>
       </Stack>

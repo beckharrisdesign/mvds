@@ -7,7 +7,7 @@ import { GAP, ALIGN, JUSTIFY, type Gap, type Align, type Justify } from "./scale
  * lists, button rows, anything that should flow and wrap on small screens.
  */
 function Inline({
-  gap = 2,
+  gap = 8,
   align = "center",
   justify = "start",
   wrap = true,

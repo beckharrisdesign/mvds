@@ -7,7 +7,7 @@ import { GAP, ALIGN, JUSTIFY, type Gap, type Align, type Justify } from "./scale
  * from the spacing scale. The workhorse primitive for forms, lists, page bodies.
  */
 function Stack({
-  gap = 4,
+  gap = 16,
   align = "stretch",
   justify,
   className,

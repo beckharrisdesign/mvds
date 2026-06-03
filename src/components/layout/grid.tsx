@@ -21,7 +21,7 @@ function Grid({
   sm,
   md,
   lg,
-  gap = 4,
+  gap = 16,
   className,
   ...props
 }: React.ComponentProps<"div"> & {

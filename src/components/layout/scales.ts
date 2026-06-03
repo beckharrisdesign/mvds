@@ -3,55 +3,55 @@
  *
  * Tailwind only keeps classes it can find as COMPLETE strings in source — you
  * can never build `gap-${n}` dynamically. So every step is spelled out here once
- * and the primitives index into these maps. Keys are the spacing-scale steps
- * (see the spacing scale in src/index.css).
+ * and the primitives index into these maps.
+ *
+ * Keys are PIXELS on the 8-point grid (see the spacing scale in src/index.css):
+ * 4 is the only half-step; everything else is a multiple of 8. So `gap={16}`
+ * reads as "16px" and matches the `space-16` Figma variable — no Tailwind
+ * step-number guessing (where `gap-4` confusingly means 16px).
  */
 
 export const GAP = {
   0: "gap-0",
-  1: "gap-1",
-  2: "gap-2",
-  3: "gap-3",
-  4: "gap-4",
-  5: "gap-5",
-  6: "gap-6",
-  8: "gap-8",
-  10: "gap-10",
-  12: "gap-12",
-  16: "gap-16",
+  4: "gap-1", //  4px — ½ step
+  8: "gap-2", //  8px
+  16: "gap-4", // 16px
+  24: "gap-6", // 24px
+  32: "gap-8", // 32px
+  40: "gap-10", // 40px
+  48: "gap-12", // 48px
+  64: "gap-16", // 64px
+  80: "gap-20", // 80px
+  96: "gap-24", // 96px
 } as const
 export type Gap = keyof typeof GAP
 
-/** Fixed block-axis sizes for Spacer (height). */
+/** Fixed block-axis sizes for Spacer (height), keyed by px on the 8-pt grid. */
 export const HEIGHT = {
-  1: "h-1",
-  2: "h-2",
-  3: "h-3",
-  4: "h-4",
-  5: "h-5",
-  6: "h-6",
-  8: "h-8",
-  10: "h-10",
-  12: "h-12",
-  16: "h-16",
-  20: "h-20",
-  24: "h-24",
+  4: "h-1",
+  8: "h-2",
+  16: "h-4",
+  24: "h-6",
+  32: "h-8",
+  40: "h-10",
+  48: "h-12",
+  64: "h-16",
+  80: "h-20",
+  96: "h-24",
 } as const
 
-/** Fixed inline-axis sizes for Spacer (width). */
+/** Fixed inline-axis sizes for Spacer (width), keyed by px on the 8-pt grid. */
 export const WIDTH = {
-  1: "w-1",
-  2: "w-2",
-  3: "w-3",
-  4: "w-4",
-  5: "w-5",
-  6: "w-6",
-  8: "w-8",
-  10: "w-10",
-  12: "w-12",
-  16: "w-16",
-  20: "w-20",
-  24: "w-24",
+  4: "w-1",
+  8: "w-2",
+  16: "w-4",
+  24: "w-6",
+  32: "w-8",
+  40: "w-10",
+  48: "w-12",
+  64: "w-16",
+  80: "w-20",
+  96: "w-24",
 } as const
 export type SpaceSize = keyof typeof HEIGHT
 

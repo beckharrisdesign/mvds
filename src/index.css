@@ -60,10 +60,14 @@
     --radius-3xl: calc(var(--radius) * 2.2);
     --radius-4xl: calc(var(--radius) * 2.6);
 
-    /* ---- Spacing scale — the 4px base unit everything snaps to ----------------
-     * Every p-*, m-*, gap-* derives from this:
-     *   1=4px  2=8  3=12  4=16  5=20  6=24  8=32  10=40  12=48  16=64  20=80  24=96
-     * The layout primitives (Stack/Inline/Grid gap props) map onto these steps. */
+    /* ---- Spacing scale — 8-point grid -----------------------------------------
+     * LAYOUT spacing follows an 8px grid (best practice for pixel density &
+     * antialiasing): every step is a multiple of 8, with 4 as the only half-step.
+     *   4(½) · 8 · 16 · 24 · 32 · 40 · 48 · 64 · 80 · 96
+     * The layout primitives (Stack/Inline/Grid/Spacer) expose ONLY these on-grid
+     * px values. Tailwind's atomic unit stays 4px so shadcn's control internals
+     * (e.g. Button h-7=28px, px-2.5=10px) keep their optically-tuned metrics —
+     * the 8-grid governs layout spacing, not the inner mechanics of a control. */
     --spacing: 0.25rem;
 
     /* ---- Breakpoints — responsive DNA (Container + @container queries use these) */

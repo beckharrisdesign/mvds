@@ -11,33 +11,33 @@ const meta: Meta = {
 export default meta
 type Story = StoryObj
 
-/* ---------------- Spacing ---------------- */
-const SPACING: { step: number; px: number }[] = [
-  { step: 1, px: 4 },
-  { step: 2, px: 8 },
-  { step: 3, px: 12 },
-  { step: 4, px: 16 },
-  { step: 5, px: 20 },
-  { step: 6, px: 24 },
-  { step: 8, px: 32 },
-  { step: 10, px: 40 },
-  { step: 12, px: 48 },
-  { step: 16, px: 64 },
-  { step: 20, px: 80 },
-  { step: 24, px: 96 },
+/* ---------------- Spacing (8-point grid) ---------------- */
+const SPACING: { px: number; note?: string }[] = [
+  { px: 4, note: "½ step" },
+  { px: 8 },
+  { px: 16 },
+  { px: 24 },
+  { px: 32 },
+  { px: 40 },
+  { px: 48 },
+  { px: 64 },
+  { px: 80 },
+  { px: 96 },
 ]
 
 export const Spacing: Story = {
   render: () => (
     <div className="flex flex-col gap-3">
       <p className="text-muted-foreground text-small">
-        4px base unit — every <code>p-*</code>, <code>m-*</code>, <code>gap-*</code> is a multiple.
+        8-point grid — layout spacing is a multiple of 8 (4 is the only half-step).
+        Better pixel density &amp; antialiasing. Primitive props take these px values
+        directly: <code>gap={"{16}"}</code>.
       </p>
-      {SPACING.map(({ step, px }) => (
-        <div key={step} className="flex items-center gap-4">
-          <code className="w-28 shrink-0 text-caption">gap-{step}</code>
+      {SPACING.map(({ px, note }) => (
+        <div key={px} className="flex items-center gap-4">
+          <code className="w-16 shrink-0 text-caption">{px}px</code>
           <div className="bg-primary h-4 rounded-sm" style={{ width: px }} />
-          <span className="text-muted-foreground text-caption">{px}px</span>
+          {note && <span className="text-muted-foreground text-caption">{note}</span>}
         </div>
       ))}
     </div>
