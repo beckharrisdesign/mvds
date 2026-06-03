@@ -29,7 +29,9 @@ generator all read this one file.
 
 The scales and layout primitives that sit *beneath* components:
 
-- **Spacing scale** — 4px base unit; every `p-*`/`gap-*`/`m-*` is a multiple.
+- **Spacing scale** — 8-point grid (multiples of 8, with 4 as the only half-step);
+  primitive props take px values directly (`gap={16}`). Tailwind's 4px atomic unit
+  is kept so shadcn control internals keep their optical metrics.
 - **Typography ramp** — semantic `text-display` → `text-caption`, each carrying
   size + line-height + weight + tracking (defined in [`src/index.css`](src/index.css)).
 - **Breakpoints** — `sm`/`md`/`lg`/`xl`/`2xl`, used by the Container and `@container` queries.
