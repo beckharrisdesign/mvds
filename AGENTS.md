@@ -20,6 +20,13 @@ generate must follow the system, not generic shadcn/Tailwind habits.
 - ✅ **Spacing = multiples & fractions of 8.** Use the layout primitives with px
   props (`<Stack gap={16}>`). ❌ Never raw `flex`/`grid` utilities for layout, and
   ❌ never off-grid spacing (`gap-3`=12px, `gap-5`=20px are forbidden).
+- ✅ **Gap is the ONLY way to space siblings.** Space between elements comes from
+  the parent's `gap` (Stack/Inline/Grid) — full stop. ❌ Never use margins to
+  create spacing, and ❌ never give a component an outer margin (it owns no
+  external space — its parent positions it). Padding is for a component's own
+  inner inset (Card, Container), never to separate siblings. So spacing is always
+  one number in one place — easy to read, easy to debug. (Only sanctioned margin:
+  `mx-auto` to center a Container.)
 - ✅ **Type via the semantic ramp** — `text-display`, `text-h1`…`text-h4`,
   `text-body-lg`, `text-body`, `text-small`, `text-caption`. ❌ Never ad-hoc
   `text-2xl font-bold`.

@@ -15,10 +15,12 @@ export default meta
 type Story = StoryObj
 
 function Box({ children }: { children?: React.ReactNode }) {
-  // text-foreground (not muted-foreground) on bg-muted: muted-foreground only
-  // meets AA contrast on background/card, not on the muted surface itself.
+  // A flat block — NO padding, border, or margin — so the spacing stories show
+  // pure "objects + gap": the ONLY space between boxes is the Stack/Grid gap.
+  // (text-foreground on bg-muted, since muted-foreground only meets AA on
+  // background/card.)
   return (
-    <div className="bg-muted text-foreground flex min-h-12 items-center justify-center rounded-md border px-3 py-2 text-small">
+    <div className="bg-muted text-foreground flex min-h-12 items-center justify-center rounded-md text-small">
       {children}
     </div>
   )
