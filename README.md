@@ -5,6 +5,8 @@ Tailwind code and Figma components — with **code as the single source of truth
 
 > Built for a **Figma Pro** plan (not Enterprise). The sync is intentionally
 > **one-way, code → Figma**, and re-runnable. See [`docs/SYNC.md`](docs/SYNC.md).
+>
+> **Live Figma mirror:** [figma-blank-space · Design System](https://www.figma.com/design/0ffa3u1EXrTqy8OkUPlx8u)
 
 ## Stack
 
