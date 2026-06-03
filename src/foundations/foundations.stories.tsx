@@ -13,7 +13,7 @@ type Story = StoryObj
 
 /* ---------------- Spacing (8-point grid) ---------------- */
 const SPACING: { px: number; note?: string }[] = [
-  { px: 4, note: "½ step" },
+  { px: 4, note: "½ × 8" },
   { px: 8 },
   { px: 16 },
   { px: 24 },
@@ -29,8 +29,8 @@ export const Spacing: Story = {
   render: () => (
     <div className="flex flex-col gap-3">
       <p className="text-muted-foreground text-small">
-        8-point grid — layout spacing is a multiple of 8 (4 is the only half-step).
-        Better pixel density &amp; antialiasing. Primitive props take these px values
+        Multiples &amp; fractions of 8 — 4 is ½ × 8, the rest are multiples. Better
+        pixel density &amp; antialiasing. Primitive props take these px values
         directly: <code>gap={"{16}"}</code>.
       </p>
       {SPACING.map(({ px, note }) => (

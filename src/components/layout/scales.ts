@@ -5,15 +5,15 @@
  * can never build `gap-${n}` dynamically. So every step is spelled out here once
  * and the primitives index into these maps.
  *
- * Keys are PIXELS on the 8-point grid (see the spacing scale in src/index.css):
- * 4 is the only half-step; everything else is a multiple of 8. So `gap={16}`
+ * Keys are PIXELS — multiples and fractions of 8 (see the spacing scale in
+ * src/index.css). 4 is a fraction (½ × 8); the rest are multiples. So `gap={16}`
  * reads as "16px" and matches the `space-16` Figma variable — no Tailwind
  * step-number guessing (where `gap-4` confusingly means 16px).
  */
 
 export const GAP = {
   0: "gap-0",
-  4: "gap-1", //  4px — ½ step
+  4: "gap-1", //  4px — ½ × 8
   8: "gap-2", //  8px
   16: "gap-4", // 16px
   24: "gap-6", // 24px
