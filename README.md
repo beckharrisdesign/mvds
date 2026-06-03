@@ -25,9 +25,24 @@ Edit tokens only there. `:root` is the light mode, `.dark` is the dark mode; the
 the two modes that map to Figma variable modes. Tailwind, Storybook, and the Figma
 generator all read this one file.
 
+## Foundations (app DNA)
+
+The scales and layout primitives that sit *beneath* components:
+
+- **Spacing scale** — 4px base unit; every `p-*`/`gap-*`/`m-*` is a multiple.
+- **Typography ramp** — semantic `text-display` → `text-caption`, each carrying
+  size + line-height + weight + tracking (defined in [`src/index.css`](src/index.css)).
+- **Breakpoints** — `sm`/`md`/`lg`/`xl`/`2xl`, used by the Container and `@container` queries.
+- **Layout primitives** ([`src/components/layout/`](src/components/layout)) — `Container`,
+  `Stack`, `Inline`, `Grid` (responsive cols), `Spacer`. Thin typed Tailwind wrappers
+  whose props snap to the spacing/breakpoint scales. *shadcn ships none of these — this
+  is the deliberate, opinionated layout layer.*
+
+See them under **Foundations/** in Storybook.
+
 ## Components
 
-The foundation set is intentionally tiny:
+The component set is intentionally tiny:
 
 - **Button** — variant-driven atom (`variant` × `size` → Figma component properties).
 - **Card** — composite molecule; the `WithButton` story nests a Button to prove

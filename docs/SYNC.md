@@ -3,8 +3,13 @@
 **Code is law. Figma is a generated mirror.**
 
 > **Generated Figma file:** [MVDS-Test](https://www.figma.com/design/C20nU0mROzk3Zr0I9BELJF/MVDS-Test)
-> (team: Beck Harris Design). Contains a `Tokens` variable collection with Light/Dark
-> modes, a `Button` component set, and a `Card` component — all generated from this repo.
+> (team: Beck Harris Design). Generated from this repo:
+> - `Tokens` variable collection — colors with Light/Dark modes
+> - `Scales` variable collection — spacing + breakpoint numbers
+> - Type ramp **text styles** (`Type/Display` … `Type/Caption`)
+> - `Button` component set, `Card` component
+> - Foundation specimens: Spacing scale, Type ramp, Breakpoints
+>
 > The sync target's fileKey is `C20nU0mROzk3Zr0I9BELJF`.
 
 This repo is the source of truth. The Figma library is regenerated from the code,
