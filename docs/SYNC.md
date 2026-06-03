@@ -2,9 +2,10 @@
 
 **Code is law. Figma is a generated mirror.**
 
-> **Generated Figma file:** [figma-blank-space · Design System](https://www.figma.com/design/0ffa3u1EXrTqy8OkUPlx8u)
+> **Generated Figma file:** [MVDS-Test](https://www.figma.com/design/C20nU0mROzk3Zr0I9BELJF/MVDS-Test)
 > (team: Beck Harris Design). Contains a `Tokens` variable collection with Light/Dark
 > modes, a `Button` component set, and a `Card` component — all generated from this repo.
+> The sync target's fileKey is `C20nU0mROzk3Zr0I9BELJF`.
 
 This repo is the source of truth. The Figma library is regenerated from the code,
 not hand-maintained. On a Figma **Pro** plan this link is **one-way (code → Figma)**
