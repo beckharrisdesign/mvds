@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import { expect } from "storybook/test"
 import { Button } from "./button"
+import { Inline } from "@/components/layout"
 
 /**
  * Button is the canonical variant-driven atom. Its `variant` and `size` props
@@ -25,7 +26,7 @@ const meta = {
     },
     size: {
       control: "select",
-      options: ["default", "xs", "sm", "lg"],
+      options: ["sm", "default", "lg"],
     },
     disabled: { control: "boolean" },
   },
@@ -46,33 +47,32 @@ export const Playground: Story = {}
 /** Every variant side by side (the set Figma maps to a `variant` property). */
 export const Variants: Story = {
   render: () => (
-    <div className="flex flex-wrap items-center gap-3">
+    <Inline gap={8}>
       <Button variant="default">Default</Button>
       <Button variant="secondary">Secondary</Button>
       <Button variant="outline">Outline</Button>
       <Button variant="ghost">Ghost</Button>
       <Button variant="destructive">Destructive</Button>
       <Button variant="link">Link</Button>
-    </div>
+    </Inline>
   ),
 }
 
-/** Every size (maps to a `size` property in Figma). */
+/** Every size (maps to a `size` property in Figma) — heights 24 / 32 / 40px. */
 export const Sizes: Story = {
   render: () => (
-    <div className="flex flex-wrap items-center gap-3">
-      <Button size="xs">Extra small</Button>
+    <Inline gap={8}>
       <Button size="sm">Small</Button>
       <Button size="default">Default</Button>
       <Button size="lg">Large</Button>
-    </div>
+    </Inline>
   ),
 }
 
 /** Disabled state across variants. */
 export const Disabled: Story = {
   render: () => (
-    <div className="flex flex-wrap items-center gap-3">
+    <Inline gap={8}>
       <Button disabled>Default</Button>
       <Button variant="secondary" disabled>
         Secondary
@@ -83,7 +83,7 @@ export const Disabled: Story = {
       <Button variant="destructive" disabled>
         Destructive
       </Button>
-    </div>
+    </Inline>
   ),
 }
 

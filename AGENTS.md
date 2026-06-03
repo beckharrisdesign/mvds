@@ -39,8 +39,13 @@ generate must follow the system, not generic shadcn/Tailwind habits.
   `text-green-500` / `text-red-500`.
 - ♿ **Contrast (WCAG AA):** `muted-foreground` meets AA only on `background`/`card`
   — ❌ don't put it on `bg-muted`. Verify with the a11y gate (below) after UI work.
-- ✅ **Add UI components via `npx shadcn@latest add <name>`.** ❌ Never hand-edit
-  files in `src/components/ui/` — they are vendored shadcn and must stay updatable.
+- ✅ **Add UI components via `npx shadcn@latest add <name>`, then tune their
+  internals to the 8-grid.** shadcn ships off-grid metrics (`px-2.5`=10, `h-7`=28,
+  `gap-1.5`=6); replace them with on-grid values (heights 24/32/40; padding/gap
+  from the 8-grid set) — this repo's `ui/` components are MVDS-tuned, not pristine
+  shadcn, so **re-apply the tuning after every `add`/update**. (Icon glyph sizes &
+  border-radius are dimensions, not spacing — leave them.) Otherwise don't rewrite
+  these files freehand.
 - ✅ **Every component/primitive gets a co-located `*.stories.tsx`** (see Storybook
   below — it is a required verification gate, not optional docs).
 - ✅ **After changing tokens or system components, re-run the Figma sync**
@@ -55,8 +60,10 @@ the rationale live in [`src/index.css`](src/index.css); the purge-safe class map
 live in [`src/components/layout/scales.ts`](src/components/layout/scales.ts).
 
 Primitive props take **pixels** directly, so `gap={16}` reads as 16px and matches
-the `space-16` Figma variable. Tailwind's atomic unit stays 4px so shadcn control
-internals keep their optical metrics — the grid governs **layout** spacing.
+the `space-16` Figma variable. The 8-grid governs **all** spacing — layout *and*
+component internals (Button/Card are tuned to it). Tailwind's 4px base is just the
+atomic unit; only icon glyph sizes and border-radius are exempt (dimensions, not
+spacing).
 
 ## Layout primitives
 

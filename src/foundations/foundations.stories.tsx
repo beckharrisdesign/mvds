@@ -27,7 +27,7 @@ const SPACING: { px: number; note?: string }[] = [
 
 export const Spacing: Story = {
   render: () => (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-2">
       <p className="text-muted-foreground text-small">
         Multiples &amp; fractions of 8 — 4 is ½ × 8, the rest are multiples. Better
         pixel density &amp; antialiasing. Primitive props take these px values
@@ -59,13 +59,13 @@ const RAMP: { cls: string; name: string; spec: string }[] = [
 
 export const Typography: Story = {
   render: () => (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-4">
       <p className="text-muted-foreground text-small">
         Semantic ramp — each utility carries size + line-height + weight + tracking.
       </p>
       {RAMP.map(({ cls, name, spec }) => (
         <div key={cls} className="flex flex-col gap-1">
-          <div className="text-muted-foreground flex gap-3 text-caption">
+          <div className="text-muted-foreground flex gap-2 text-caption">
             <code className="w-28">{cls}</code>
             <span>{spec}</span>
           </div>
@@ -87,7 +87,7 @@ const BREAKPOINTS: { name: string; px: number; note: string }[] = [
 
 export const Breakpoints: Story = {
   render: () => (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-2">
       <p className="text-muted-foreground text-small">
         Responsive DNA — the Container and <code>@container</code> queries snap to these.
       </p>

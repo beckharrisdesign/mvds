@@ -79,9 +79,10 @@
      * else is a multiple:
      *   4(½×8) · 8 · 16 · 24 · 32 · 40 · 48 · 64 · 80 · 96
      * The layout primitives (Stack/Inline/Grid/Spacer) expose ONLY these on-grid
-     * px values. Tailwind's atomic unit stays 4px so shadcn's control internals
-     * (e.g. Button h-7=28px, px-2.5=10px) keep their optically-tuned metrics —
-     * the grid governs layout spacing, not the inner mechanics of a control. */
+     * px values, and the UI components are tuned to the grid too (Button/Card
+     * heights 24/32/40, padding & gap from the set above). Tailwind's 4px base is
+     * just the atomic unit. Exempt: icon glyph sizes and border-radius are
+     * dimensions, not spacing. */
     --spacing: 0.25rem;
 
     /* ---- Breakpoints — responsive DNA (Container + @container queries use these) */
