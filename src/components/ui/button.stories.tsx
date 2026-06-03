@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
+import { expect } from "storybook/test"
 import { Button } from "./button"
 
 /**
@@ -84,4 +85,26 @@ export const Disabled: Story = {
       </Button>
     </div>
   ),
+}
+
+/**
+ * CssCheck — proves the token layer (`src/index.css`) actually loaded in
+ * Storybook. `toBeVisible` would pass on an unstyled button; this asserts a
+ * concrete token value instead. If `preview.tsx` failed to import the tokens,
+ * `--primary` would be empty and the default Button would have no fill — both
+ * assertions would fail. (Default = light mode via the preview theme decorator.)
+ */
+export const CssCheck: Story = {
+  play: async ({ canvas }) => {
+    const button = canvas.getByRole("button", { name: /button/i })
+    // The token layer loaded: --primary resolves to its light-mode value.
+    const primary = getComputedStyle(document.documentElement)
+      .getPropertyValue("--primary")
+      .trim()
+    await expect(primary).toBe("oklch(0.205 0 0)")
+    // ...and the default Button actually consumes it (non-transparent fill).
+    await expect(getComputedStyle(button).backgroundColor).not.toBe(
+      "rgba(0, 0, 0, 0)"
+    )
+  },
 }
