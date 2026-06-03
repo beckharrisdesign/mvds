@@ -1,34 +1,26 @@
 import * as React from "react"
 import { cn } from "@/lib/utils"
-import {
-  GAP,
-  COLS,
-  COLS_SM,
-  COLS_MD,
-  COLS_LG,
-  type Gap,
-  type Cols,
-  type ResponsiveCols,
-} from "./scales"
+import { GAP, responsiveClasses, type Gap, type Responsive } from "./scales"
 
 /**
- * Grid — responsive columns. `cols` sets the base count; `sm`/`md`/`lg` override
- * at breakpoints (the responsive DNA). e.g. <Grid cols={1} md={2} lg={3} gap={4}>
- * is the classic 1→2→3 card layout.
+ * Grid — a column field that cascades across breakpoints. `cols` is the number
+ * of columns, either fixed or per-breakpoint; `gap` is the gutter (8-pt grid).
+ * Children are `GridItem`s that span columns; bare children occupy one cell.
+ *
+ *   <Grid cols={{ base: 4, md: 8, lg: 12 }} gap={16}>
+ *     <GridItem span={{ base: 4, md: 4, lg: 6 }}>…</GridItem>
+ *   </Grid>
+ *
+ * = a 4-col phone grid → 8-col tablet → 12-col desktop, with that item going
+ * full-width → half → half. (Breakpoints are viewport-based: sm/md/lg/xl/2xl.)
  */
 function Grid({
-  cols = 1,
-  sm,
-  md,
-  lg,
+  cols = 12,
   gap = 16,
   className,
   ...props
 }: React.ComponentProps<"div"> & {
-  cols?: Cols
-  sm?: ResponsiveCols
-  md?: ResponsiveCols
-  lg?: ResponsiveCols
+  cols?: Responsive<number>
   gap?: Gap
 }) {
   return (
@@ -36,10 +28,7 @@ function Grid({
       data-slot="grid"
       className={cn(
         "grid",
-        COLS[cols],
-        sm && COLS_SM[sm],
-        md && COLS_MD[md],
-        lg && COLS_LG[lg],
+        responsiveClasses("grid-cols", cols),
         GAP[gap],
         className
       )}

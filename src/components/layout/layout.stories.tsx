@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
-import { Container, Stack, Inline, Grid, Spacer } from "./index"
+import { Container, Stack, Inline, Grid, GridItem, Spacer } from "./index"
 import { Button } from "@/components/ui/button"
 
 /**
@@ -49,14 +49,47 @@ export const InlineStory: Story = {
   ),
 }
 
-/** Grid — responsive columns: 1 → 2 (md) → 3 (lg). Resize the preview to see it. */
+/** Grid — responsive columns: 1 → 2 (md) → 3 (lg). Bare children = 1 cell each.
+ *  Resize the preview to see the cascade. */
 export const GridStory: Story = {
-  name: "Grid (responsive)",
+  name: "Grid (responsive cols)",
   render: () => (
-    <Grid cols={1} md={2} lg={3} gap={16}>
+    <Grid cols={{ base: 1, md: 2, lg: 3 }} gap={16}>
       {Array.from({ length: 6 }, (_, i) => (
         <Box key={i}>cell {i + 1}</Box>
       ))}
+    </Grid>
+  ),
+}
+
+/**
+ * Grid cascade with GridItem spans — the designer's mental model: a 4-col phone
+ * grid → 8-col tablet → 12-col desktop, with items spanning different widths at
+ * each breakpoint. Resize the preview to watch blocks reflow from stacked →
+ * paired → thirds.
+ */
+export const GridCascade: Story = {
+  name: "Grid cascade (span)",
+  render: () => (
+    <Grid cols={{ base: 4, md: 8, lg: 12 }} gap={16}>
+      <GridItem span={{ base: 4, md: 8, lg: 12 }}>
+        <Box>Header — spans the full width at every breakpoint</Box>
+      </GridItem>
+      <GridItem span={{ base: 4, md: 4, lg: 6 }}>
+        <Box>Half on tablet & desktop</Box>
+      </GridItem>
+      <GridItem span={{ base: 4, md: 4, lg: 6 }}>
+        <Box>Half on tablet & desktop</Box>
+      </GridItem>
+      <GridItem span={{ base: 4, md: 8, lg: 4 }}>
+        <Box>1/3 on desktop</Box>
+      </GridItem>
+      <GridItem span={{ base: 4, md: 8, lg: 8 }}>
+        <Box>2/3 on desktop</Box>
+      </GridItem>
+      <GridItem span={{ base: 4, md: 8, lg: 12 }}>
+        <Box>Footer — full width</Box>
+      </GridItem>
     </Grid>
   ),
 }

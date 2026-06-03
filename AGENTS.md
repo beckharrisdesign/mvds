@@ -61,10 +61,17 @@ shadcn ships none of these; they are this system's opinionated layout layer
 | `Container` | page/section width + responsive padding | `size` (sm…2xl, prose, full) |
 | `Stack` | vertical rhythm | `gap` (px), `align`, `justify` |
 | `Inline` | horizontal cluster that wraps (toolbars, tag rows) | `gap` (px), `align`, `justify`, `wrap` |
-| `Grid` | responsive columns | `cols`, `sm`/`md`/`lg`, `gap` (px) |
+| `Grid` | the column field (cascades across breakpoints) | `cols` (number or `{base,sm,md,lg,xl,2xl}`), `gap` (px gutter) |
+| `GridItem` (alias `Col`) | a Grid child that spans columns | `span` (number or per-breakpoint object), `start` |
 | `Spacer` | fixed gap or flexible push-apart | `size` (px), `axis` |
 
-Compose layouts from these. Example: `<Grid cols={1} md={2} lg={3} gap={16}>`.
+Responsive values use a **per-breakpoint object** (mobile-first): `cols={{ base: 4,
+md: 8, lg: 12 }}`, `span={{ base: 4, lg: 6 }}`. Grid/GridItem are the only place
+dynamic Tailwind classes are allowed — the `grid-cols-*`/`col-span-*` range is
+safelisted via `@source inline(...)` in `src/index.css`. Everywhere else, static
+classes only.
+
+Compose layouts from these. Example: `<Grid cols={{ base: 1, md: 2, lg: 3 }} gap={16}>`.
 
 ## Storybook — first-class verification surface
 

@@ -9,6 +9,12 @@
  * src/index.css). 4 is a fraction (½ × 8); the rest are multiples. So `gap={16}`
  * reads as "16px" and matches the `space-16` Figma variable — no Tailwind
  * step-number guessing (where `gap-4` confusingly means 16px).
+ *
+ * EXCEPTION: the grid system (`grid-cols-*` / `col-span-*` / `col-start-*`) spans
+ * a 12×6-breakpoint matrix that would be ~200 literal entries. Those are instead
+ * safelisted via `@source inline(...)` in src/index.css and built dynamically by
+ * `responsiveClasses()` below — the one sanctioned place for dynamic Tailwind
+ * class names, because the full range is explicitly safelisted.
  */
 
 export const GAP = {
@@ -55,49 +61,45 @@ export const WIDTH = {
 } as const
 export type SpaceSize = keyof typeof HEIGHT
 
-/** Base column counts (1–12). */
-export const COLS = {
-  1: "grid-cols-1",
-  2: "grid-cols-2",
-  3: "grid-cols-3",
-  4: "grid-cols-4",
-  5: "grid-cols-5",
-  6: "grid-cols-6",
-  7: "grid-cols-7",
-  8: "grid-cols-8",
-  9: "grid-cols-9",
-  10: "grid-cols-10",
-  11: "grid-cols-11",
-  12: "grid-cols-12",
-} as const
-export type Cols = keyof typeof COLS
+/* ----------------------------- Responsive grid ----------------------------- */
 
-/** Responsive column counts (common subset) per breakpoint. */
-export const COLS_SM = {
-  1: "sm:grid-cols-1",
-  2: "sm:grid-cols-2",
-  3: "sm:grid-cols-3",
-  4: "sm:grid-cols-4",
-  6: "sm:grid-cols-6",
-  12: "sm:grid-cols-12",
-} as const
-export const COLS_MD = {
-  1: "md:grid-cols-1",
-  2: "md:grid-cols-2",
-  3: "md:grid-cols-3",
-  4: "md:grid-cols-4",
-  6: "md:grid-cols-6",
-  12: "md:grid-cols-12",
-} as const
-export const COLS_LG = {
-  1: "lg:grid-cols-1",
-  2: "lg:grid-cols-2",
-  3: "lg:grid-cols-3",
-  4: "lg:grid-cols-4",
-  6: "lg:grid-cols-6",
-  12: "lg:grid-cols-12",
-} as const
-export type ResponsiveCols = keyof typeof COLS_SM
+/** The breakpoints, in cascade order. `base` = no prefix (mobile-first). */
+export type Breakpoint = "base" | "sm" | "md" | "lg" | "xl" | "2xl"
+
+const BP_PREFIX: Record<Breakpoint, string> = {
+  base: "",
+  sm: "sm:",
+  md: "md:",
+  lg: "lg:",
+  xl: "xl:",
+  "2xl": "2xl:",
+}
+
+/**
+ * A value that can be a single setting (applied at `base`) or an object that
+ * cascades across breakpoints, e.g. `12` or `{ base: 4, md: 8, lg: 12 }`.
+ */
+export type Responsive<T> = T | Partial<Record<Breakpoint, T>>
+
+/**
+ * Build a responsive Tailwind class list for `util` (e.g. "grid-cols",
+ * "col-span", "col-start") from a Responsive<number>. A bare number applies at
+ * `base`; an object emits one class per breakpoint (`md:col-span-6`).
+ *
+ * These classes are safelisted via `@source inline(...)` in src/index.css, so
+ * the dynamic construction here is safe (see the EXCEPTION note at the top).
+ */
+export function responsiveClasses(
+  util: string,
+  value: Responsive<number> | undefined
+): string {
+  if (value == null) return ""
+  if (typeof value === "number") return `${util}-${value}`
+  return (Object.keys(value) as Breakpoint[])
+    .filter((bp) => value[bp] != null)
+    .map((bp) => `${BP_PREFIX[bp]}${util}-${value[bp]}`)
+    .join(" ")
+}
 
 export const ALIGN = {
   start: "items-start",
