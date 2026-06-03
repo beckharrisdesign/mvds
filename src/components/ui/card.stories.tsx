@@ -45,7 +45,7 @@ export const Default: Story = {
   ),
 }
 
-/** Composition test — a Button living inside a Card. */
+/** Composition test — actions live in the footer (the action bar), not the content. */
 export const WithButton: Story = {
   render: () => (
     <Card className="w-full max-w-sm">
@@ -58,15 +58,14 @@ export const WithButton: Story = {
           </Button>
         </CardAction>
       </CardHeader>
-      <CardContent className="flex flex-wrap gap-2">
-        <Button>Primary</Button>
-        <Button variant="outline">Outline</Button>
+      <CardContent>
+        <p className="text-muted-foreground text-small">
+          Card body content. Actions belong in the footer below — not here.
+        </p>
       </CardContent>
-      <CardFooter className="justify-between">
-        <span className="text-muted-foreground text-xs">2 actions</span>
-        <Button variant="link" className="px-0">
-          Learn more
-        </Button>
+      <CardFooter className="justify-end gap-2">
+        <Button variant="outline">Outline</Button>
+        <Button>Primary</Button>
       </CardFooter>
     </Card>
   ),

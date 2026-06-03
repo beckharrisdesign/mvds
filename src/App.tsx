@@ -39,17 +39,15 @@ function App() {
             Button + Card, themed by the same token layer.
           </CardDescription>
         </CardHeader>
-        <CardContent className="flex flex-wrap gap-2">
-          <Button>Primary</Button>
-          <Button variant="secondary">Secondary</Button>
-          <Button variant="outline">Outline</Button>
-          <Button variant="ghost">Ghost</Button>
-          <Button variant="destructive">Destructive</Button>
+        <CardContent>
+          <p className="text-muted-foreground text-small">
+            Toggle the mode above — every token flips. Actions live in the
+            footer; the full variant set is in Storybook.
+          </p>
         </CardContent>
-        <CardFooter>
-          <Button variant="link" className="px-0">
-            Edit tokens in src/index.css
-          </Button>
+        <CardFooter className="justify-end gap-2">
+          <Button variant="outline">Outline</Button>
+          <Button>Primary</Button>
         </CardFooter>
       </Card>
     </main>
