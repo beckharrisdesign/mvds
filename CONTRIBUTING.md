@@ -5,8 +5,8 @@ house rules). This file covers the **delivery workflow** only.
 
 ## Branch + PR workflow (required)
 
-- **`main` is protected — never push to it directly.** All changes land via pull
-  request, reviewed in isolation before merge.
+- **Never push to `main` directly.** All changes land via pull request, reviewed
+  in isolation before merge. (Recommended: enable branch protection on `main`.)
 - **One branch → one PR.** Start every change on its own branch off the latest
   `main`; open a dedicated PR for it.
 - **PRs are opened, marked _ready for review_, and left for a human to approve and
