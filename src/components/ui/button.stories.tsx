@@ -100,9 +100,23 @@ export const CssCheck: Story = {
     const root = document.documentElement
     const isDark = root.classList.contains("dark")
     // The token layer loaded AND the active mode applied: --primary resolves to
-    // its light- or dark-mode value depending on the `.dark` class.
+    // its light- or dark-mode value depending on the `.dark` class. Resolve both
+    // the token and the expected value through the same engine before comparing —
+    // browsers serialize oklch lightness inconsistently across Chromium versions
+    // ("oklch(0.205 0 0)" vs "oklch(20.5% 0 0)"), so an exact string match is
+    // brittle (it passes in vitest's Chromium but fails in Chromatic's capture).
+    const resolveColor = (value: string) => {
+      const probe = document.createElement("span")
+      probe.style.color = value
+      document.body.appendChild(probe)
+      const computed = getComputedStyle(probe).color
+      probe.remove()
+      return computed
+    }
     const primary = getComputedStyle(root).getPropertyValue("--primary").trim()
-    await expect(primary).toBe(isDark ? "oklch(0.922 0 0)" : "oklch(0.205 0 0)")
+    await expect(resolveColor(primary)).toBe(
+      resolveColor(isDark ? "oklch(0.922 0 0)" : "oklch(0.205 0 0)")
+    )
     // ...and the default Button actually consumes it (non-transparent fill).
     await expect(getComputedStyle(button).backgroundColor).not.toBe(
       "rgba(0, 0, 0, 0)"
