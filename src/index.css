@@ -104,7 +104,7 @@
     --text-h1--line-height: 1.1;
     --text-h1--font-weight: 600;
     --text-h1--letter-spacing: -0.02em;
-    --text-h2: 1.875rem;
+    --text-h2: 2.125rem;
     --text-h2--line-height: 1.15;
     --text-h2--font-weight: 600;
     --text-h2--letter-spacing: -0.015em;
@@ -140,7 +140,7 @@
     --popover-foreground: oklch(0.145 0 0);
     --primary: oklch(0.205 0 0);
     --primary-foreground: oklch(0.985 0 0);
-    --secondary: oklch(0.97 0 0);
+    --secondary: oklch(0.95 0.03 290);
     --secondary-foreground: oklch(0.205 0 0);
     --muted: oklch(0.97 0 0);
     --muted-foreground: oklch(0.556 0 0);
@@ -182,7 +182,7 @@
     --popover-foreground: oklch(0.985 0 0);
     --primary: oklch(0.922 0 0);
     --primary-foreground: oklch(0.205 0 0);
-    --secondary: oklch(0.269 0 0);
+    --secondary: oklch(0.32 0.04 290);
     --secondary-foreground: oklch(0.985 0 0);
     --muted: oklch(0.269 0 0);
     --muted-foreground: oklch(0.708 0 0);
