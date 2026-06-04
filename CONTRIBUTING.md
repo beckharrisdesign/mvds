@@ -17,10 +17,11 @@ house rules). This file covers the **delivery workflow** only.
 1. **CI gate** ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) — `npm run build`
    (tsc + Vite) then `npm test`: every Storybook story in headless Chromium with
    render, interaction, and axe a11y checks, in **both light and dark**. Must be green.
-2. **Vercel preview** — a per-PR deployment of the **static Storybook build**
-   (`npm run build-storybook` → `storybook-static`, configured in
-   [`vercel.json`](vercel.json)), so reviewers can browse the component gallery for
-   the branch in isolation before merging. Vercel posts the preview URL on the PR.
+2. **Vercel preview** — a per-PR deployment of the **deploy hub**
+   (`npm run build:site` → `dist-site`, configured in [`vercel.json`](vercel.json)): a
+   landing page at `/` linking to the sample app at `/app/` and the Storybook gallery
+   at `/storybook/`, so reviewers can browse both for the branch in isolation before
+   merging. Vercel posts the preview URL on the PR.
 
 ## Local gate (run before opening a PR)
 
