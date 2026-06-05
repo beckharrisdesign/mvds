@@ -39,5 +39,8 @@ jobs:
       - name: Build (tsc + vite)
         run: npm run build
 
+      - name: Token contrast (WCAG AA, light + dark)
+        run: npm run check:contrast
+
       - name: Test (Storybook stories, light + dark, a11y)
         run: npm test
