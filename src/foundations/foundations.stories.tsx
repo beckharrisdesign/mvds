@@ -48,7 +48,7 @@ export const Spacing: Story = {
 const RAMP: { cls: string; name: string; spec: string }[] = [
   { cls: "text-display", name: "Display", spec: "48 / 1.05 / 600" },
   { cls: "text-h1", name: "Heading 1", spec: "36 / 1.1 / 600" },
-  { cls: "text-h2", name: "Heading 2", spec: "34 / 1.15 / 600" },
+  { cls: "text-h2", name: "Heading 2", spec: "30 / 1.15 / 600" },
   { cls: "text-h3", name: "Heading 3", spec: "24 / 1.2 / 600" },
   { cls: "text-h4", name: "Heading 4", spec: "20 / 1.3 / 600" },
   { cls: "text-body-lg", name: "Body large", spec: "18 / 1.6 / 400" },
