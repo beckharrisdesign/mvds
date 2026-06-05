@@ -1,0 +1,34 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(gh pr view:*)",
+      "Bash(gh pr list:*)",
+      "Bash(gh pr checks:*)",
+      "Bash(gh run view:*)",
+      "Bash(gh run list:*)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git branch:*)",
+      "Bash(git show:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm run check:contrast:*)",
+      "Bash(npm test:*)",
+      "Bash(node scripts/check-contrast.mjs:*)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node scripts/hooks/token-edit-guard.mjs",
+            "statusMessage": "Checking token contrast…"
+          }
+        ]
+      }
+    ]
+  }
+}
