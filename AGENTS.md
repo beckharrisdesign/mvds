@@ -37,8 +37,12 @@ generate must follow the system, not generic shadcn/Tailwind habits.
   `destructive` (bad). Use as text (`text-success`), a tint (`bg-success/10`), or
   solid with its foreground (`bg-success text-success-foreground`). ❌ Never
   `text-green-500` / `text-red-500`.
-- ♿ **Contrast (WCAG AA):** `muted-foreground` meets AA only on `background`/`card`
-  — ❌ don't put it on `bg-muted`. Verify with the a11y gate (below) after UI work.
+- ♿ **Contrast (WCAG AA):** every token foreground/background pairing must clear
+  **4.5:1 in both modes** — including each status color solid with its
+  `-foreground`, and `text-success`/`text-destructive` etc. as text on
+  `background`. The one exception is `muted-foreground`: AA only on
+  `background`/`card`, ❌ never on `bg-muted`. Enforced by `npm run check:contrast`
+  (token-level) **and** the a11y gate on stories.
 - ✅ **Add UI components via `npx shadcn@latest add <name>`, then tune their
   internals to the 8-grid.** shadcn ships off-grid metrics (`px-2.5`=10, `h-7`=28,
   `gap-1.5`=6); replace them with on-grid values (heights 24/32/40; padding/gap
@@ -48,9 +52,11 @@ generate must follow the system, not generic shadcn/Tailwind habits.
   these files freehand.
 - ✅ **Every component/primitive gets a co-located `*.stories.tsx`** (see Storybook
   below — it is a required verification gate, not optional docs).
-- ✅ **After changing tokens or system components, re-run the Figma sync**
-  (`docs/SYNC.md`). ❌ Never assume Code Connect or Figma write-back — this is a
-  **Figma Pro** plan; the link is one-way via the Figma MCP.
+- ✅ **Figma is a downstream mirror, synced only on request.** Code is the source
+  of truth; the Figma file (MVDS Core) is updated via the Figma MCP **only when
+  explicitly asked** — never automatically after a token/component change. ❌ No
+  Code Connect (not used, not planned). One-way; see `docs/SYNC.md` and the
+  `mvds-figma-token-sync` skill.
 
 ## Spacing — the 8 grid
 
@@ -99,6 +105,13 @@ add or change a component you **must** add/update its story, and it must pass he
 - **Autodocs** — `@storybook/addon-docs` (`tags: ["autodocs"]`).
 - **Agent access** — `@storybook/addon-mcp` lets agents drive Storybook directly.
 
+**Specimen vs. component stories.** Foundation/specimen stories (palette, scales)
+document tokens as data and may render intentionally low-contrast pairings (borders,
+muted, swatches) — they scope axe `color-contrast` **off** via
+`parameters.a11y.config.rules`. Contrast is enforced in **component** stories (real
+usage context) and at the token level by `npm run check:contrast` — never gated on
+a reference board.
+
 Story requirements: enumerate every variant/state; exercise both **light and dark**
 via the toolbar theme toggle (the decorator in `.storybook/preview.tsx`); import
 nothing that bypasses the token layer.
@@ -114,14 +127,21 @@ Full workflow + constraints: [`docs/SYNC.md`](docs/SYNC.md).
 
 ```bash
 npm run build              # tsc + vite — must pass
+npm run check:contrast     # token-level WCAG AA on every pairing, light + dark — must pass
 npm test                   # every story in headless Chromium + axe a11y, LIGHT + DARK — must pass
 ```
 
 `npm test` is the gate: render + interaction + **WCAG color-contrast** checks on
 every story, run in **both** modes (`test:light`, then `test:dark` via
-`VITE_SB_THEME=dark`). Fix violations before shipping.
+`VITE_SB_THEME=dark`). `npm run check:contrast` adds a token-level AA check on every
+foreground/background pairing — independent of whether a component renders it. Fix
+violations before shipping.
 
-Then, if you changed tokens or system components, re-run the Figma sync.
+**Isolate experiments.** Never bundle throwaway/experimental edits (a token you're
+trying out, a Chromatic probe) into a PR with real changes — put them on their own
+branch so they can't merge by accident.
+
+Figma is synced **only when explicitly asked** — not automatically after a change.
 
 ## Map of intent
 
