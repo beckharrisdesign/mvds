@@ -52,10 +52,10 @@ const preview: Preview = {
       },
     },
     a11y: {
-      // 'todo' - show a11y violations in the test UI only
-      // 'error' - fail CI on a11y violations
+      // 'error' - fail the test run on a11y violations (the documented gate)
+      // 'todo' - show a11y violations in the test UI only (non-blocking)
       // 'off' - skip a11y checks entirely
-      test: 'todo',
+      test: 'error',
     },
   },
 }

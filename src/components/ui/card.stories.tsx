@@ -34,13 +34,13 @@ export const Default: Story = {
         <CardDescription>A short supporting description.</CardDescription>
       </CardHeader>
       <CardContent>
-        <p className="text-muted-foreground text-sm">
+        <p className="text-muted-foreground text-small">
           Card content sits here. Everything is themed by the same token layer
           as the rest of the system.
         </p>
       </CardContent>
       <CardFooter>
-        <p className="text-muted-foreground text-xs">Footer</p>
+        <p className="text-muted-foreground text-caption">Footer</p>
       </CardFooter>
     </Card>
   ),
