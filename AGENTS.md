@@ -145,6 +145,30 @@ branch so they can't merge by accident.
 
 Figma is synced **only when explicitly asked** — not automatically after a change.
 
+## Branch & PR workflow (always)
+
+Every change rides this lifecycle. The agent owns it end to end — **except the
+final approval, which is always the founder's.** Do not skip a step or wait to be
+re-asked; this is the standing default for the repo.
+
+1. ✅ **One feature per branch.** Never bundle unrelated changes. Name the branch
+   with a convention that describes the change — `feat/…`, `fix/…`, `docs/…`,
+   `chore/…` — and carry that name through to the PR. ❌ Never commit straight to
+   `main`.
+2. ✅ **You create and push the PR** for the branch (`gh pr create`), with the
+   branch's naming convention carried into the PR title.
+3. ✅ **Write a PR description that has both:** (a) a list of **all** the code
+   changes in the PR, and (b) a summary of the **founder's original intent** for
+   the change, in the founder's own framing as it was explained to you — the
+   *why*, not just the *what*.
+4. ✅ **Watch for Copilot review comments/suggestions.** Surface every one to the
+   founder for approval first — ❌ never act on them unilaterally — then wait for
+   Copilot to resolve them.
+5. ✅ **Fold any changes from that review cycle back into the same PR**, and note
+   the additional commits in the PR description so it stays a complete record.
+6. ✅ **When all checks come back green, flag the PR as ready to review.** ❌ Never
+   approve or merge it yourself — **the founder always gives final approval.**
+
 ## Map of intent
 
 - [`src/index.css`](src/index.css) — token layer: colors (light/dark), 8-grid

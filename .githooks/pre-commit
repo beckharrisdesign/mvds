@@ -1,0 +1,25 @@
+#!/bin/sh
+# MVDS branch guardrail — enforces the "Branch & PR workflow" house rule in AGENTS.md.
+# Wired up via the `prepare` npm script (git config core.hooksPath .githooks).
+#
+# - HARD BLOCK: never commit directly to main (one feature per branch; the agent
+#   opens a PR, the founder approves).
+# - WARN: branch names should follow the convention so they carry into the PR title.
+
+branch="$(git symbolic-ref --short HEAD 2>/dev/null)"
+
+if [ "$branch" = "main" ]; then
+  echo "✖ Direct commits to 'main' are blocked." >&2
+  echo "  Create a feature branch first: feat/… fix/… docs/… chore/… refactor/… test/…" >&2
+  exit 1
+fi
+
+case "$branch" in
+  feat/*|fix/*|docs/*|chore/*|refactor/*|test/*|perf/*|build/*|ci/*) ;;
+  *)
+    echo "⚠ Branch '$branch' is off-convention." >&2
+    echo "  Prefer feat/… fix/… docs/… chore/… so the name carries into the PR title." >&2
+    ;;
+esac
+
+exit 0
