@@ -17,7 +17,7 @@ try {
 const path = (payload?.tool_input?.file_path ?? "").replace(/\\/g, "/")
 // Only authored TS/TSX under src/. src/index.css is the token guard's job; this
 // hook ignores it (and every non-source file).
-if (!/\.(ts|tsx)$/.test(path) || !path.includes("/src/")) {
+if (!/\.(ts|tsx)$/.test(path) || !(path.startsWith("src/") || path.includes("/src/"))) {
   process.exit(0)
 }
 
