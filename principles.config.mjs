@@ -53,7 +53,7 @@ export const baseManifest = {
         // m / mt / mr / mb / ml / mx / my followed by a VALUE (digit, px, or [arb]),
         // with optional responsive/state prefixes and optional negative. Requiring a
         // value char after the dash avoids "max-w", "transform", "from-", "item".
-        pattern: /(?<![\w-])(?:[a-z0-9]+:)*-?m[trblxy]?-(?:px\b|\d|\[)/,
+        pattern: /(?<![\w-])(?:[a-z0-9]+:)*-?m[trblxy]?-(?:auto|px\b|\d+(?:\.\d+)?|\[[^\]]+\])\b/,
         allow: ["mx-auto"],
       },
       fix: "Remove the margin; wrap siblings in <Stack gap> / <Inline gap> / <Grid gap>. To center a Container, mx-auto is allowed.",
