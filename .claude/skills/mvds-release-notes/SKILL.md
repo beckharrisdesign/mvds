@@ -47,9 +47,11 @@ description: Draft a release-notes entry for the most recently merged PR in beck
 5. **Breaking changes only:** add a `Migration` block listing exactly what users
    must do to update.
 
-6. **Post as a PR comment** on the merged PR. Append a one-line hint:
-   `Suggested changelog location: CHANGELOG.md (root)` — or the actual path if one
-   exists; note if no changelog file exists yet.
+6. **Post as a PR comment** on the merged PR. Before appending the changelog hint,
+   check the repo root for common changelog paths (`CHANGELOG.md`, `CHANGELOG`,
+   `docs/changelog.md`, `docs/CHANGELOG.md`). Then:
+   - If one exists → `Suggested changelog location: {path}`
+   - If none exists → `No changelog file found — consider creating CHANGELOG.md at the repo root.`
 
 ## Format
 
