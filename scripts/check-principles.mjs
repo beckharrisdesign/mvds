@@ -124,7 +124,8 @@ function runForbidClassName(file, p) {
     const re = new RegExp(p.check.pattern.source, p.check.pattern.flags.replace("g", "") + "g")
     let m
     while ((m = re.exec(text)) !== null) {
-      if (allow.has(m[0])) continue
+      const token = m[0].includes(":") ? m[0].split(":").pop() : m[0]
+      if (allow.has(token)) continue
       out.push({ file, line: i + 1, snippet: m[0] })
     }
   })
