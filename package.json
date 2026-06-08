@@ -5,7 +5,7 @@
   "description": "MVDS — Minimum Viable Design System. An agent-first design system for early startup prototyping with solid foundational design strategy.",
   "type": "module",
   "scripts": {
-    "prepare": "git config core.hooksPath .githooks",
+    "prepare": "git config core.hooksPath .githooks || true",
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",

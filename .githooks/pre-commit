@@ -14,6 +14,9 @@ if [ "$branch" = "main" ]; then
   exit 1
 fi
 
+# Detached HEAD / rebase state — no branch name; skip convention check.
+[ -z "$branch" ] && exit 0
+
 case "$branch" in
   feat/*|fix/*|docs/*|chore/*|refactor/*|test/*|perf/*|build/*|ci/*) ;;
   *)
