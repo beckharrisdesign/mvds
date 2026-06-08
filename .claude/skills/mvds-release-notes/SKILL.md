@@ -7,10 +7,12 @@ description: Draft a release-notes entry for the most recently merged PR in beck
 
 ## Steps
 
-1. **Find the PR.** Use `mcp__github__list_pull_requests` (state: closed, sort:
-   updated, desc, limit 5) to identify the most recently merged PR.
+1. **Find and read the PR.** Use `mcp__github__list_pull_requests` (state: closed,
+   sort: updated, desc, limit 5) to identify the most recently merged PR. Then read
+   its title, description, and full diff before proceeding — classification must be
+   based on what the code actually changed, not just the title.
 
-2. **Classify the change.** Read the PR title, description, and diff. Decide:
+2. **Classify the change.** Decide:
    - **Internal-only** (tests, CI, build tooling, comments, dead-code removal, pure
      refactors with no behavior change) → post a single comment:
      `Internal change — no release note.` Stop here.
@@ -28,7 +30,7 @@ description: Draft a release-notes entry for the most recently merged PR in beck
      feature name; start with the intent.
    - Sentences 2–3 — **what changed**: describe concretely what is new or fixed and
      what people can now do or rely on. Imperative voice. No file paths, function
-     names, or commit SHAs in the prose.
+     names, commit SHAs, internal codenames, or technical jargon in the prose.
 
    **Related (links, gathered from the PR and its checks):**
    - **Commits** — link each commit SHA referenced or included in the PR.
