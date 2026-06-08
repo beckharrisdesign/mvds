@@ -50,8 +50,10 @@ generate must follow the system, not generic shadcn/Tailwind habits.
   shadcn, so **re-apply the tuning after every `add`/update**. (Icon glyph sizes &
   border-radius are dimensions, not spacing — leave them.) Otherwise don't rewrite
   these files freehand.
-- ✅ **Every component/primitive gets a co-located `*.stories.tsx`** (see Storybook
-  below — it is a required verification gate, not optional docs).
+- ✅ **Every component/primitive is covered by a co-located `*.stories.tsx`** —
+  one file per UI component (`button.stories.tsx`), while a cohesive primitive
+  family may share one (the layout primitives live in `layout.stories.tsx`). (see
+  Storybook below — it is a required verification gate, not optional docs).
 - ✅ **Figma is a downstream mirror, synced only on request.** Code is the source
   of truth; the Figma file (MVDS Core) is updated via the Figma MCP **only when
   explicitly asked** — never automatically after a token/component change. ❌ No
