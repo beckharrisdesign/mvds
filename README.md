@@ -17,10 +17,10 @@ components, with **code as the single source of truth**.
 
 | Layer | Choice |
 | --- | --- |
-| Build | Vite + React + TypeScript |
+| Build | Vite 8 + React 19 + TypeScript 6 |
 | Styling | Tailwind CSS v4 (CSS-first `@theme`) |
 | Components | shadcn/ui (`radix-nova`, CSS variables) |
-| Gallery | Storybook (`@storybook/react-vite`) |
+| Gallery | Storybook 10 (`@storybook/react-vite`) |
 | Figma link | Figma MCP `/figma-generate-library` (Plugin API) |
 
 ## The keystone
