@@ -8,9 +8,12 @@ description: Draft a release-notes entry for the most recently merged PR in beck
 ## Steps
 
 1. **Find and read the PR.** Use `mcp__github__list_pull_requests` (state: closed,
-   sort: updated, desc, limit 5) to identify the most recently merged PR. Then read
-   its title, description, and full diff before proceeding — classification must be
-   based on what the code actually changed, not just the title.
+   sort: updated, desc, limit 10). From the results, filter to PRs where `merged_at`
+   is not null (actually merged, not just closed), then pick the one with the latest
+   `merged_at` timestamp. Do not rely on list order alone — a closed-but-unmerged PR
+   updated after a merged one would otherwise appear first. Then read the PR's title,
+   description, and full diff before proceeding — classification must be based on
+   what the code actually changed, not just the title.
 
 2. **Classify the change.** Decide:
    - **Internal-only** (tests, CI, build tooling, comments, dead-code removal, pure
