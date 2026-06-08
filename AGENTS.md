@@ -130,6 +130,7 @@ Full workflow + constraints: [`docs/SYNC.md`](docs/SYNC.md).
 ```bash
 npm run build              # tsc + vite — must pass
 npm run check:contrast     # token-level WCAG AA on every pairing, light + dark — must pass
+npm run check:principles   # machine-enforced golden rules (color/margin/flex-grid/story coverage) — must pass
 npm test                   # every story in headless Chromium + axe a11y, LIGHT + DARK — must pass
 ```
 
@@ -138,6 +139,21 @@ every story, run in **both** modes (`test:light`, then `test:dark` via
 `VITE_SB_THEME=dark`). `npm run check:contrast` adds a token-level AA check on every
 foreground/background pairing — independent of whether a component renders it. Fix
 violations before shipping.
+
+**Golden rules are partly machine-enforced.** `npm run check:principles` is a
+manifest-driven gate ([`principles.config.mjs`](principles.config.mjs)) that turns
+several golden rules from prose into tests: no hardcoded color (hex / palette / `bg-white`
+/ `rgb()`), no margins for spacing (only `mx-auto`), no raw `flex`/`grid` outside the
+layout primitives, and one story per UI component (the layout family shares
+`layout.stories.tsx`). Principles are **data** — a new rule is a new record — and each
+carries a `scope` (vendored `ui/` and specimen stories are carved out where
+appropriate). A genuine, justified exception is suppressed inline with a
+`// mvds-allow <principle-id> — <reason>` comment on the offending line; bare
+`// mvds-allow` suppresses every principle on that line. The same check runs at the
+keystroke via the `principle-edit-guard` PostToolUse hook. The manifest is also the
+spine of the planned per-context principle cascade (`resolveManifest`,
+[`principles.resolve.mjs`](principles.resolve.mjs)) — principles will later vary by
+company/experiment/product, so encode rules as data, not as hardcoded checks.
 
 **Isolate experiments.** Never bundle throwaway/experimental edits (a token you're
 trying out, a Chromatic probe) into a PR with real changes — put them on their own
