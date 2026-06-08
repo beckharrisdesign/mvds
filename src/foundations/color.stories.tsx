@@ -143,7 +143,7 @@ export const Palette: Story = {
     for (const token of ["success", "neutral"]) {
       const el = canvasElement.querySelector(`[data-token=${token}]`)!
       await expect(getComputedStyle(el).backgroundColor).not.toBe(
-        "rgba(0, 0, 0, 0)"
+        "rgba(0, 0, 0, 0)" // mvds-allow no-hardcoded-color — transparent sentinel read back from the browser, not an authored color
       )
     }
   },

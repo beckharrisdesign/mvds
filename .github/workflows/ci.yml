@@ -42,5 +42,8 @@ jobs:
       - name: Token contrast (WCAG AA, light + dark)
         run: npm run check:contrast
 
+      - name: Design principles (manifest-driven golden rules)
+        run: npm run check:principles
+
       - name: Test (Storybook stories, light + dark, a11y)
         run: npm test

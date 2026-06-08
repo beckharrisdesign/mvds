@@ -13,8 +13,10 @@
       "Bash(git show:*)",
       "Bash(npm run build:*)",
       "Bash(npm run check:contrast:*)",
+      "Bash(npm run check:principles:*)",
       "Bash(npm test:*)",
-      "Bash(node scripts/check-contrast.mjs:*)"
+      "Bash(node scripts/check-contrast.mjs:*)",
+      "Bash(node scripts/check-principles.mjs:*)"
     ]
   },
   "hooks": {
@@ -26,6 +28,11 @@
             "type": "command",
             "command": "node scripts/hooks/token-edit-guard.mjs",
             "statusMessage": "Checking token contrast…"
+          },
+          {
+            "type": "command",
+            "command": "node scripts/hooks/principle-edit-guard.mjs",
+            "statusMessage": "Checking design principles…"
           }
         ]
       }
