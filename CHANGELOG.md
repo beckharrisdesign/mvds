@@ -28,7 +28,7 @@ releases. The project is pre-release (`0.0.0`), so entries accumulate under
   Storybook gallery (`/storybook/`).
   ([#2](https://github.com/beckharrisdesign/mvds/pull/2))
 - This changelog.
-  ([#14](https://github.com/beckharrisdesign/mvds/pull/14))
+  ([#15](https://github.com/beckharrisdesign/mvds/pull/15))
 
 ### Changed
 
