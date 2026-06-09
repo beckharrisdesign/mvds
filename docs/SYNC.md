@@ -2,12 +2,12 @@
 
 **Code is law. Figma is a generated mirror.**
 
-> **Generated Figma file:** [the MVDS Figma file](https://www.figma.com/design/C20nU0mROzk3Zr0I9BELJF/MVDS-Test)
+> **Generated Figma file:** ["MVDS Core"](https://www.figma.com/design/C20nU0mROzk3Zr0I9BELJF/MVDS-Test)
 > (team: Beck Harris Design). Generated from this repo:
 > - `Tokens` variable collection — colors with Light/Dark modes
 > - `Scales` variable collection — spacing + breakpoint numbers
 > - Type ramp **text styles** (`Type/Display` … `Type/Caption`)
-> - `Button` component set, `Card` component
+> - `Button` / `Badge` / `Card` component sets (manifests in `figma/components/`)
 > - Foundation specimens: Spacing scale, Type ramp, Breakpoints
 >
 > The sync target's fileKey is `C20nU0mROzk3Zr0I9BELJF`.
@@ -17,13 +17,14 @@ not hand-maintained. On a Figma **Pro** plan this link is **one-way (code → Fi
 and **re-runnable** — see [Why one-way](#why-one-way-the-pro-tier-reality) below.
 
 ```
-  src/index.css  ─┐
-  (token layer)   │
-                  ├──►  /figma-generate-library  ──►  Figma file (Beck Harris Design)
-  src/components/ │       (Figma MCP, Plugin API)        · variable collection (light/dark modes)
-  ui/*.tsx       ─┘                                       · Button + Card components
+  src/index.css  ──►  mvds-figma-token-sync      ──►  Figma file (Beck Harris Design)
+  (token layer)         (Figma MCP, Plugin API)          · Tokens/Scales variables (light/dark)
+                                                         · Type/* text styles
+  figma/components/   ─►  mvds-figma-component-sync ──►  · Button/Badge/Card component sets
+  *.figma.mjs (authored     (Figma MCP, Plugin API)        (axes = code API, props bound to
+   manifests, check:figma)                                  variables; founder publishes = merge)
         ▲
-        └── Storybook renders the same files = live, reviewable gallery
+        └── src/components/ui/*.tsx — Storybook renders the same files = live gallery
 ```
 
 ## The loop
@@ -33,16 +34,59 @@ and **re-runnable** — see [Why one-way](#why-one-way-the-pro-tier-reality) bel
    - Tokens: **only** in `src/index.css` (`@theme inline`, `:root` = light, `.dark` = dark).
 2. **Verify in Storybook** — `npm run storybook`. Stories are co-located (`*.stories.tsx`)
    and are the canonical, diffable surface the Figma generation references.
-3. **Sync to Figma (re-runnable).** Invoke the Figma plugin skill **`/figma-generate-library`**
-   (it loads `/figma-use` first). Point it at a file in the *Beck Harris Design* team. It:
-   - reads `src/index.css` + `src/components/ui/*`;
-   - creates/updates the variable **collection + light/dark modes**, primitive→semantic
-     aliases, scopes, and code-syntax bindings;
-   - builds a Foundations page + Button (variants as component properties) + Card.
-   - This step is **idempotent** — re-run after any token/component change; it reconciles
-     rather than duplicating nodes.
+3. **Sync to Figma (re-runnable, on explicit request only).** Two repo-native skills,
+   in order (each loads `/figma-use` first):
+   - **`mvds-figma-token-sync`** — tokens: the `Tokens`/`Scales` variable collections
+     (light/dark modes) and the `Type/*` text styles, from `src/index.css`.
+   - **`mvds-figma-component-sync`** — components: working component sets whose variant
+     axes mirror the code API and whose every fill/spacing/text property is **bound** to
+     those variables/styles. The spec is the authored manifests (see
+     [Component sync](#component-sync) below), gated by `npm run check:figma`.
+   - Both are **idempotent** — they reconcile (adopt/update in place) rather than
+     duplicating nodes.
 4. **Inspect (read-only on Pro).** `get_variable_defs`, `get_design_context`, `get_screenshot`
    to confirm the Figma mirror matches the code.
+
+## Component sync
+
+The component mirror is driven by **authored manifests** — data, reviewed in PRs,
+same philosophy as `principles.config.mjs`:
+
+- [`figma/components/*.figma.mjs`](../figma/components) — one per mirrored component:
+  variant axes (drift-guarded against the `cva()`/prop-union truth in the source),
+  the auto-layout layer tree, and token bindings. Manifests declare **structure +
+  exceptions only**.
+- [`figma/conventions.mjs`](../figma/conventions.mjs) — the mechanical mapping rules,
+  declared once: `bg-primary` → fill bound to variable `primary`; `bg-destructive/10` →
+  same variable + paint opacity 0.1; `px-4` → padding bound to `space-16`;
+  `text-small` → text style `Type/Small`; Default + Disabled states only
+  (disabled = frame opacity 0.5; hover/focus stay code-only).
+- [`figma/figma.lock.json`](../figma/figma.lock.json) — machine-recorded Figma node IDs
+  (the package-lock analog). Manifests are reviewed intent; the lock is recorded
+  reality, updated by the sync and committed so re-syncs update **in place by ID** —
+  node identity is what keeps instances in experiment files alive across syncs.
+- **`npm run check:figma`** ([`scripts/check-figma-manifest.mjs`](../scripts/check-figma-manifest.mjs),
+  also in CI) — fails when a variant is added/renamed/reordered in code without a
+  manifest update, so the mirror can't silently fall behind. It also lints every
+  `{ var }`/`textStyle` binding against the token layer.
+
+## Review model: publish is the merge gate
+
+Figma **branching** needs Org/Enterprise, so on Pro the component sync uses the
+library-publish flow as its branch-and-merge analog:
+
+1. The sync updates component sets **in place** (instances downstream keep working)
+   and writes a **Sync Report** — a dated frame in MVDS Core plus matching markdown.
+2. The sync **never publishes.** The founder reviews the report and clicks
+   **Publish library**, pasting the report as the version description — that click
+   is the merge approval. An unpublished sync is an open PR, not a landed change.
+3. Files consuming the library get Figma's standard **library-update prompt** and
+   accept changes per-file — existing Figma infra controls what folds into
+   working assets.
+
+If the team upgrades to Org/Enterprise: create a branch of MVDS Core in the Figma
+UI, run the same sync against the branch, and the Sync Report becomes the
+branch-review description. Nothing else changes.
 
 ## Why one-way: the Pro-tier reality
 
@@ -72,6 +116,9 @@ activate it and Dev Mode will show real component code. Until then it's document
 npm run dev              # app demo (Card + Button, light/dark toggle)
 npm run storybook        # component gallery — the living design system
 npm run build            # typecheck + production build
+npm run check:figma      # component manifests vs code — must pass before a sync
 npm run build-storybook  # static Storybook
-# then, in this agent:  /figma-generate-library   (the code → Figma push)
+# then, in this agent (on explicit request only):
+#   mvds-figma-token-sync       (tokens → variables + text styles)
+#   mvds-figma-component-sync   (components → bound component sets)
 ```
