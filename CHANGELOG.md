@@ -6,8 +6,9 @@ All notable changes to MVDS are recorded here. The format follows
 (`0.x`): per the house rules, breaking changes may land in any release until
 `1.0.0`.
 
-> Entries are drafted per merged PR by the `mvds-release-notes` skill and land in
-> the **Unreleased** section, then roll into the next tagged version.
+> The `mvds-release-notes` skill drafts a per-PR entry and posts it as a PR
+> comment; that draft is then landed here under **Unreleased**, and rolls into the
+> next tagged version when a release is cut.
 
 ## [Unreleased]
 
@@ -19,6 +20,10 @@ verification gates.
 
 ### Added
 
+- `docs/VERSIONING.md` — the coupling contract: principles and components share
+  **one SemVer** (lockstep), and `manifest.version` is recast as the manifest's
+  schema/shape version, decoupled from principle content.
+  ([#22](https://github.com/beckharrisdesign/mvds/pull/22))
 - MVDS is now an installable package (built with `tsup`), and shipped the `Badge`
   component.
   ([#18](https://github.com/beckharrisdesign/mvds/pull/18))
