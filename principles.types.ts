@@ -57,6 +57,12 @@ export interface Principle {
 }
 
 export interface PrincipleManifest {
+  /**
+   * Manifest SCHEMA version — the *shape* of this object (check kinds, fields),
+   * NOT the version of any principle's content. Bumps only on structural changes
+   * to the manifest format; principle content rides the package SemVer instead.
+   * See docs/VERSIONING.md (the coupling contract).
+   */
   version: 1
   principles: Principle[]
 }
