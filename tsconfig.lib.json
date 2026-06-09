@@ -1,0 +1,18 @@
+{
+  "extends": "./tsconfig.app.json",
+  "compilerOptions": {
+    "ignoreDeprecations": "6.0",
+    "paths": { "@/*": ["./src/*"] },
+    "noEmit": false,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "allowImportingTsExtensions": false,
+    "outDir": "dist-lib",
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "composite": false,
+    "tsBuildInfoFile": null
+  },
+  "include": ["src/index.ts", "src/components/**/*", "src/lib/**/*"],
+  "exclude": ["src/**/*.stories.tsx", "src/foundations/**/*"]
+}
