@@ -2,12 +2,12 @@
 
 **Code is law. Figma is a generated mirror.**
 
-> **Generated Figma file:** [the MVDS Figma file](https://www.figma.com/design/C20nU0mROzk3Zr0I9BELJF/MVDS-Test)
+> **Generated Figma file:** ["MVDS Core"](https://www.figma.com/design/C20nU0mROzk3Zr0I9BELJF/MVDS-Test)
 > (team: Beck Harris Design). Generated from this repo:
 > - `Tokens` variable collection — colors with Light/Dark modes
 > - `Scales` variable collection — spacing + breakpoint numbers
 > - Type ramp **text styles** (`Type/Display` … `Type/Caption`)
-> - `Button` component set, `Card` component
+> - `Button` / `Badge` / `Card` component sets (manifests in `figma/components/`)
 > - Foundation specimens: Spacing scale, Type ramp, Breakpoints
 >
 > The sync target's fileKey is `C20nU0mROzk3Zr0I9BELJF`.
@@ -20,9 +20,9 @@ and **re-runnable** — see [Why one-way](#why-one-way-the-pro-tier-reality) bel
   src/index.css  ──►  mvds-figma-token-sync      ──►  Figma file (Beck Harris Design)
   (token layer)         (Figma MCP, Plugin API)          · Tokens/Scales variables (light/dark)
                                                          · Type/* text styles
-  figma/*.figma.mjs ─►  mvds-figma-component-sync ──►    · Button/Badge/Card component sets
-  (authored manifests,    (Figma MCP, Plugin API)          (axes = code API, props bound to
-   gated by check:figma)                                    variables; founder publishes = merge)
+  figma/components/   ─►  mvds-figma-component-sync ──►  · Button/Badge/Card component sets
+  *.figma.mjs (authored     (Figma MCP, Plugin API)        (axes = code API, props bound to
+   manifests, check:figma)                                  variables; founder publishes = merge)
         ▲
         └── src/components/ui/*.tsx — Storybook renders the same files = live gallery
 ```

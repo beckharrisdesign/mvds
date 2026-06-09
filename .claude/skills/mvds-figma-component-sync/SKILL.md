@@ -74,10 +74,15 @@ branch-review description. Nothing else changes.)
    - **Existing set:** `clone()` a sibling and `appendChild` for new variants;
      rename for renames; re-bind only what the diff flagged.
    - **Bindings:** colors via `figma.variables.setBoundVariableForPaint(paint,
-     "color", v)` (tints carry the manifest's `opacity` on the paint); spacing/
-     size/radius via `node.setBoundVariable("paddingLeft"|"paddingRight"|
-     "itemSpacing"|"width"|"height"|"topLeftRadius"…, v)`; text via
-     `setTextStyleIdAsync` (await `loadFontAsync` for Geist first).
+     "color", v)` (tints carry the manifest's `opacity` on the paint). Spacing,
+     size, and radius bind one field per `node.setBoundVariable` call —
+     concretely: `paddingX` → `setBoundVariable("paddingLeft", space16)` and
+     `setBoundVariable("paddingRight", space16)`; `gap` →
+     `setBoundVariable("itemSpacing", space8)`; `height` →
+     `setBoundVariable("height", space32)`; `cornerRadius` → one call per
+     corner (`"topLeftRadius"`, `"topRightRadius"`, `"bottomLeftRadius"`,
+     `"bottomRightRadius"`). Text styles via `setTextStyleIdAsync` (await
+     `loadFontAsync` for Geist first).
    - **Disabled state:** variant-frame `opacity = 0.5` — nothing else changes.
    - **Nested instances** (Card → Button): look up the donor variant via the
      lock (or the set's child by variant name) and `createInstance()` into the
