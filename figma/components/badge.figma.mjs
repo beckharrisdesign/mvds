@@ -15,17 +15,7 @@ export default {
     {
       name: "variant",
       source: { kind: "cva", export: "badgeVariants", axis: "variant" },
-      options: [
-        "default",
-        "muted",
-        // Deprecated alias of `muted` (badge.tsx) — listed so the drift guard's
-        // exact-match against code passes, but no Figma variant is built.
-        { name: "secondary", skip: true, reason: "deprecated alias of muted — slated for removal" },
-        "outline",
-        "success",
-        "neutral",
-        "destructive",
-      ],
+      options: ["default", "muted", "outline", "success", "neutral", "destructive"],
     },
   ],
   defaults: { variant: "default" },
