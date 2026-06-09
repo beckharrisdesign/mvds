@@ -21,14 +21,18 @@ export const conventions = {
   //   text-X    → text-node fill      bound to variable X
   //   border-X  → frame stroke        bound to variable X
   //
-  // Opacity-modified utilities (`bg-destructive/10`) bind the SAME variable and
-  // carry the modifier as paint opacity (0.10) — never a baked-in lighter color,
-  // so the tint keeps tracking the token across light/dark modes.
+  // Opacity-modified utilities (`bg-destructive/10`) bind a DERIVED tint
+  // variable named `{token}-tint` whose rgba VALUE carries the alpha per mode
+  // (e.g. destructive-tint = destructive @ a0.10 light / a0.20 dark, mirroring
+  // `bg-destructive/10 dark:bg-destructive/20`). Alpha lives in the variable —
+  // NOT as paint opacity, which Figma drops when instances re-resolve modes
+  // (verified 2026-06-09 sync). Derived tints are Figma-only variables in the
+  // Tokens collection; their IDs are recorded in figma.lock.json.
   color: {
     fill: "bg-{token} → fill bound to {token}",
     text: "text-{token} → text fill bound to {token}",
     stroke: "border-{token} → stroke bound to {token}",
-    tint: "bg-{token}/N → fill bound to {token} with paint opacity N/100",
+    tint: "bg-{token}/N → fill bound to derived variable {token}-tint (alpha-in-value per mode)",
   },
 
   // ---- Spacing utilities → Scales variables ---------------------------------

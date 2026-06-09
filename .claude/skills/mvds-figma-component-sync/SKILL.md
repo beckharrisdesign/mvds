@@ -73,8 +73,13 @@ branch-review description. Nothing else changes.)
      the manifest's axis order.
    - **Existing set:** `clone()` a sibling and `appendChild` for new variants;
      rename for renames; re-bind only what the diff flagged.
-   - **Bindings:** colors via `figma.variables.setBoundVariableForPaint(paint,
-     "color", v)` (tints carry the manifest's `opacity` on the paint). Spacing,
+   - **Bindings:** colors via paint literals — `{ type: "SOLID", color:
+     <lightModeValue>, boundVariables: { color: { type: "VARIABLE_ALIAS", id } } }`
+     with the static color set to the variable's light-mode value, so the paint
+     renders correctly even where live resolution lags. Tints bind the DERIVED
+     `{token}-tint` variable (alpha-in-value per mode — see
+     `figma/conventions.mjs`); NEVER paint-level opacity, which Figma drops when
+     instances re-resolve modes (verified 2026-06-09). Spacing,
      size, and radius bind one field per `node.setBoundVariable` call —
      concretely: `paddingX` → `setBoundVariable("paddingLeft", space16)` and
      `setBoundVariable("paddingRight", space16)`; `gap` →
@@ -93,9 +98,11 @@ branch-review description. Nothing else changes.)
    review, then **Publish library** with this text as the version description.
 6. **Validate.**
    - Re-read each set: variant count = product of non-skipped axis options
-     (today: Button 72, Badge 6 built + 1 skipped, Card 2); spot-check tricky
-     bindings — the destructive/success tint opacities, Button sm radius cap,
-     Card Footer's nested instance.
+     (today: Button 72, Badge 6, Card 2); spot-check tricky bindings — the
+     destructive/success tint variables, Button sm radius cap, Card Footer's
+     nested instance. Validate dark mode on a temp frame of INSTANCES with
+     `setExplicitVariableModeForCollection` (instances are where mode-resolution
+     bugs like dropped paint opacity show up), then remove the temp frame.
    - `get_screenshot` of each set; compare against the matching Storybook story
      (`npm run storybook`) in **both modes** — switch the page/frame to the
      `Tokens` collection's Dark mode; correct dark rendering proves bindings,
