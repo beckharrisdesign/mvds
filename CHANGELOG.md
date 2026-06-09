@@ -64,5 +64,5 @@ verification gates.
   `background`.
   ([#9](https://github.com/beckharrisdesign/mvds/pull/9))
 
-[Unreleased]: https://github.com/beckharrisdesign/mvds/compare/v0.1.0...HEAD
-[0.1.0]: https://github.com/beckharrisdesign/mvds/releases/tag/v0.1.0
+[Unreleased]: https://github.com/beckharrisdesign/mvds/compare/v0.1.0...main
+[0.1.0]: https://github.com/beckharrisdesign/mvds/tree/v0.1.0
