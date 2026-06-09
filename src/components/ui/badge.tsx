@@ -16,6 +16,8 @@ const badgeVariants = cva(
         // Tone — neutral labels & tags, no status meaning.
         default: "border-transparent bg-primary text-primary-foreground",
         muted: "border-transparent bg-muted text-foreground",
+        /** @deprecated Use `muted` instead. Will be removed in v1. */
+        secondary: "border-transparent bg-muted text-foreground",
         outline: "border-border text-foreground",
         // Status — the semantic triad, as tints (good / in-progress / bad).
         success:
