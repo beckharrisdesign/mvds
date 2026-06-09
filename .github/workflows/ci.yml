@@ -45,5 +45,8 @@ jobs:
       - name: Design principles (manifest-driven golden rules)
         run: npm run check:principles
 
+      - name: Figma manifest drift (component axes vs code)
+        run: npm run check:figma
+
       - name: Test (Storybook stories, light + dark, a11y)
         run: npm test
