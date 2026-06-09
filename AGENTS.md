@@ -159,6 +159,16 @@ company/experiment/product, so encode rules as data, not as hardcoded checks.
 trying out, a Chromatic probe) into a PR with real changes — put them on their own
 branch so they can't merge by accident.
 
+**Pre-1.0: breaking changes are fine; don't hoard compatibility.** MVDS is `v0.x`,
+owner-gated, and code is the single source of truth — consumers compose primitives
+in their own repos, and new DS surface is the founder's deliberate call. So when a
+variant/prop/export is wrong, **remove or rename it outright.** ❌ Never keep a
+deprecated alias "for compatibility" (e.g. a `secondary` that just duplicates
+`muted`) — back-compat cruft reintroduces the exact bloat we prune, and there are no
+external consumers to protect yet. A generic-library reviewer (e.g. Copilot) will
+reflexively suggest deprecation shims; that default is **wrong for this repo's
+stage** — prefer the clean break.
+
 Figma is synced **only when explicitly asked** — not automatically after a change.
 
 ## Branch & PR workflow (always)
@@ -179,9 +189,15 @@ re-asked; this is the standing default for the repo.
    *why*, not just the *what*.
 4. ✅ **Watch for Copilot review comments/suggestions.** Surface every one to the
    founder for approval first — ❌ never act on them unilaterally — then wait for
-   Copilot to resolve them.
-5. ✅ **Fold any changes from that review cycle back into the same PR**, and note
-   the additional commits in the PR description so it stays a complete record.
+   Copilot to resolve them. Evaluate each on its merits against *these* house rules,
+   not generic-library defaults (see the pre-1.0 note above — Copilot will suggest
+   compat shims and pristine-shadcn habits that this repo rejects).
+5. ✅ **Verify what Copilot actually landed — don't trust a "Done" comment.** The
+   `copilot-swe-agent` may claim a fix and reference a commit that never reached the
+   PR branch. Always confirm against the real branch tip (`git log`/diff the head
+   SHA) before treating a suggestion as resolved. **Fold any approved changes back
+   into the same PR**, and note the additional commits in the PR description so it
+   stays a complete record.
 6. ✅ **When all checks come back green, flag the PR as ready to review.** ❌ Never
    approve or merge it yourself — **the founder always gives final approval.**
 
