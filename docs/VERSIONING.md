@@ -46,10 +46,9 @@ constantly; you change the format almost never.
 
 ## What bumps the package version
 
-MVDS is **pre-1.0** (`0.x`). Per the house rules, **breaking changes are allowed
-in any release until `1.0.0`** — we do not hoard backward compatibility this early
-(see [AGENTS.md](../AGENTS.md), "Pre-1.0: breaking changes are fine"). So before
-`1.0.0` the SemVer mapping is deliberately loose:
+MVDS is **pre-1.0** (`0.x`). Until `1.0.0`, breaking changes are allowed in any release —
+we do not hoard backward compatibility this early. So before `1.0.0` the SemVer mapping
+is deliberately loose:
 
 | Change | Pre-1.0 (`0.x`) | Post-1.0 |
 |---|---|---|
