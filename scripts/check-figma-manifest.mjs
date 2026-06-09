@@ -29,7 +29,8 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..")
 // --- args --------------------------------------------------------------------
 const argv = process.argv.slice(2)
 const fileFlag = argv.indexOf("--file")
-const singleFile = fileFlag !== -1 ? argv[fileFlag + 1] : null
+// Guard the missing-value case (`--file` as the last arg) → treat as no file.
+const singleFile = fileFlag !== -1 ? (argv[fileFlag + 1] ?? null) : null
 const singleRel = singleFile
   ? relative(ROOT, singleFile).split(sep).join("/")
   : null
@@ -53,7 +54,9 @@ function sliceBalanced(src, openIdx) {
       continue
     }
     if (c === "/" && src[i + 1] === "*") {
-      i = src.indexOf("*/", i) + 1
+      const end = src.indexOf("*/", i)
+      if (end === -1) return null // unterminated block comment — fail fast, never loop
+      i = end + 1
       continue
     }
     if (c === "{") depth++
@@ -93,7 +96,9 @@ function objectKeys(inner) {
       continue
     }
     if (c === "/" && inner[i + 1] === "*") {
-      i = inner.indexOf("*/", i) + 1
+      const end = inner.indexOf("*/", i)
+      if (end === -1) break // unterminated block comment — bail with what we have
+      i = end + 1
       continue
     }
     if (c === "{" || c === "(" || c === "[") depth++
