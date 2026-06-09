@@ -6,14 +6,24 @@ import { cn } from "@/lib/utils"
 
 const badgeVariants = cva(
   // 8-pt grid: px-2 = 8, gap-1 = 4. text-caption is the smallest ramp step.
-  "inline-flex w-fit shrink-0 items-center justify-center gap-1 rounded-md border px-2 py-0.5 text-caption font-medium whitespace-nowrap transition-colors outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-3",
+  // A Badge is a non-interactive <span>, so it carries no focus ring by default —
+  // the interactive treatment is scoped to the asChild-as-link case ([a&]).
+  "inline-flex w-fit shrink-0 items-center justify-center gap-1 rounded-md border px-2 py-0.5 text-caption font-medium whitespace-nowrap [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-3 [a&]:transition-colors [a&]:outline-none [a&]:focus-visible:border-ring [a&]:focus-visible:ring-3 [a&]:focus-visible:ring-ring/50",
   {
+    // Two axes, deliberately NOT Button's emphasis ladder (Button = action loudness;
+    // Badge = meaning). Tone = neutral label/tag; status = the AGENTS.md semantic
+    // triad (success/neutral/destructive) as tints. See AGENTS.md "semantic triad".
     variants: {
       variant: {
+        // Tone — neutral labels & tags, no status meaning.
         default: "border-transparent bg-primary text-primary-foreground",
-        secondary: "border-transparent bg-secondary text-secondary-foreground",
         muted: "border-transparent bg-muted text-foreground",
         outline: "border-border text-foreground",
+        // Status — the semantic triad, as tints (good / in-progress / bad).
+        success:
+          "border-transparent bg-success/10 text-success dark:bg-success/15",
+        neutral:
+          "border-transparent bg-neutral/10 text-foreground dark:bg-neutral/15",
         destructive:
           "border-transparent bg-destructive/10 text-destructive dark:bg-destructive/20",
       },
