@@ -18,6 +18,8 @@ const STORIES = "src/**/*.stories.tsx"
 
 /** @type {PrincipleManifest} */
 export const baseManifest = {
+  // Schema version (the manifest's SHAPE) — not the version of these rules'
+  // content, which rides the package SemVer. See docs/VERSIONING.md.
   version: 1,
   principles: [
     {
