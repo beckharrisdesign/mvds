@@ -30,6 +30,7 @@
     "build:site": "node scripts/build-site.mjs",
     "check:contrast": "node scripts/check-contrast.mjs",
     "check:principles": "node scripts/check-principles.mjs",
+    "check:figma": "node scripts/check-figma-manifest.mjs",
     "test": "npm run test:light && npm run test:dark",
     "test:light": "vitest --project storybook run",
     "test:dark": "VITE_SB_THEME=dark vitest --project storybook run"
