@@ -1,18 +1,32 @@
 # Changelog
 
 All notable changes to MVDS are recorded here. The format follows
-[Keep a Changelog](https://keepachangelog.com/en/1.1.0/); MVDS aims to follow
-[Semantic Versioning](https://semver.org/spec/v2.0.0.html) once it cuts tagged
-releases. The project is pre-release (`0.0.0`), so entries accumulate under
-**Unreleased** until the first version is tagged.
+[Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and MVDS follows
+[Semantic Versioning](https://semver.org/spec/v2.0.0.html). MVDS is pre-1.0
+(`0.x`): per the house rules, breaking changes may land in any release until
+`1.0.0`.
 
 > Entries are drafted per merged PR by the `mvds-release-notes` skill and land in
-> the **Unreleased** section below.
+> the **Unreleased** section, then roll into the next tagged version.
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-06-09
+
+First tagged release. Establishes the token layer, layout primitives, the
+manifest-driven principle engine, the installable package, and the Storybook
+verification gates.
+
 ### Added
 
+- MVDS is now an installable package (built with `tsup`), and shipped the `Badge`
+  component.
+  ([#18](https://github.com/beckharrisdesign/mvds/pull/18))
+- Manifest-driven principle-enforcement engine — golden rules encoded as data in
+  `principles.config.mjs`, enforced by `npm run check:principles` and a
+  `principle-edit-guard` PostToolUse hook, with a stubbed context cascade
+  (`resolveManifest`) as the seam for per-context principles.
+  ([#17](https://github.com/beckharrisdesign/mvds/pull/17))
 - `mvds-release-notes` skill — drafts a release-notes entry for the most recently
   merged PR and posts it as a PR comment.
   ([#11](https://github.com/beckharrisdesign/mvds/pull/11),
@@ -32,6 +46,9 @@ releases. The project is pre-release (`0.0.0`), so entries accumulate under
 
 ### Changed
 
+- Hardened the branch/PR workflow as a house rule (no commits to `main`, enforced
+  by a hook) and pinned the stack versions in the README.
+  ([#16](https://github.com/beckharrisdesign/mvds/pull/16))
 - House rules: every component/primitive must be *covered* by a co-located story,
   while a cohesive primitive family may share one file (the layout primitives live
   in `layout.stories.tsx`).
@@ -39,6 +56,13 @@ releases. The project is pre-release (`0.0.0`), so entries accumulate under
 
 ### Fixed
 
+- `Badge` now differentiates from `Button` via tone + the semantic status triad,
+  with `secondary` kept as a deprecated alias of `muted` for compatibility, and
+  uses `text-foreground` on `bg-muted` to clear WCAG AA.
+  ([#19](https://github.com/beckharrisdesign/mvds/pull/19))
 - Darkened the light-mode `--success` token to clear WCAG AA as text on
   `background`.
   ([#9](https://github.com/beckharrisdesign/mvds/pull/9))
+
+[Unreleased]: https://github.com/beckharrisdesign/mvds/compare/v0.1.0...main
+[0.1.0]: https://github.com/beckharrisdesign/mvds/tree/v0.1.0
