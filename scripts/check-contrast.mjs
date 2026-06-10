@@ -41,9 +41,6 @@ const AA_PAIRS = [
   ["destructive-foreground", "destructive"],
   ["success-foreground", "success"],
   ["neutral-foreground", "neutral"],
-  ["sidebar-foreground", "sidebar"],
-  ["sidebar-primary-foreground", "sidebar-primary"],
-  ["sidebar-accent-foreground", "sidebar-accent"],
   ["muted-foreground", "background"],
   ["muted-foreground", "card"],
   // status colors used AS text on the page background
