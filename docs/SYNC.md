@@ -58,7 +58,9 @@ same philosophy as `principles.config.mjs`:
   exceptions only**.
 - [`figma/conventions.mjs`](../figma/conventions.mjs) — the mechanical mapping rules,
   declared once: `bg-primary` → fill bound to variable `primary`; `bg-destructive/10` →
-  same variable + paint opacity 0.1; `px-4` → padding bound to `space-16`;
+  fill bound to the derived `destructive-tint` variable (alpha in the value per
+  mode — never paint-level opacity, which Figma drops when instances re-resolve
+  modes); `px-4` → padding bound to `space-16`;
   `text-small` → text style `Type/Small`; Default + Disabled states only
   (disabled = frame opacity 0.5; hover/focus stay code-only).
 - [`figma/figma.lock.json`](../figma/figma.lock.json) — machine-recorded Figma node IDs
