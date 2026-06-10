@@ -8,9 +8,8 @@ import { cn } from "@/lib/utils"
  * src/index.css is rendered here as a swatch (light + dark via the toolbar
  * theme), making this story the single VISIBLE source of truth for color and
  * the surface Chromatic snapshots for color-regression diffs. Before this
- * story, tokens like `success`, `neutral`, `accent`, the charts and the sidebar
- * set were defined but rendered in no story at all — invisible to both docs and
- * Chromatic.
+ * story, tokens like `success`, `neutral`, `accent` and the charts were defined
+ * but rendered in no story at all — invisible to both docs and Chromatic.
  *
  * Pairs render their foreground ON their fill, so the story doubles as a
  * contrast check. `muted` intentionally pairs with `foreground` (not
@@ -81,16 +80,6 @@ const SECTIONS: { title: string; swatches: Swatch[] }[] = [
       { name: "chart-3", bg: "bg-chart-3" },
       { name: "chart-4", bg: "bg-chart-4" },
       { name: "chart-5", bg: "bg-chart-5" },
-    ],
-  },
-  {
-    title: "Sidebar",
-    swatches: [
-      { name: "sidebar", bg: "bg-sidebar", fg: "text-sidebar-foreground" },
-      { name: "sidebar-primary", bg: "bg-sidebar-primary", fg: "text-sidebar-primary-foreground" },
-      { name: "sidebar-accent", bg: "bg-sidebar-accent", fg: "text-sidebar-accent-foreground" },
-      { name: "sidebar-border", bg: "bg-sidebar-border" },
-      { name: "sidebar-ring", bg: "bg-sidebar-ring" },
     ],
   },
 ]

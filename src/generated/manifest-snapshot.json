@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-06-10T11:30:13-05:00",
-  "commit": "8e5164d",
+  "generatedAt": "2026-06-10T12:09:32-05:00",
+  "commit": "9ea98f4",
   "dirty": true,
   "lock": {
     "fileKey": "C20nU0mROzk3Zr0I9BELJF",
     "syncedAt": "2026-06-09",
     "syncedFromCommit": "e2f85f1",
-    "commitsBehind": 11
+    "commitsBehind": 13
   },
   "manifests": [
     {
@@ -164,7 +164,7 @@
       ],
       "status": {
         "level": "neutral",
-        "label": "11 commits behind",
+        "label": "13 commits behind",
         "detail": "Synced 2026-06-09 from e2f85f1 — code-first, the mirror trails until the next requested sync."
       }
     },
@@ -177,15 +177,15 @@
       "counts": [
         {
           "label": "color utilities",
-          "value": 36
+          "value": 28
         },
         {
           "label": "light tokens",
-          "value": 37
+          "value": 29
         },
         {
           "label": "dark tokens",
-          "value": 36
+          "value": 28
         },
         {
           "label": "radius steps",
