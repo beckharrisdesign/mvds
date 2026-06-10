@@ -12,6 +12,51 @@ All notable changes to MVDS are recorded here. The format follows
 
 ## [Unreleased]
 
+The code→Figma component mirror became real, and typography joined color and
+spacing as a fully gated foundation: the font family is now a declared token,
+enforced from code to manifest to recorded Figma reality.
+
+### Added
+
+- Component manifests (`figma/components/*.figma.mjs`) + the `npm run check:figma`
+  drift guard — the authored, PR-reviewed spec for the code→Figma component
+  mirror, gated so a variant changed in code can't silently leave the mirror
+  stale.
+  ([#24](https://github.com/beckharrisdesign/mvds/pull/24))
+- `mvds-figma-component-sync` skill + the publish-as-merge-gate review model:
+  the sync updates component sets in place and never publishes — the founder's
+  **Publish library** click is the merge approval.
+  ([#25](https://github.com/beckharrisdesign/mvds/pull/25))
+- First real component sync recorded: `figma/figma.lock.json` (node identity so
+  re-syncs update in place and instances survive) and the derived
+  `{token}-tint` variable convention — alpha lives in the variable value per
+  mode, because Figma drops paint-level opacity when instances re-resolve modes.
+  ([#27](https://github.com/beckharrisdesign/mvds/pull/27))
+- Typography drift gate: the font family is declared in `figma/conventions.mjs`
+  (`typography` record — code vs Figma family names + the weight → Figma-style
+  map) and enforced by `check:figma` in both directions: code ↔ manifest
+  (`--font-sans`, the `@fontsource` dependency, every ramp/manifest weight
+  mappable) and manifest ↔ `figma.lock.json`'s recorded text-style fonts, so
+  font drift fails the build even though CI can't reach Figma.
+  ([#28](https://github.com/beckharrisdesign/mvds/pull/28))
+
+### Changed
+
+- **Breaking:** removed `Badge`'s deprecated `secondary` variant alias — use
+  `muted` (pre-1.0 clean break; no compat shims).
+  ([#26](https://github.com/beckharrisdesign/mvds/pull/26))
+- The system typeface is **Inter** (`@fontsource-variable/inter`), switched from
+  Geist Variable — the Figma text styles were already Inter, so the family gap
+  closed on the code side and the new gate keeps it closed.
+  ([#28](https://github.com/beckharrisdesign/mvds/pull/28))
+
+### Fixed
+
+- `docs/SYNC.md` no longer describes the retired paint-opacity tint recipe — the
+  text now matches the derived-tint convention that
+  [#27](https://github.com/beckharrisdesign/mvds/pull/27) established.
+  ([#29](https://github.com/beckharrisdesign/mvds/pull/29))
+
 ## [0.1.0] - 2026-06-09
 
 First tagged release. Establishes the token layer, layout primitives, the
