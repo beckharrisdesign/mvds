@@ -104,6 +104,21 @@
       }
     }
   },
+  "typography": {
+    "$comment": "Recorded text-style fonts at last sync (resolved values, even when variable-bound) — checked by check:figma T6/T7. fontFamily is bound to the font-sans STRING variable; fontStyle is set directly per ramp step.",
+    "fontFamilyVariable": { "name": "font-sans", "id": "VariableID:153:2", "value": "Inter" },
+    "textStyles": {
+      "Type/Display": { "id": "S:3f28cb750fd2e5cdb3b1be548a8c021703f579b1,", "fontFamily": "Inter", "fontStyle": "Semi Bold", "bound": true },
+      "Type/Heading 1": { "id": "S:36cb15c693c99230cabf25b670b35d2fa603a907,", "fontFamily": "Inter", "fontStyle": "Semi Bold", "bound": true },
+      "Type/Heading 2": { "id": "S:bb3aab118105ef48b289553a4d1fc54eca2b3696,", "fontFamily": "Inter", "fontStyle": "Semi Bold", "bound": true },
+      "Type/Heading 3": { "id": "S:53e9d52b0c2ddfd943d505c57ef525525447b858,", "fontFamily": "Inter", "fontStyle": "Semi Bold", "bound": true },
+      "Type/Heading 4": { "id": "S:ecb0376966d151227caf3a419478049e70f9ae92,", "fontFamily": "Inter", "fontStyle": "Semi Bold", "bound": true },
+      "Type/Body Large": { "id": "S:f942407d9d8732af761c7a060df3a93f103f118f,", "fontFamily": "Inter", "fontStyle": "Regular", "bound": true },
+      "Type/Body": { "id": "S:e077770ac99e6e4888d6fea681e1c31c9dba153b,", "fontFamily": "Inter", "fontStyle": "Regular", "bound": true },
+      "Type/Small": { "id": "S:7382ccc2fe3a99df486b6728b166b1441d3cbb26,", "fontFamily": "Inter", "fontStyle": "Regular", "bound": true },
+      "Type/Caption": { "id": "S:5a4469ce20fc8690e7c6546cfb9b0173332ad53c,", "fontFamily": "Inter", "fontStyle": "Medium", "bound": true }
+    }
+  },
   "derivedVariables": {
     "$comment": "Figma-only tint variables (alpha per mode) mirroring code utilities like bg-destructive/10 dark:/20 — created because paint-level opacity does not survive into instances.",
     "destructive-tint": "VariableID:131:2",
