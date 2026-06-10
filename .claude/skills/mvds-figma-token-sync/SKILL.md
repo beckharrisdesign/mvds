@@ -18,7 +18,14 @@ file's structure isn't re-discovered each time.
 - **Collections:**
   - `Tokens` — `VariableCollectionId:2:2` — colors + `radius`. Modes: **Light** `2:0`, **Dark** `2:1`.
   - `Scales` — `VariableCollectionId:8:5` — spacing (`space-*`) + breakpoints. Mode: **Value** `8:0`.
-- **Text styles:** the 9-step ramp — `Type/Display`, `Type/Heading 1..4`, `Type/Body Large`, `Type/Body`, `Type/Small`, `Type/Caption`.
+- **Text styles:** the 9-step ramp — `Type/Display`, `Type/Heading 1..4`, `Type/Body Large`, `Type/Body`, `Type/Small`, `Type/Caption`. Each style's
+  `fontName` comes from `figma/conventions.mjs` → `typography` (family
+  `fontFamily.figma`, style from `weightToFigmaStyle` keyed by the ramp step's
+  `--font-weight` in `src/index.css`).
+- **Font token:** a `font-sans` STRING variable (scope `["FONT_FAMILY"]`) in the
+  Tokens collection — same value in **both** modes (font doesn't vary by mode) —
+  bound to every `Type/*` style's `fontFamily`. The family is a token: a rebrand
+  is a one-variable change.
 
 ## Conventions (match exactly — don't impose new ones)
 
@@ -30,6 +37,11 @@ file's structure isn't re-discovered each time.
   Figma's existing values to the digit; validate against an existing variable
   before bulk writes.
 - Per-mode mapping: light token (`:root`) → mode `2:0`; dark token (`.dark`) → mode `2:1`.
+- **Font style names:** take them from `conventions.typography.weightToFigmaStyle`,
+  never from memory — Inter's Figma styles contain a **space** (`Semi Bold`, not
+  `SemiBold`; Geist is the opposite). `loadFontAsync` fails loudly on the wrong
+  form, and every face used across **all modes** must be loaded before any
+  `fontFamily` binding / `setValueForMode` on a `FONT_FAMILY`-scoped variable.
 
 ## Procedure
 
@@ -45,8 +57,28 @@ file's structure isn't re-discovered each time.
    `createVariable(name, collection, "COLOR")` → set `scopes` →
    `setValueForMode("2:0", lightRgb)` and `setValueForMode("2:1", darkRgb)`.
    Return all created variable IDs.
-6. **Validate**: re-read the collection — count + spot-check tricky values (alpha
+6. **Typography** (the font family is a gated token — `check:figma` T6/T7):
+   a. Inspect: dump every `Type/*` style's `fontName` and diff against
+      `conventions.typography` — this is where live hand-drift in Figma is
+      caught (the code↔manifest side is already gated in CI).
+   b. Ensure the `font-sans` STRING variable exists in Tokens (scope
+      `["FONT_FAMILY"]`), value `fontFamily.figma` in **both** modes.
+   c. `await figma.loadFontAsync(...)` for every face in `weightToFigmaStyle`
+      (family `fontFamily.figma`), then per style: set `fontName` per the map
+      and bind `fontFamily` to the variable (`setBoundVariable`). **Probe one
+      style first**; if binding fails, leave `fontName` direct and record
+      `bound: false` — values still match, CI compares resolved strings.
+   d. **Override sweep:** component text nodes with manifest `fontWeight`
+      overrides (e.g. Button Label, Medium) hold node-level `fontName` and do
+      NOT follow style retargets — set them to the mapped face explicitly.
+   e. Validate: re-read all 9 styles' `fontName`; screenshot the type ramp.
+7. **Validate**: re-read the collection — count + spot-check tricky values (alpha
    like dark `sidebar-border`; hued tokens like dark `sidebar-primary`).
+8. **Record**: write the `typography` block into `figma/figma.lock.json` —
+   `fontFamilyVariable { name, id, value }` + per style `{ id, fontFamily,
+   fontStyle, bound }` (resolved values, even when variable-bound) — then commit
+   on a `chore/figma-lock-…` branch and confirm `npm run check:figma` passes
+   with **zero** typography warnings.
 
 ## Out of scope
 

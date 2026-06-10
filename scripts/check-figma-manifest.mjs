@@ -16,6 +16,20 @@
 //
 // Also lints (warn-level) every { var } / textStyle binding against the token
 // layer + conventions, catching typos like space-18 before they hit Figma.
+// Manifest fontWeight values are ERROR-level (T5) and run in BOTH modes —
+// lintBindings is per-manifest, so --file catches an unmappable weight at the
+// keystroke; an unmappable weight cannot sync (no Figma face to load).
+//
+// Typography gate (system-level checks T1–T4/T6–T7 — full mode only, skipped
+// under --file): the font family is a token, enforced in two directions
+// because CI has no Figma access:
+//   code ↔ conventions.typography  — record exists (T1), --font-sans family
+//     (T2), @fontsource import + dependency (T3), every ramp weight mappable
+//     to a Figma style (T4);
+//   conventions.typography ↔ figma.lock.json — the lock records each Type/*
+//     style's resolved font at last sync; a mismatch is an error (T7). A lock
+//     with no typography block is a bootstrap WARNING (T6) until the first
+//     font-aware token sync records reality.
 //
 // Exit codes: 0 = clean (or warn-only). 1 = errors. 2 = errors in --file mode
 // (surfaces to the agent via a PostToolUse hook, like check-principles).
@@ -148,12 +162,22 @@ const { conventions } = await import(pathToFileURL(join(ROOT, "figma/conventions
 const knownTextStyles = new Set(Object.values(conventions.textStyles))
 const spaceScale = new Set(conventions.spacing.scale)
 
-function lintBindings(node, path, warns, componentName) {
+function lintBindings(node, path, warns, errors, componentName) {
   if (Array.isArray(node)) {
-    node.forEach((v, i) => lintBindings(v, `${path}[${i}]`, warns, componentName))
+    node.forEach((v, i) => lintBindings(v, `${path}[${i}]`, warns, errors, componentName))
     return
   }
   if (!node || typeof node !== "object") return
+  // T5 (error, not warn): a fontWeight outside the weight map cannot be
+  // expressed as a Figma font style at sync time — unlike a typo'd var name,
+  // there is no raw-value fallback for a missing face.
+  const weightMap = conventions.typography?.weightToFigmaStyle ?? {} // absent record → T1 fires in checkTypography
+  if (typeof node.fontWeight === "number" && !(node.fontWeight in weightMap)) {
+    errors.push({
+      component: componentName,
+      message: `${path}: fontWeight ${node.fontWeight} has no Figma style in conventions.typography.weightToFigmaStyle (${Object.keys(weightMap).join("/") || "record missing"})`,
+    })
+  }
   if (typeof node.var === "string") {
     const space = /^space-(\d+)$/.exec(node.var)
     const ok = space
@@ -174,7 +198,121 @@ function lintBindings(node, path, warns, componentName) {
   }
   for (const [k, v] of Object.entries(node)) {
     if (k === "var" || k === "textStyle") continue
-    lintBindings(v, path ? `${path}.${k}` : k, warns, componentName)
+    lintBindings(v, path ? `${path}.${k}` : k, warns, errors, componentName)
+  }
+}
+
+// --- typography gate (full mode only) -------------------------------------------
+// The font family is a token: code ↔ conventions.typography ↔ figma.lock.json.
+// CI has no Figma access, so the lock is the recorded Figma reality (written by
+// the mvds-figma-token-sync skill); live hand-drift is caught at sync time.
+function checkTypography(errors, warns) {
+  const t = conventions.typography
+  // T1 — the record itself.
+  if (!t?.fontFamily || !t?.weightToFigmaStyle) {
+    errors.push({
+      component: "typography",
+      message: `T1: figma/conventions.mjs has no typography record (fontFamily + weightToFigmaStyle) — the font family must be declared, not implied`,
+    })
+    return // everything below depends on it
+  }
+  const f = t.fontFamily
+
+  // T2 — --font-sans in code matches the declared code family.
+  const sansMatch = /--font-sans:\s*['"]([^'"]+)['"]/.exec(indexCss)
+  const codeFamily = sansMatch?.[1] ?? null
+  if (codeFamily !== f.code) {
+    errors.push({
+      component: "typography",
+      message: `T2: src/index.css --font-sans is ${codeFamily ? `'${codeFamily}'` : "missing/unquoted"} but conventions.typography declares '${f.code}' — change both together (then re-run the token sync)`,
+    })
+  }
+  if (!/--font-heading:\s*var\(--font-sans\)/.test(indexCss)) {
+    warns.push({
+      component: "typography",
+      message: `--font-heading no longer aliases var(--font-sans) — the typography record assumes one family; extend conventions.typography if a second family is now real`,
+    })
+  }
+
+  // T3 — the fontsource package is imported and declared.
+  if (!indexCss.includes(`@import "${f.package}"`)) {
+    errors.push({
+      component: "typography",
+      message: `T3: src/index.css does not @import "${f.package}" (the declared font package)`,
+    })
+  }
+  const pkg = JSON.parse(readFileSync(join(ROOT, "package.json"), "utf8"))
+  if (!pkg.dependencies?.[f.package] && !pkg.devDependencies?.[f.package]) {
+    errors.push({
+      component: "typography",
+      message: `T3: package.json has no dependency on ${f.package}`,
+    })
+  }
+
+  // T4 — every ramp step's weight is expressible as a Figma style.
+  const stepWeights = {} // Figma style name → weight from code
+  for (const [util, styleName] of Object.entries(conventions.textStyles)) {
+    const w = new RegExp(`--${util}--font-weight:\\s*(\\d+)`).exec(indexCss)
+    const weight = w ? Number(w[1]) : 400 // absent = CSS default 400
+    stepWeights[styleName] = weight
+    if (!(weight in t.weightToFigmaStyle)) {
+      errors.push({
+        component: "typography",
+        message: `T4: ramp step ${util} uses font-weight ${weight}, which has no entry in weightToFigmaStyle (${Object.keys(t.weightToFigmaStyle).join("/")})`,
+      })
+    }
+  }
+
+  // T6/T7 — recorded Figma reality (the lock).
+  let lock
+  try {
+    lock = JSON.parse(readFileSync(join(ROOT, "figma/figma.lock.json"), "utf8"))
+  } catch {
+    warns.push({ component: "typography", message: "figma/figma.lock.json missing or unparseable — skipping recorded-reality checks" })
+    return
+  }
+  if (!lock.typography) {
+    warns.push({
+      component: "typography",
+      message: `T6: figma.lock.json has no typography block — text-style fonts were never recorded; run the mvds-figma-token-sync skill to record them (until then, Figma's fonts are unverified)`,
+    })
+    return
+  }
+  const lockVar = lock.typography.fontFamilyVariable
+  if (lockVar?.value !== f.figma) {
+    errors.push({
+      component: "typography",
+      message: `T7: lock records font-sans variable value '${lockVar?.value}' but conventions declare '${f.figma}' — re-run the token sync`,
+    })
+  }
+  for (const styleName of Object.values(conventions.textStyles)) {
+    const entry = lock.typography.textStyles?.[styleName]
+    if (!entry) {
+      errors.push({
+        component: "typography",
+        message: `T7: lock has no recorded font for text style "${styleName}" — re-run the token sync`,
+      })
+      continue
+    }
+    if (entry.fontFamily !== f.figma) {
+      errors.push({
+        component: "typography",
+        message: `T7: "${styleName}" recorded as ${entry.fontFamily} in Figma but conventions declare ${f.figma} — Figma is stale; re-run the token sync`,
+      })
+    }
+    const expectedStyle = t.weightToFigmaStyle[stepWeights[styleName]]
+    if (expectedStyle && entry.fontStyle !== expectedStyle) {
+      errors.push({
+        component: "typography",
+        message: `T7: "${styleName}" recorded as ${entry.fontFamily} ${entry.fontStyle} but code weight ${stepWeights[styleName]} maps to ${expectedStyle} — re-run the token sync`,
+      })
+    }
+    if (entry.bound === false) {
+      warns.push({
+        component: "typography",
+        message: `"${styleName}" fontFamily is set directly, not bound to the font-sans variable (bind failed at last sync) — rebinding is cosmetic, values still match`,
+      })
+    }
   }
 }
 
@@ -234,9 +372,15 @@ for (const m of checked) {
     }
   }
 
-  lintBindings(m.base, "base", warns, m.name)
-  lintBindings(m.perOption, "perOption", warns, m.name)
+  lintBindings(m.base, "base", warns, errors, m.name)
+  lintBindings(m.perOption, "perOption", warns, errors, m.name)
 }
+
+// The system-level typography checks (T1–T4, T6–T7) are not per-component —
+// full mode only (the --file path is the per-edit PostToolUse hook; keep it
+// fast and scoped). T5 is the exception: it lives in lintBindings above and
+// runs per-manifest in both modes.
+if (!singleRel) checkTypography(errors, warns)
 
 // --- report -------------------------------------------------------------------------
 const scope = singleRel ?? `${checked.length} component manifest(s)`
