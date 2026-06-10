@@ -19,6 +19,10 @@ property bound to the token variables — never baked-in values.
 3. Tokens must be current — components bind to `Tokens`/`Scales` variables and
    `Type/*` styles. Spot-check 2–3 variables (see `mvds-figma-token-sync`); run
    that skill first if drifted.
+4. Typography must be recorded — `figma/figma.lock.json` needs its `typography`
+   block and `npm run check:figma` must show **no typography warnings/errors**
+   (T6/T7). If absent or drifted, run `mvds-figma-token-sync` first: text
+   bindings below take style IDs from `lock.typography.textStyles`.
 
 ## Target & spec
 
@@ -86,8 +90,14 @@ branch-review description. Nothing else changes.)
      `setBoundVariable("itemSpacing", space8)`; `height` →
      `setBoundVariable("height", space32)`; `cornerRadius` → one call per
      corner (`"topLeftRadius"`, `"topRightRadius"`, `"bottomLeftRadius"`,
-     `"bottomRightRadius"`). Text styles via `setTextStyleIdAsync` (await
-     `loadFontAsync` for Geist first).
+     `"bottomRightRadius"`). Text styles via `setTextStyleIdAsync`
+     using the IDs recorded in `lock.typography.textStyles`; first `await
+     loadFontAsync` for **every** face in
+     `conventions.typography.weightToFigmaStyle` (family
+     `conventions.typography.fontFamily.figma` — style names from the map,
+     never from memory: Inter has a space, `Semi Bold`). Manifest `fontWeight`
+     overrides set `fontName` to the **mapped Figma style** (500 → `Medium`),
+     never a numeric weight.
    - **Disabled state:** variant-frame `opacity = 0.5` — nothing else changes.
    - **Nested instances** (Card → Button): look up the donor variant via the
      lock (or the set's child by variant name) and `createInstance()` into the
