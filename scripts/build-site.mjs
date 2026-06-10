@@ -22,6 +22,10 @@ function run(cmd) {
 rmSync(OUT, { recursive: true, force: true });
 mkdirSync(OUT, { recursive: true });
 
+// Manifest snapshot — regenerate before the app build so the dashboard reflects
+// this deploy (npx vite build bypasses the npm `prebuild` hook).
+run("node scripts/generate-manifest-snapshot.mjs");
+
 // Sample app — served under /app/, so build with that base.
 run(`npx vite build --base=/app/ --outDir ${OUT}/app --emptyOutDir`);
 

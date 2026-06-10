@@ -1,0 +1,223 @@
+{
+  "generatedAt": "2026-06-10T10:54:55-05:00",
+  "commit": "b5d6c39",
+  "dirty": true,
+  "lock": {
+    "fileKey": "C20nU0mROzk3Zr0I9BELJF",
+    "syncedAt": "2026-06-09",
+    "syncedFromCommit": "e2f85f1",
+    "commitsBehind": 10
+  },
+  "manifests": [
+    {
+      "id": "principles",
+      "name": "Principles",
+      "path": "principles.config.mjs",
+      "kind": "enforcement",
+      "description": "Golden rules encoded as data — machine-enforced by check:principles and the edit-guard hook.",
+      "counts": [
+        {
+          "label": "principles",
+          "value": 6
+        },
+        {
+          "label": "enabled",
+          "value": 6
+        },
+        {
+          "label": "error severity",
+          "value": 6
+        }
+      ],
+      "status": {
+        "level": "neutral",
+        "label": "code-only",
+        "detail": "No Figma mapping applies."
+      },
+      "items": [
+        {
+          "name": "no-hardcoded-color",
+          "meta": "forbid-source · error"
+        },
+        {
+          "name": "no-margin-spacing",
+          "meta": "forbid-classname · error"
+        },
+        {
+          "name": "no-raw-flex-grid",
+          "meta": "forbid-classname · error"
+        },
+        {
+          "name": "story-coverage-ui",
+          "meta": "require-sibling-file · error"
+        },
+        {
+          "name": "story-coverage-site",
+          "meta": "require-sibling-file · error"
+        },
+        {
+          "name": "story-coverage-layout",
+          "meta": "require-sibling-file · error"
+        }
+      ]
+    },
+    {
+      "id": "figma-components",
+      "name": "Figma component manifests",
+      "path": "figma/components.config.mjs",
+      "kind": "figma mirror",
+      "description": "Per-component variant specs, drift-guarded against the code by check:figma; the sync skill reads them as the mirror spec.",
+      "counts": [
+        {
+          "label": "components",
+          "value": 3
+        },
+        {
+          "label": "declared variants",
+          "value": 80
+        },
+        {
+          "label": "synced variants",
+          "value": 80
+        }
+      ],
+      "status": {
+        "level": "success",
+        "label": "synced 80/80"
+      },
+      "items": [
+        {
+          "name": "Button",
+          "meta": "3 axes · 72 variants · src/components/ui/button.tsx",
+          "status": {
+            "level": "success",
+            "label": "synced 72/72"
+          }
+        },
+        {
+          "name": "Badge",
+          "meta": "1 axis · 6 variants · src/components/ui/badge.tsx",
+          "status": {
+            "level": "success",
+            "label": "synced 6/6"
+          }
+        },
+        {
+          "name": "Card",
+          "meta": "1 axis · 2 variants · src/components/ui/card.tsx",
+          "status": {
+            "level": "success",
+            "label": "synced 2/2"
+          }
+        }
+      ]
+    },
+    {
+      "id": "conventions",
+      "name": "Conventions",
+      "path": "figma/conventions.mjs",
+      "kind": "mapping rules",
+      "description": "Mechanical code → Figma mapping, declared once: which utility binds to which variable or text style.",
+      "counts": [
+        {
+          "label": "text styles",
+          "value": 9
+        },
+        {
+          "label": "spacing steps",
+          "value": 10
+        },
+        {
+          "label": "radius mappings",
+          "value": 7
+        },
+        {
+          "label": "font weights",
+          "value": 3
+        }
+      ],
+      "status": {
+        "level": "neutral",
+        "label": "code-only",
+        "detail": "Rules, not synced state."
+      }
+    },
+    {
+      "id": "figma-lock",
+      "name": "Figma lock",
+      "path": "figma/figma.lock.json",
+      "kind": "lock file",
+      "description": "Machine-recorded Figma reality — node IDs written by the sync skills so re-syncs update in place.",
+      "counts": [
+        {
+          "label": "components",
+          "value": 3
+        },
+        {
+          "label": "derived variables",
+          "value": 5
+        },
+        {
+          "label": "pages",
+          "value": 2
+        }
+      ],
+      "status": {
+        "level": "neutral",
+        "label": "10 commits behind",
+        "detail": "Synced 2026-06-09 from e2f85f1 — code-first, the mirror trails until the next requested sync."
+      }
+    },
+    {
+      "id": "tokens",
+      "name": "Token layer",
+      "path": "src/index.css",
+      "kind": "source of truth",
+      "description": "Colors (light + dark), radius, breakpoints, and the type ramp — the single source every surface reads.",
+      "counts": [
+        {
+          "label": "color utilities",
+          "value": 36
+        },
+        {
+          "label": "light tokens",
+          "value": 37
+        },
+        {
+          "label": "dark tokens",
+          "value": 36
+        },
+        {
+          "label": "radius steps",
+          "value": 7
+        },
+        {
+          "label": "type ramp",
+          "value": 9
+        }
+      ],
+      "status": {
+        "level": "success",
+        "label": "light/dark parity"
+      }
+    },
+    {
+      "id": "scales",
+      "name": "Spacing scale",
+      "path": "src/components/layout/scales.ts",
+      "kind": "spacing scale",
+      "description": "The 8-grid — multiples & fractions of 8: 4 · 8 · 16 · 24 · 32 · 40 · 48 · 64 · 80 · 96. Purge-safe class maps for the layout primitives.",
+      "counts": [
+        {
+          "label": "steps",
+          "value": 10
+        }
+      ],
+      "status": {
+        "level": "neutral",
+        "label": "code-only",
+        "detail": "Mirrored to Figma as the Scales collection (space-{px})."
+      }
+    }
+  ]
+}

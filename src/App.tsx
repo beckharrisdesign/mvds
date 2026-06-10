@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { Stack, Inline } from "@/components/layout"
+import { Container, Stack, Inline } from "@/components/layout"
 import {
   Card,
   CardHeader,
@@ -9,6 +9,11 @@ import {
   CardContent,
   CardFooter,
 } from "@/components/ui/card"
+import { ManifestDashboard } from "@/components/site/manifest-dashboard"
+import type { ManifestSnapshot } from "@/components/site/manifest-snapshot.types"
+import snapshotData from "@/generated/manifest-snapshot.json"
+
+const snapshot = snapshotData as unknown as ManifestSnapshot
 
 function App() {
   const [dark, setDark] = useState(false)
@@ -59,6 +64,10 @@ function App() {
             </Inline>
           </CardFooter>
         </Card>
+
+        <Container size="xl">
+          <ManifestDashboard snapshot={snapshot} />
+        </Container>
       </Stack>
     </main>
   )

@@ -99,6 +99,24 @@ export const baseManifest = {
       docs: "AGENTS.md (Storybook — first-class verification surface)",
     },
     {
+      id: "story-coverage-site",
+      description: "Every site section component has a co-located *.stories.tsx.",
+      rationale:
+        "Storybook is the verification gate for site/ sections (the landing-page surface) exactly as for ui/ components.",
+      severity: "error",
+      enabled: true,
+      scope: {
+        include: ["src/components/site/**/*.tsx"],
+        exclude: [STORIES],
+      },
+      check: {
+        kind: "require-sibling-file",
+        companion: (f) => f.replace(/\.tsx$/, ".stories.tsx"),
+      },
+      fix: "Add a co-located *.stories.tsx exercising the section in light + dark.",
+      docs: "AGENTS.md (Storybook — first-class verification surface)",
+    },
+    {
       id: "story-coverage-layout",
       description: "Every layout primitive is covered by the shared layout story.",
       rationale:

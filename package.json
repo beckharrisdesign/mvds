@@ -21,6 +21,8 @@
   "scripts": {
     "prepare": "git config core.hooksPath .githooks || true",
     "dev": "vite",
+    "generate:snapshot": "node scripts/generate-manifest-snapshot.mjs",
+    "prebuild": "npm run generate:snapshot",
     "build": "tsc -b && vite build",
     "build:lib": "tsup",
     "lint": "eslint .",
