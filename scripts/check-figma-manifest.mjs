@@ -16,13 +16,16 @@
 //
 // Also lints (warn-level) every { var } / textStyle binding against the token
 // layer + conventions, catching typos like space-18 before they hit Figma.
-// Manifest fontWeight values are ERROR-level: an unmappable weight cannot sync.
+// Manifest fontWeight values are ERROR-level (T5) and run in BOTH modes —
+// lintBindings is per-manifest, so --file catches an unmappable weight at the
+// keystroke; an unmappable weight cannot sync (no Figma face to load).
 //
-// Typography gate (full mode only — skipped under --file): the font family is
-// a token, enforced in two directions because CI has no Figma access:
-//   code ↔ conventions.typography  — --font-sans family (T2), @fontsource
-//     import + dependency (T3), every ramp weight mappable to a Figma style (T4),
-//     every manifest fontWeight mappable (T5);
+// Typography gate (system-level checks T1–T4/T6–T7 — full mode only, skipped
+// under --file): the font family is a token, enforced in two directions
+// because CI has no Figma access:
+//   code ↔ conventions.typography  — record exists (T1), --font-sans family
+//     (T2), @fontsource import + dependency (T3), every ramp weight mappable
+//     to a Figma style (T4);
 //   conventions.typography ↔ figma.lock.json — the lock records each Type/*
 //     style's resolved font at last sync; a mismatch is an error (T7). A lock
 //     with no typography block is a bootstrap WARNING (T6) until the first
@@ -373,8 +376,10 @@ for (const m of checked) {
   lintBindings(m.perOption, "perOption", warns, errors, m.name)
 }
 
-// Typography is a system-level contract, not per-component — full mode only
-// (the --file path is the per-edit PostToolUse hook; keep it fast and scoped).
+// The system-level typography checks (T1–T4, T6–T7) are not per-component —
+// full mode only (the --file path is the per-edit PostToolUse hook; keep it
+// fast and scoped). T5 is the exception: it lives in lintBindings above and
+// runs per-manifest in both modes.
 if (!singleRel) checkTypography(errors, warns)
 
 // --- report -------------------------------------------------------------------------
