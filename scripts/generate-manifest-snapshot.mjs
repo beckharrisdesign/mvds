@@ -65,7 +65,12 @@ const dirty = (git("status --porcelain") ?? "")
   .split("\n")
   .filter((l) => l && !l.includes("src/generated/manifest-snapshot.json"))
   .length > 0
-const behind = git(`rev-list --count ${lock.syncedFromCommit}..HEAD`)
+// Lock values are repo-controlled, but they reach a shell string — accept only
+// a hex SHA before interpolating.
+const syncedSha = /^[0-9a-f]{4,40}$/i.test(lock.syncedFromCommit ?? "")
+  ? lock.syncedFromCommit
+  : null
+const behind = syncedSha ? git(`rev-list --count ${syncedSha}..HEAD`) : null
 const commitsBehind = behind === null ? null : Number(behind)
 
 // --- token-layer counts (cheap regex over src/index.css) ------------------------
