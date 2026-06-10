@@ -1,8 +1,8 @@
 {
   "$comment": "Machine-recorded Figma reality — node IDs written by the mvds-figma-component-sync skill after each run (manifests are the human-reviewed intent; this is the package-lock analog). componentSetId null = not yet adopted/created. The sync's inspect phase resolves by name as a self-healing fallback and repairs this file if nodes were moved or renamed in Figma.",
   "fileKey": "C20nU0mROzk3Zr0I9BELJF",
-  "syncedAt": "2026-06-09",
-  "syncedFromCommit": "e2f85f1",
+  "syncedAt": "2026-06-10",
+  "syncedFromCommit": "cd1b896",
   "pages": { "components": "95:4", "syncReports": "136:2" },
   "components": {
     "Button": {
