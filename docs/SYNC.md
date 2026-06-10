@@ -4,7 +4,8 @@
 
 > **Generated Figma file:** ["MVDS Core"](https://www.figma.com/design/C20nU0mROzk3Zr0I9BELJF/MVDS-Test)
 > (team: Beck Harris Design). Generated from this repo:
-> - `Tokens` variable collection — colors with Light/Dark modes
+> - `Tokens` variable collection — colors with Light/Dark modes, plus the
+>   `font-sans` font-family token (STRING variable bound to every text style)
 > - `Scales` variable collection — spacing + breakpoint numbers
 > - Type ramp **text styles** (`Type/Display` … `Type/Caption`)
 > - `Button` / `Badge` / `Card` component sets (manifests in `figma/components/`)
@@ -60,15 +61,25 @@ same philosophy as `principles.config.mjs`:
   declared once: `bg-primary` → fill bound to variable `primary`; `bg-destructive/10` →
   same variable + paint opacity 0.1; `px-4` → padding bound to `space-16`;
   `text-small` → text style `Type/Small`; Default + Disabled states only
-  (disabled = frame opacity 0.5; hover/focus stay code-only).
+  (disabled = frame opacity 0.5; hover/focus stay code-only). The `typography`
+  record declares the font family as a token — code name (`Inter Variable`,
+  fontsource) vs Figma name (`Inter`) plus the weight → Figma-style map — the
+  one mapping that *cannot* be derived from code at sync time.
 - [`figma/figma.lock.json`](../figma/figma.lock.json) — machine-recorded Figma node IDs
   (the package-lock analog). Manifests are reviewed intent; the lock is recorded
   reality, updated by the sync and committed so re-syncs update **in place by ID** —
   node identity is what keeps instances in experiment files alive across syncs.
+  Its `typography` block records each `Type/*` style's resolved font at last
+  sync — **the drift tripwire**: `check:figma` fails the build when the recorded
+  font contradicts `conventions.typography`, even though CI can't reach Figma.
 - **`npm run check:figma`** ([`scripts/check-figma-manifest.mjs`](../scripts/check-figma-manifest.mjs),
   also in CI) — fails when a variant is added/renamed/reordered in code without a
   manifest update, so the mirror can't silently fall behind. It also lints every
-  `{ var }`/`textStyle` binding against the token layer.
+  `{ var }`/`textStyle` binding against the token layer, and gates **typography**
+  in both directions: code ↔ `conventions.typography` (the `--font-sans` family,
+  the `@fontsource` import + dependency, every ramp/manifest weight mappable to a
+  Figma style) and `conventions.typography` ↔ the lock's recorded style fonts
+  (warn-only until the first font-aware token sync records them).
 
 ## Review model: publish is the merge gate
 

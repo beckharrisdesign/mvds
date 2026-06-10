@@ -68,6 +68,37 @@ export const conventions = {
     "text-caption": "Type/Caption",
   },
 
+  // ---- Typography — the font family IS a token --------------------------------
+  // The family is recorded here because it CANNOT be derived from code at sync
+  // time: code ships the fontsource VARIABLE font ("Inter Variable"), while
+  // Figma uses the static Google-Font family ("Inter"). That asymmetry is the
+  // reason this record exists — without it, the text styles silently drift
+  // (code and Figma disagreed on the family until 2026-06-10 because nothing
+  // declared the intent). check:figma enforces all of it: code ↔ this record
+  // (the --font-sans family, the @fontsource import + dependency, every ramp
+  // weight mappable) and this record ↔ figma.lock.json's recorded reality.
+  //
+  // In Figma the family lives as a STRING variable (`font-sans`, FONT_FAMILY
+  // scope, Tokens collection, same value in both modes) bound to every Type/*
+  // style's fontFamily — a rebrand is a one-variable change. Per-style weight
+  // (fontStyle) is set directly from weightToFigmaStyle; it varies per ramp
+  // step, so it is not variable-bound.
+  //
+  // GOTCHA: Inter's Figma style names contain a SPACE ("Semi Bold", not
+  // "SemiBold" — Geist is the opposite). loadFontAsync fails loudly on the
+  // wrong form; take the names from this map, never from memory.
+  typography: {
+    fontFamily: {
+      token: "font-sans", // --font-sans in @theme; --font-heading aliases it
+      code: "Inter Variable", // first family in --font-sans (variable font)
+      package: "@fontsource-variable/inter", // the @import + package.json dep
+      figma: "Inter", // Figma family name (static styles)
+      figmaVariable: "font-sans", // STRING variable, FONT_FAMILY scope, Tokens
+    },
+    // code font-weight → Figma font style (the ramp uses exactly these three).
+    weightToFigmaStyle: { 400: "Regular", 500: "Medium", 600: "Semi Bold" },
+  },
+
   // ---- Radius ----------------------------------------------------------------
   // Only the BASE radius exists as a variable (`radius` in Tokens, 10px). The
   // other steps are calc() multiples in code, so they sync as raw px values.
