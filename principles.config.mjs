@@ -26,7 +26,7 @@ export const baseManifest = {
       id: "no-hardcoded-color",
       description: "No hardcoded color — use the token utilities.",
       rationale:
-        "Color must flow through the token layer so it themes per context. AGENTS.md: never text-gray-*, hex, or bg-white.",
+        "Color must flow through the token layer so it themes per context. AGENTS.md: never a generic Tailwind palette (text-slate-*), hex, or bg-white. The gray/primary/secondary ramps ARE tokens (src/index.css scales), so gray-* passes.",
       severity: "error",
       enabled: true,
       // Stories stay IN scope — a specimen must still source color from tokens.
@@ -41,7 +41,7 @@ export const baseManifest = {
         pattern:
           /#[0-9a-fA-F]{3,8}\b|\b(?:text|bg|border|ring|fill|stroke)-(?:slate|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-\d{2,3}\b|\bbg-(?:white|black)\b|\b(?:rgb|hsl)a?\(/,
       },
-      fix: "Use bg-background / text-foreground / text-muted-foreground or the semantic triad (success / neutral / destructive).",
+      fix: "Use bg-background / text-foreground / text-muted-foreground, the semantic triad (success / neutral / destructive), or a scale-ramp step (gray-* / primary-* / secondary-*).",
       docs: "AGENTS.md (Golden rules — Color via tokens)",
     },
     {
