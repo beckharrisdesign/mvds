@@ -29,11 +29,39 @@
 @theme inline {
     --font-heading: var(--font-sans);
     --font-sans: 'Inter Variable', sans-serif;
-    --color-chart-5: var(--chart-5);
-    --color-chart-4: var(--chart-4);
-    --color-chart-3: var(--chart-3);
-    --color-chart-2: var(--chart-2);
-    --color-chart-1: var(--chart-1);
+    --color-gray-50: var(--gray-50);
+    --color-gray-100: var(--gray-100);
+    --color-gray-200: var(--gray-200);
+    --color-gray-300: var(--gray-300);
+    --color-gray-400: var(--gray-400);
+    --color-gray-500: var(--gray-500);
+    --color-gray-600: var(--gray-600);
+    --color-gray-700: var(--gray-700);
+    --color-gray-800: var(--gray-800);
+    --color-gray-900: var(--gray-900);
+    --color-gray-950: var(--gray-950);
+    --color-primary-50: var(--primary-50);
+    --color-primary-100: var(--primary-100);
+    --color-primary-200: var(--primary-200);
+    --color-primary-300: var(--primary-300);
+    --color-primary-400: var(--primary-400);
+    --color-primary-500: var(--primary-500);
+    --color-primary-600: var(--primary-600);
+    --color-primary-700: var(--primary-700);
+    --color-primary-800: var(--primary-800);
+    --color-primary-900: var(--primary-900);
+    --color-primary-950: var(--primary-950);
+    --color-secondary-50: var(--secondary-50);
+    --color-secondary-100: var(--secondary-100);
+    --color-secondary-200: var(--secondary-200);
+    --color-secondary-300: var(--secondary-300);
+    --color-secondary-400: var(--secondary-400);
+    --color-secondary-500: var(--secondary-500);
+    --color-secondary-600: var(--secondary-600);
+    --color-secondary-700: var(--secondary-700);
+    --color-secondary-800: var(--secondary-800);
+    --color-secondary-900: var(--secondary-900);
+    --color-secondary-950: var(--secondary-950);
     --color-ring: var(--ring);
     --color-input: var(--input);
     --color-border: var(--border);
@@ -149,12 +177,50 @@
     --border: oklch(0.922 0 0);
     --input: oklch(0.922 0 0);
     --ring: oklch(0.708 0 0);
-    --chart-1: oklch(0.87 0 0);
-    --chart-2: oklch(0.556 0 0);
-    --chart-3: oklch(0.439 0 0);
-    --chart-4: oklch(0.371 0 0);
-    --chart-5: oklch(0.269 0 0);
     --radius: 0.625rem;
+
+    /* ---- Color scales — 11-step ramps (50…950) -------------------------------
+     * `gray` is the fixed black↔white ladder (the same lightness rungs the
+     * semantic tokens above already sit on). `primary-*` / `secondary-*` are
+     * DERIVED from their base token with CSS relative color: each step pins a
+     * lightness rung and scales the base's chroma, inheriting its hue — so
+     * re-branding --primary cascades down its entire ramp automatically.
+     * Defined once (not re-declared in .dark): relative oklch() re-resolves
+     * against the mode's base at use time. Scales do not flip with the mode —
+     * usage flips (pick a lighter/darker step), like any palette ramp. */
+    --gray-50: oklch(0.985 0 0);
+    --gray-100: oklch(0.97 0 0);
+    --gray-200: oklch(0.922 0 0);
+    --gray-300: oklch(0.87 0 0);
+    --gray-400: oklch(0.708 0 0);
+    --gray-500: oklch(0.556 0 0);
+    --gray-600: oklch(0.439 0 0);
+    --gray-700: oklch(0.371 0 0);
+    --gray-800: oklch(0.269 0 0);
+    --gray-900: oklch(0.205 0 0);
+    --gray-950: oklch(0.145 0 0);
+    --primary-50: oklch(from var(--primary) 0.985 calc(c * 0.10) h);
+    --primary-100: oklch(from var(--primary) 0.97 calc(c * 0.18) h);
+    --primary-200: oklch(from var(--primary) 0.922 calc(c * 0.34) h);
+    --primary-300: oklch(from var(--primary) 0.87 calc(c * 0.52) h);
+    --primary-400: oklch(from var(--primary) 0.708 calc(c * 0.78) h);
+    --primary-500: oklch(from var(--primary) 0.556 c h);
+    --primary-600: oklch(from var(--primary) 0.439 c h);
+    --primary-700: oklch(from var(--primary) 0.371 calc(c * 0.92) h);
+    --primary-800: oklch(from var(--primary) 0.269 calc(c * 0.78) h);
+    --primary-900: oklch(from var(--primary) 0.205 calc(c * 0.62) h);
+    --primary-950: oklch(from var(--primary) 0.145 calc(c * 0.50) h);
+    --secondary-50: oklch(from var(--secondary) 0.985 calc(c * 0.10) h);
+    --secondary-100: oklch(from var(--secondary) 0.97 calc(c * 0.18) h);
+    --secondary-200: oklch(from var(--secondary) 0.922 calc(c * 0.34) h);
+    --secondary-300: oklch(from var(--secondary) 0.87 calc(c * 0.52) h);
+    --secondary-400: oklch(from var(--secondary) 0.708 calc(c * 0.78) h);
+    --secondary-500: oklch(from var(--secondary) 0.556 c h);
+    --secondary-600: oklch(from var(--secondary) 0.439 c h);
+    --secondary-700: oklch(from var(--secondary) 0.371 calc(c * 0.92) h);
+    --secondary-800: oklch(from var(--secondary) 0.269 calc(c * 0.78) h);
+    --secondary-900: oklch(from var(--secondary) 0.205 calc(c * 0.62) h);
+    --secondary-950: oklch(from var(--secondary) 0.145 calc(c * 0.50) h);
 }
 
 .dark {
@@ -182,11 +248,7 @@
     --border: oklch(1 0 0 / 10%);
     --input: oklch(1 0 0 / 15%);
     --ring: oklch(0.556 0 0);
-    --chart-1: oklch(0.87 0 0);
-    --chart-2: oklch(0.556 0 0);
-    --chart-3: oklch(0.439 0 0);
-    --chart-4: oklch(0.371 0 0);
-    --chart-5: oklch(0.269 0 0);
+    /* Color scales are NOT re-declared here — see the :root ramp comment. */
 }
 
 @layer base {

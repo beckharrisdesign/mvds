@@ -36,8 +36,10 @@ export const baseManifest = {
         kind: "forbid-source",
         // hex; Tailwind palette color utilities with a numeric step; bg-white/black;
         // rgb()/hsl(). Semantic `neutral` (no numeric step) is NOT matched.
+        // `gray-*` is NOT matched either — it is an MVDS token ramp (src/index.css
+        // scales), not the generic Tailwind palette.
         pattern:
-          /#[0-9a-fA-F]{3,8}\b|\b(?:text|bg|border|ring|fill|stroke)-(?:gray|slate|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-\d{2,3}\b|\bbg-(?:white|black)\b|\b(?:rgb|hsl)a?\(/,
+          /#[0-9a-fA-F]{3,8}\b|\b(?:text|bg|border|ring|fill|stroke)-(?:slate|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-\d{2,3}\b|\bbg-(?:white|black)\b|\b(?:rgb|hsl)a?\(/,
       },
       fix: "Use bg-background / text-foreground / text-muted-foreground or the semantic triad (success / neutral / destructive).",
       docs: "AGENTS.md (Golden rules — Color via tokens)",
