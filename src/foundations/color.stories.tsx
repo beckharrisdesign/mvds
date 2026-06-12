@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import { expect } from "storybook/test"
-import { Stack, Grid } from "@/components/layout"
+import { Stack, Inline, Grid } from "@/components/layout"
 import { cn } from "@/lib/utils"
 
 /**
@@ -72,14 +72,59 @@ const SECTIONS: { title: string; swatches: Swatch[] }[] = [
       { name: "ring", bg: "bg-ring" },
     ],
   },
+]
+
+// Scale ramps — 11 steps each. gray is the fixed black↔white ladder;
+// primary/secondary are derived from their base token via CSS relative color
+// (change --primary and its whole ramp cascades). Every class is a complete
+// literal for the same purge reason as SECTIONS above.
+const RAMPS: { name: string; steps: { step: string; bg: string }[] }[] = [
   {
-    title: "Charts",
-    swatches: [
-      { name: "chart-1", bg: "bg-chart-1" },
-      { name: "chart-2", bg: "bg-chart-2" },
-      { name: "chart-3", bg: "bg-chart-3" },
-      { name: "chart-4", bg: "bg-chart-4" },
-      { name: "chart-5", bg: "bg-chart-5" },
+    name: "gray",
+    steps: [
+      { step: "50", bg: "bg-gray-50" },
+      { step: "100", bg: "bg-gray-100" },
+      { step: "200", bg: "bg-gray-200" },
+      { step: "300", bg: "bg-gray-300" },
+      { step: "400", bg: "bg-gray-400" },
+      { step: "500", bg: "bg-gray-500" },
+      { step: "600", bg: "bg-gray-600" },
+      { step: "700", bg: "bg-gray-700" },
+      { step: "800", bg: "bg-gray-800" },
+      { step: "900", bg: "bg-gray-900" },
+      { step: "950", bg: "bg-gray-950" },
+    ],
+  },
+  {
+    name: "primary",
+    steps: [
+      { step: "50", bg: "bg-primary-50" },
+      { step: "100", bg: "bg-primary-100" },
+      { step: "200", bg: "bg-primary-200" },
+      { step: "300", bg: "bg-primary-300" },
+      { step: "400", bg: "bg-primary-400" },
+      { step: "500", bg: "bg-primary-500" },
+      { step: "600", bg: "bg-primary-600" },
+      { step: "700", bg: "bg-primary-700" },
+      { step: "800", bg: "bg-primary-800" },
+      { step: "900", bg: "bg-primary-900" },
+      { step: "950", bg: "bg-primary-950" },
+    ],
+  },
+  {
+    name: "secondary",
+    steps: [
+      { step: "50", bg: "bg-secondary-50" },
+      { step: "100", bg: "bg-secondary-100" },
+      { step: "200", bg: "bg-secondary-200" },
+      { step: "300", bg: "bg-secondary-300" },
+      { step: "400", bg: "bg-secondary-400" },
+      { step: "500", bg: "bg-secondary-500" },
+      { step: "600", bg: "bg-secondary-600" },
+      { step: "700", bg: "bg-secondary-700" },
+      { step: "800", bg: "bg-secondary-800" },
+      { step: "900", bg: "bg-secondary-900" },
+      { step: "950", bg: "bg-secondary-950" },
     ],
   },
 ]
@@ -122,15 +167,36 @@ export const Palette: Story = {
           </Grid>
         </Stack>
       ))}
+      <Stack gap={16}>
+        <h3 className="text-h4">Scales — derived ramps</h3>
+        {RAMPS.map((ramp) => (
+          <Stack key={ramp.name} gap={4}>
+            <code className="text-muted-foreground text-caption">{ramp.name}</code>
+            <Inline gap={4}>
+              {ramp.steps.map((s) => (
+                <Stack key={s.step} gap={4}>
+                  <div
+                    data-token={`${ramp.name}-${s.step}`}
+                    className={cn(s.bg, "border-border h-8 w-8 rounded-md border")}
+                  />
+                  <code className="text-muted-foreground text-caption">{s.step}</code>
+                </Stack>
+              ))}
+            </Inline>
+          </Stack>
+        ))}
+      </Stack>
     </Stack>
   ),
-  // Guard: the two triad tokens that no other story renders (success, neutral)
-  // must resolve to a real, non-transparent fill — i.e. the tokens are wired,
-  // not just named. Catches a deleted/renamed token that would otherwise be
-  // invisible everywhere else.
+  // Guard: tokens that no other story renders (the triad's success/neutral and
+  // one step per scale ramp) must resolve to a real, non-transparent fill —
+  // i.e. the tokens are wired, not just named. Catches a deleted/renamed token
+  // that would otherwise be invisible everywhere else. The -500 steps also
+  // pin the relative-color derivation: if oklch(from …) ever stopped parsing,
+  // the fill would compute transparent and fail here.
   play: async ({ canvasElement }) => {
-    for (const token of ["success", "neutral"]) {
-      const el = canvasElement.querySelector(`[data-token=${token}]`)!
+    for (const token of ["success", "neutral", "gray-500", "primary-500", "secondary-500"]) {
+      const el = canvasElement.querySelector(`[data-token="${token}"]`)!
       await expect(getComputedStyle(el).backgroundColor).not.toBe(
         "rgba(0, 0, 0, 0)" // mvds-allow no-hardcoded-color — transparent sentinel read back from the browser, not an authored color
       )
