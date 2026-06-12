@@ -106,9 +106,5 @@ These are the system's structure, not its skin (see
 - **Gray ramp rungs** — semantic tokens sit on these lightness positions;
   re-tinting neutrals is better done via `--background`/`--muted`/`--border`.
 
-## Worked example
-
-The reference consumer
-([`bhd-headless-notion/app/globals.css`](../../bhd-headless-notion/app/globals.css))
-carries a real brand layer: primary rebrand (light + dark), font swap, and a
+The reference consumer (`bhd-headless-notion`) carries a real brand layer: primary rebrand (light + dark), font swap, and a
 radius tweak — all in the cascade block, zero component edits.
