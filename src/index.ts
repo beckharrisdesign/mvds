@@ -18,6 +18,16 @@ export { Checkbox } from "./components/ui/checkbox";
 export { RadioGroup, RadioGroupItem } from "./components/ui/radio-group";
 export { Switch } from "./components/ui/switch";
 export { Textarea } from "./components/ui/textarea";
+export {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectSeparator,
+  SelectTrigger,
+  SelectValue,
+} from "./components/ui/select";
 export { Field } from "./components/forms";
 export * from "./components/layout";
 export { cn } from "./lib/utils";
