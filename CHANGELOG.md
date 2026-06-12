@@ -14,9 +14,21 @@ All notable changes to MVDS are recorded here. The format follows
 
 The code→Figma component mirror became real, and typography joined color and
 spacing as a fully gated foundation: the font family is now a declared token,
-enforced from code to manifest to recorded Figma reality.
+enforced from code to manifest to recorded Figma reality. Color grew its first
+derived scales: a re-brand is now a one-token change that cascades down every
+ramp.
 
 ### Added
+
+- Three 11-step color scales (`50…950`): `gray-*` as a fixed black↔white ladder
+  on the system's existing lightness rungs, and `primary-*` / `secondary-*`
+  **derived from their base token via CSS relative color** — re-branding
+  `--primary` recolors its entire ramp automatically, in code and (after a
+  token re-sync) in the Figma mirror. Rendered in `Foundations/Color` with a
+  play guard that pins the derivation, and sanctioned as token utilities in the
+  no-hardcoded-color principle (`gray-*` is ours now; `slate`/`zinc`/… stay
+  forbidden).
+  ([#36](https://github.com/beckharrisdesign/mvds/pull/36))
 
 - Component manifests (`figma/components/*.figma.mjs`) + the `npm run check:figma`
   drift guard — the authored, PR-reviewed spec for the code→Figma component
@@ -42,6 +54,12 @@ enforced from code to manifest to recorded Figma reality.
 
 ### Changed
 
+- **Breaking:** removed the unused `chart-1`…`chart-5` tokens and their
+  `bg-chart-*` utilities (pre-1.0 clean break; no compat shims). Each old value
+  sits on the new gray ladder at the same rung — `chart-1` → `gray-300`,
+  `chart-2` → `gray-500`, `chart-3` → `gray-600`, `chart-4` → `gray-700`,
+  `chart-5` → `gray-800` (identical resolved colors).
+  ([#36](https://github.com/beckharrisdesign/mvds/pull/36))
 - **Breaking:** removed `Badge`'s deprecated `secondary` variant alias — use
   `muted` (pre-1.0 clean break; no compat shims).
   ([#26](https://github.com/beckharrisdesign/mvds/pull/26))
