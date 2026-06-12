@@ -31,8 +31,11 @@ generate must follow the system, not generic shadcn/Tailwind habits.
   `text-body-lg`, `text-body`, `text-small`, `text-caption`. ❌ Never ad-hoc
   `text-2xl font-bold`.
 - ✅ **Color via tokens** — `bg-background`, `text-foreground`,
-  `text-muted-foreground`, `bg-primary`, `border-border`, etc. ❌ Never
-  `text-gray-500` / hardcoded hex / `bg-white`.
+  `text-muted-foreground`, `bg-primary`, `border-border`, etc. The scale ramps
+  are tokens too: `gray-*` / `primary-*` / `secondary-*` (11 steps, 50…950,
+  derived from their base token — re-branding `--primary` cascades its ramp).
+  ❌ Never a generic Tailwind palette (`text-slate-500`) / hardcoded hex /
+  `bg-white`.
 - ✅ **Status / intent via the semantic triad** — `success` (good), `neutral`,
   `destructive` (bad). Use as text (`text-success`), a tint (`bg-success/10`), or
   solid with its foreground (`bg-success text-success-foreground`). ❌ Never
