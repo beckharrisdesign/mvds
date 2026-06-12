@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-06-12T07:47:16-05:00",
-  "commit": "2a1649b",
-  "dirty": true,
+  "generatedAt": "2026-06-12T10:47:45-05:00",
+  "commit": "adb6737",
+  "dirty": false,
   "lock": {
     "fileKey": "C20nU0mROzk3Zr0I9BELJF",
     "syncedAt": "2026-06-10",
     "syncedFromCommit": "8b1401e",
-    "commitsBehind": 17
+    "commitsBehind": 27
   },
   "manifests": [
     {
@@ -164,7 +164,7 @@
       ],
       "status": {
         "level": "neutral",
-        "label": "17 commits behind",
+        "label": "27 commits behind",
         "detail": "Synced 2026-06-10 from 8b1401e — code-first, the mirror trails until the next requested sync."
       }
     },
