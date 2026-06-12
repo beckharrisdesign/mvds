@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-06-11T16:11:08-05:00",
-  "commit": "0fba5b6",
+  "generatedAt": "2026-06-11T17:09:13-05:00",
+  "commit": "b57745a",
   "dirty": true,
   "lock": {
     "fileKey": "C20nU0mROzk3Zr0I9BELJF",
@@ -181,15 +181,15 @@
         },
         {
           "label": "light tokens",
-          "value": 57
+          "value": 60
         },
         {
           "label": "dark tokens",
-          "value": 23
+          "value": 26
         },
         {
           "label": "radius steps",
-          "value": 7
+          "value": 4
         },
         {
           "label": "type ramp",
