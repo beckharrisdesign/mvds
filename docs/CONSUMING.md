@@ -2,8 +2,7 @@
 
 The ingestion runbook. Written so a human — or an agent with no other context —
 can wire `@beckharrisdesign/mvds` into an app from this document alone.
-Reference consumer: [`bhd-headless-notion`](../../bhd-headless-notion) (sibling
-repo), a Next.js 15 + Tailwind v4 site.
+Reference consumer: `bhd-headless-notion` (sibling repo), a Next.js 15 + Tailwind v4 site.
 
 ## Prerequisites
 
