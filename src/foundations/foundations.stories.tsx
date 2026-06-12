@@ -76,6 +76,103 @@ export const Typography: Story = {
   ),
 }
 
+/* ---------------- Radius ---------------- */
+const RADII: { name: string; cls: string; px: number }[] = [
+  { name: "sm", cls: "rounded-sm", px: 6 },
+  { name: "md", cls: "rounded-md", px: 8 },
+  { name: "lg", cls: "rounded-lg", px: 10 },
+  { name: "xl", cls: "rounded-xl", px: 14 },
+]
+
+export const Radius: Story = {
+  render: () => (
+    <div className="flex flex-col gap-2">
+      <p className="text-muted-foreground text-small">
+        One base dimension (<code>--radius</code>, 10px) drives the whole ramp — a
+        dimension, not spacing, so it is exempt from the 8-grid. Steps past{" "}
+        <code>xl</code> were pruned as unused.
+      </p>
+      <div className="flex gap-4">
+        {RADII.map(({ name, cls, px }) => (
+          <div key={name} className="flex flex-col items-center gap-1">
+            <div className={`bg-muted border-border size-16 border ${cls}`} />
+            <code className="text-caption">{name}</code>
+            <span className="text-muted-foreground text-caption">{px}px</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  ),
+}
+
+/* ---------------- Elevation ---------------- */
+const ELEVATION: { name: string; cls: string; use: string }[] = [
+  { name: "sm", cls: "shadow-sm", use: "cards — subtle lift" },
+  { name: "md", cls: "shadow-md", use: "popovers, dropdowns" },
+  { name: "lg", cls: "shadow-lg", use: "modals, toasts" },
+]
+
+export const Elevation: Story = {
+  render: () => (
+    <div className="flex flex-col gap-2">
+      <p className="text-muted-foreground text-small">
+        Three steps, mode-dependent (deeper in dark mode, where raised surfaces
+        also separate via lighter fills). Tailwind&apos;s default shadow scale is
+        disabled — this ramp is the only shadow vocabulary.
+      </p>
+      <div className="flex gap-8 p-4">
+        {ELEVATION.map(({ name, cls, use }) => (
+          <div key={name} className="flex flex-col items-center gap-2">
+            <div className={`bg-card size-24 rounded-lg ${cls}`} />
+            <code className="text-caption">shadow-{name}</code>
+            <span className="text-muted-foreground text-caption">{use}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  ),
+}
+
+/* ---------------- Motion ---------------- */
+const DURATIONS: { name: string; ms: number; use: string }[] = [
+  { name: "fast", ms: 150, use: "hovers, fades — also the transition-* default" },
+  { name: "base", ms: 250, use: "expand/collapse, slides" },
+  { name: "slow", ms: 400, use: "large surfaces — modals, drawers" },
+]
+const EASINGS: { name: string; curve: string; use: string }[] = [
+  { name: "ease-standard", curve: "cubic-bezier(0.2, 0, 0, 1)", use: "most UI" },
+  { name: "ease-emphasized", curve: "cubic-bezier(0.05, 0.7, 0.1, 1)", use: "enters, attention" },
+]
+
+export const Motion: Story = {
+  render: () => (
+    <div className="flex flex-col gap-4">
+      <p className="text-muted-foreground text-small">
+        Durations are plain tokens (<code>duration-(--duration-base)</code>);
+        easings ship as utilities. Hover a bar to see duration × standard easing.
+      </p>
+      {DURATIONS.map(({ name, ms, use }) => (
+        <div key={name} className="flex items-center gap-4">
+          <code className="w-32 shrink-0 text-caption">--duration-{name}</code>
+          <code className="w-16 shrink-0 text-caption">{ms}ms</code>
+          <div
+            className="bg-primary ease-standard h-4 w-16 rounded-sm transition-transform hover:translate-x-16"
+            style={{ transitionDuration: `var(--duration-${name})` }}
+          />
+          <span className="text-muted-foreground text-caption">{use}</span>
+        </div>
+      ))}
+      {EASINGS.map(({ name, curve, use }) => (
+        <div key={name} className="flex items-center gap-4">
+          <code className="w-32 shrink-0 text-caption">{name}</code>
+          <code className="text-muted-foreground text-caption">{curve}</code>
+          <span className="text-muted-foreground text-caption">{use}</span>
+        </div>
+      ))}
+    </div>
+  ),
+}
+
 /* ---------------- Breakpoints ---------------- */
 const BREAKPOINTS: { name: string; px: number; note: string }[] = [
   { name: "sm", px: 640, note: "large phone / small tablet" },
