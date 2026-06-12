@@ -85,13 +85,24 @@
     --color-card: var(--card);
     --color-foreground: var(--foreground);
     --color-background: var(--background);
+    /* ---- Radius ramp — one base dimension drives every corner -----------------
+     * Border-radius is a dimension, not spacing (exempt from the 8-grid). The
+     * whole ramp derives from --radius (see :root) so the corner language stays
+     * consistent: sm 6 · md 8 · lg 10 · xl 14 at the 10px base. Steps past xl
+     * were unused and pruned (pre-1.0 clean break). */
     --radius-sm: calc(var(--radius) * 0.6);
     --radius-md: calc(var(--radius) * 0.8);
     --radius-lg: var(--radius);
     --radius-xl: calc(var(--radius) * 1.4);
-    --radius-2xl: calc(var(--radius) * 1.8);
-    --radius-3xl: calc(var(--radius) * 2.2);
-    --radius-4xl: calc(var(--radius) * 2.6);
+
+    /* ---- Elevation — shadow ramp (mode-dependent; values in :root / .dark) ----
+     * Three steps only: sm (cards, subtle lift) · md (popovers, dropdowns) ·
+     * lg (modals, toasts). Tailwind's default shadow scale is disabled so this
+     * ramp is the only shadow vocabulary. */
+    --shadow-*: initial;
+    --shadow-sm: var(--elevation-sm);
+    --shadow-md: var(--elevation-md);
+    --shadow-lg: var(--elevation-lg);
 
     /* ---- Spacing scale — multiples & fractions of 8 ---------------------------
      * LAYOUT spacing is built from multiples and fractions of 8 (best practice
@@ -151,6 +162,23 @@
     --text-caption--letter-spacing: 0.01em;
 }
 
+/* ---- Motion — durations + easings ------------------------------------------
+ * Durations: fast 150ms (hovers, fades) · base 250ms (expand/collapse, slides)
+ * · slow 400ms (large surfaces — modals, drawers). Tailwind has no duration
+ * theme namespace, so reference them as `duration-(--duration-base)`; the
+ * `transition-*` utilities default to fast via --default-transition-duration.
+ * Easings: `ease-standard` for most UI; `ease-emphasized` for enters and
+ * attention moments. `@theme static` (not inline) so the variables are always
+ * emitted at runtime, even before any utility consumes them. */
+@theme static {
+    --duration-fast: 150ms;
+    --duration-base: 250ms;
+    --duration-slow: 400ms;
+    --default-transition-duration: var(--duration-fast);
+    --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+    --ease-emphasized: cubic-bezier(0.05, 0.7, 0.1, 1);
+}
+
 :root {
     --background: oklch(1 0 0);
     --foreground: oklch(0.145 0 0);
@@ -178,6 +206,10 @@
     --input: oklch(0.922 0 0);
     --ring: oklch(0.708 0 0);
     --radius: 0.625rem;
+    /* Elevation — soft, low-opacity shadow ramp for light surfaces. */
+    --elevation-sm: 0 1px 2px 0 oklch(0 0 0 / 0.05);
+    --elevation-md: 0 2px 4px -1px oklch(0 0 0 / 0.06), 0 4px 8px -2px oklch(0 0 0 / 0.08);
+    --elevation-lg: 0 4px 8px -4px oklch(0 0 0 / 0.08), 0 12px 24px -4px oklch(0 0 0 / 0.14);
 
     /* ---- Color scales — 11-step ramps (50…950) -------------------------------
      * `gray` is the fixed black↔white ladder (the same lightness rungs the
@@ -249,6 +281,11 @@
     --input: oklch(1 0 0 / 15%);
     --ring: oklch(0.556 0 0);
     /* Color scales are NOT re-declared here — see the :root ramp comment. */
+    /* Elevation (dark mode) — deeper shadows; raised surfaces also separate
+     * via their lighter card/popover fills. */
+    --elevation-sm: 0 1px 2px 0 oklch(0 0 0 / 0.45);
+    --elevation-md: 0 2px 4px -1px oklch(0 0 0 / 0.45), 0 4px 8px -2px oklch(0 0 0 / 0.55);
+    --elevation-lg: 0 4px 8px -4px oklch(0 0 0 / 0.55), 0 12px 24px -4px oklch(0 0 0 / 0.65);
 }
 
 @layer base {
