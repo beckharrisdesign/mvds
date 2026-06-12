@@ -13,5 +13,7 @@ export {
   CardContent,
 } from "./components/ui/card";
 export { Badge, badgeVariants } from "./components/ui/badge";
+export { Label } from "./components/ui/label";
+export { Field } from "./components/forms";
 export * from "./components/layout";
 export { cn } from "./lib/utils";

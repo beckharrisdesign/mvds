@@ -10,10 +10,12 @@ import { Stack } from "@/components/layout"
  * Switch, Textarea, Select) compose into this scaffold rather than each
  * re-implementing label/help/error wiring.
  *
- * Accessibility is wired automatically when the child is a single element:
- * Field assigns it an id (generated unless the child brings its own), points
- * the label's `htmlFor` at it, links help/error via `aria-describedby`, and
- * sets `aria-invalid` while an error is shown.
+ * Accessibility is wired automatically when the child is exactly one
+ * non-Fragment element: Field assigns it an id (generated unless the child
+ * brings its own), points the label's `htmlFor` at it, links help/error via
+ * `aria-describedby` (merged with any existing value), and sets
+ * `aria-invalid` / `aria-required` while an error / `required` apply. Any
+ * other children shape renders unwired — bring your own attributes.
  */
 function Field({
   label,
@@ -33,23 +35,37 @@ function Field({
   children: React.ReactNode
 }) {
   const generatedId = React.useId()
-  const child = React.isValidElement(children) ? children : null
-  const childProps = child?.props as { id?: string } | undefined
+  const child =
+    React.Children.count(children) === 1 &&
+    React.isValidElement(children) &&
+    children.type !== React.Fragment
+      ? children
+      : null
+  const childProps = child?.props as
+    | { id?: string; "aria-describedby"?: string }
+    | undefined
   const controlId = childProps?.id ?? generatedId
   const description = error ?? help
   const descriptionId = `${controlId}-description`
 
-  const control = child
-    ? React.cloneElement(child as React.ReactElement<Record<string, unknown>>, {
-        id: controlId,
-        "aria-describedby": description ? descriptionId : undefined,
-        "aria-invalid": error ? true : undefined,
-      })
-    : children
+  let control = children
+  if (child) {
+    const wired: Record<string, unknown> = { id: controlId }
+    if (description)
+      wired["aria-describedby"] = [childProps?.["aria-describedby"], descriptionId]
+        .filter(Boolean)
+        .join(" ")
+    if (error) wired["aria-invalid"] = true
+    if (required) wired["aria-required"] = true
+    control = React.cloneElement(
+      child as React.ReactElement<Record<string, unknown>>,
+      wired
+    )
+  }
 
   return (
     <Stack gap={8} data-slot="field" className={className} {...props}>
-      <Label htmlFor={controlId}>
+      <Label htmlFor={child ? controlId : undefined}>
         {label}
         {required && (
           <span aria-hidden="true" className="text-destructive">

@@ -66,10 +66,12 @@ export const A11yWiring: Story = {
     label: "Username",
     help: "Lowercase letters only.",
     error: "That username is taken.",
+    required: true,
   },
   play: async ({ canvas }) => {
-    const input = canvas.getByLabelText("Username")
+    const input = canvas.getByLabelText(/Username/)
     await expect(input).toHaveAttribute("aria-invalid", "true")
+    await expect(input).toHaveAttribute("aria-required", "true")
     const description = canvas.getByRole("alert")
     await expect(description).toHaveTextContent("That username is taken.")
     await expect(input).toHaveAttribute(
