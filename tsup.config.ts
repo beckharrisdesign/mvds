@@ -54,8 +54,8 @@ export default defineConfig({
       .filter((line) => !/^@import "[^.]/.test(line.trim()))
       .join("\n")
       .replace(
-        "* ====",
-        "* (tokens.css build: external @imports stripped — bring your own\n *  Tailwind, reset, and font; see docs/CONSUMING.md)\n * ===="
+        " * ===========================================================================*/",
+        " * (tokens.css build: external @imports stripped — bring your own\n *  Tailwind, reset, and font; see docs/CONSUMING.md)\n * ===========================================================================*/"
       );
     writeFileSync(path.resolve(dirname, "dist-lib/tokens.css"), tokensCss);
     console.log("[tsup] emitted dist-lib/tokens.css (token layer only)");
