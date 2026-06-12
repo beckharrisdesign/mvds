@@ -15,6 +15,11 @@ MVDS exists so that *intent is encoded* — its reason for being is that you (an
 agent) and humans both generate consistent, on-brand UI from it. So anything you
 generate must follow the system, not generic shadcn/Tailwind habits.
 
+> **Working in a consumer app instead of this repo?** The ingestion runbook is
+> [`docs/CONSUMING.md`](docs/CONSUMING.md) and the brand/theming recipes are
+> [`docs/THEMING.md`](docs/THEMING.md). The golden rules below still apply to
+> any UI you generate with MVDS components.
+
 ## Golden rules (always / never)
 
 - ✅ **Spacing = multiples & fractions of 8.** Use the layout primitives with px

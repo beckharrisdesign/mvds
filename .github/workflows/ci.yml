@@ -39,6 +39,11 @@ jobs:
       - name: Build (tsc + vite)
         run: npm run build
 
+      # The package consumers install (dist-lib via tsup) — keep it building so
+      # `npm run build:lib` + the prepack hook can never silently rot.
+      - name: Build library (tsup → dist-lib)
+        run: npm run build:lib
+
       - name: Token contrast (WCAG AA, light + dark)
         run: npm run check:contrast
 

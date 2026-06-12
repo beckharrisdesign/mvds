@@ -28,7 +28,7 @@
 
 @theme inline {
     --font-heading: var(--font-sans);
-    --font-sans: 'Inter Variable', sans-serif;
+    --font-sans: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
     --color-gray-50: var(--gray-50);
     --color-gray-100: var(--gray-100);
     --color-gray-200: var(--gray-200);
