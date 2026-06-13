@@ -1,7 +1,7 @@
 import { defineConfig } from "tsup";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { copyFileSync } from "node:fs";
+import { copyFileSync, readFileSync, writeFileSync } from "node:fs";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -40,5 +40,24 @@ export default defineConfig({
       path.resolve(dirname, "dist-lib/styles.css")
     );
     console.log("[tsup] copied src/index.css -> dist-lib/styles.css");
+
+    // Also emit tokens.css: the same file minus the external @imports
+    // (tailwindcss, tw-animate-css, shadcn base, font). For consumers who bring
+    // their own Tailwind/reset/font and want ONLY the MVDS token layer.
+    // src/index.css stays the single editable source — this is derived.
+    const indexCss = readFileSync(
+      path.resolve(dirname, "src/index.css"),
+      "utf8"
+    );
+    const tokensCss = indexCss
+      .split("\n")
+      .filter((line) => !/^@import "[^.]/.test(line.trim()))
+      .join("\n")
+      .replace(
+        " * ===========================================================================*/",
+        " * (tokens.css build: external @imports stripped — bring your own\n *  Tailwind, reset, and font; see docs/CONSUMING.md)\n * ===========================================================================*/"
+      );
+    writeFileSync(path.resolve(dirname, "dist-lib/tokens.css"), tokensCss);
+    console.log("[tsup] emitted dist-lib/tokens.css (token layer only)");
   },
 });

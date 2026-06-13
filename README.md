@@ -65,6 +65,14 @@ npm run dev              # demo app — Card + Button, with a light/dark toggle
 npm run storybook        # the living component gallery at http://localhost:6006
 ```
 
+## Using MVDS in an app
+
+MVDS is consumed as a package (`@beckharrisdesign/mvds`) — install, import the
+styles, `@source` the dist, done. The full ingestion runbook (written so an
+agent can follow it cold) is [`docs/CONSUMING.md`](docs/CONSUMING.md); putting
+a brand on it — colors, type, dark mode — is [`docs/THEMING.md`](docs/THEMING.md).
+Reference consumer: the `bhd-headless-notion` sibling repo.
+
 ## The code → Figma sync
 
 ```bash
@@ -89,5 +97,7 @@ src/
   App.tsx                ← demo composition
 .storybook/              ← Storybook config (preview imports the token layer)
 docs/SYNC.md             ← the re-runnable code → Figma workflow
+docs/CONSUMING.md        ← install + wire MVDS into an app (agent-followable)
+docs/THEMING.md          ← brand a consumer app via the token cascade
 code-connect/            ← dormant on Pro; activate after an Org/Enterprise upgrade
 ```

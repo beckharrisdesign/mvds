@@ -10,6 +10,7 @@
       "import": "./dist-lib/index.js"
     },
     "./styles.css": "./dist-lib/styles.css",
+    "./tokens.css": "./dist-lib/tokens.css",
     "./package.json": "./package.json"
   },
   "main": "./dist-lib/index.js",
@@ -20,6 +21,7 @@
   ],
   "scripts": {
     "prepare": "git config core.hooksPath .githooks || true",
+    "prepack": "npm run build:lib",
     "dev": "vite",
     "generate:snapshot": "node scripts/generate-manifest-snapshot.mjs",
     "prebuild": "npm run generate:snapshot",
@@ -46,6 +48,7 @@
     "@fontsource-variable/inter": "^5.2.8",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "lucide-react": "^1.17.0",
     "radix-ui": "^1.4.3",
     "shadcn": "^4.10.0",
     "tailwind-merge": "^3.6.0",
@@ -71,7 +74,6 @@
     "eslint-plugin-react-refresh": "^0.5.2",
     "eslint-plugin-storybook": "^10.4.2",
     "globals": "^17.6.0",
-    "lucide-react": "^1.17.0",
     "playwright": "^1.60.0",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",

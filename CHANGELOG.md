@@ -20,6 +20,17 @@ ramp.
 
 ### Added
 
+- Consumer packaging + docs, hardened by the first real ingestion
+  (`bhd-headless-notion`): a `tokens.css` export (the token layer with external
+  `@import`s stripped, for apps that bring their own Tailwind/reset/font),
+  a `prepack` hook + CI step so `dist-lib` can no longer ship stale (the first
+  ingestion ran on a build still carrying Geist after the Inter switch), and
+  `docs/CONSUMING.md` + `docs/THEMING.md` — the agent-followable ingestion
+  runbook and the token-cascade theming recipes, with pointers from README and
+  AGENTS.md. A cold-start ingestion test (fresh Next 16 app, docs only) also
+  caught `lucide-react` living in devDependencies while being externalized in
+  shipped components — moved to `dependencies`.
+
 - Three 11-step color scales (`50…950`): `gray-*` as a fixed black↔white ladder
   on the system's existing lightness rungs, and `primary-*` / `secondary-*`
   **derived from their base token via CSS relative color** — re-branding
