@@ -1,8 +1,8 @@
 {
   "$comment": "Machine-recorded Figma reality — node IDs written by the mvds-figma-component-sync skill after each run (manifests are the human-reviewed intent; this is the package-lock analog). componentSetId null = not yet adopted/created. The sync's inspect phase resolves by name as a self-healing fallback and repairs this file if nodes were moved or renamed in Figma.",
   "fileKey": "C20nU0mROzk3Zr0I9BELJF",
-  "syncedAt": "2026-06-10",
-  "syncedFromCommit": "8b1401e",
+  "syncedAt": "2026-06-17",
+  "syncedFromCommit": "dde681d",
   "pages": { "components": "95:4", "syncReports": "136:2" },
   "components": {
     "Button": {
@@ -118,6 +118,13 @@
       "Type/Small": { "id": "S:7382ccc2fe3a99df486b6728b166b1441d3cbb26,", "fontFamily": "Inter", "fontStyle": "Regular", "bound": true },
       "Type/Caption": { "id": "S:5a4469ce20fc8690e7c6546cfb9b0173332ad53c,", "fontFamily": "Inter", "fontStyle": "Medium", "bound": true }
     }
+  },
+  "radiusRamp": {
+    "$comment": "Derived radius variables in Tokens collection — computed from --radius (10px base). Scoped CORNER_RADIUS only; same value in both modes.",
+    "radius-sm": "VariableID:235:2",
+    "radius-md": "VariableID:235:3",
+    "radius-lg": "VariableID:235:4",
+    "radius-xl": "VariableID:235:5"
   },
   "derivedVariables": {
     "$comment": "Figma-only tint variables (alpha per mode) mirroring code utilities like bg-destructive/10 dark:/20 — created because paint-level opacity does not survive into instances.",
