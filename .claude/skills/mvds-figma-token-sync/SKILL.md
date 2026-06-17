@@ -16,21 +16,29 @@ file's structure isn't re-discovered each time.
 
 - **fileKey:** `C20nU0mROzk3Zr0I9BELJF` (file "MVDS Core")
 - **Collections:**
-  - `Tokens` — `VariableCollectionId:2:2` — colors + `radius`. Modes: **Light** `2:0`, **Dark** `2:1`.
+  - `Tokens` — `VariableCollectionId:2:2` — colors + radius + font-sans. Modes: **Light** `2:0`, **Dark** `2:1`.
   - `Scales` — `VariableCollectionId:8:5` — spacing (`space-*`) + breakpoints. Mode: **Value** `8:0`.
 - **Text styles:** the 9-step ramp — `Type/Display`, `Type/Heading 1..4`, `Type/Body Large`, `Type/Body`, `Type/Small`, `Type/Caption`. Each style's
   `fontName` comes from `figma/conventions.mjs` → `typography` (family
   `fontFamily.figma`, style from `weightToFigmaStyle` keyed by the ramp step's
   `--font-weight` in `src/index.css`).
-- **Font token:** a `font-sans` STRING variable (scope `["FONT_FAMILY"]`) in the
+- **Font token:** a `Typography/font-sans` STRING variable (scope `["FONT_FAMILY"]`) in the
   Tokens collection — same value in **both** modes (font doesn't vary by mode) —
   bound to every `Type/*` style's `fontFamily`. The family is a token: a rebrand
   is a one-variable change.
 
 ## Conventions (match exactly — don't impose new ones)
 
-- Variable names are **flat**, matching code token names without the `--`
-  (e.g. `sidebar-primary-foreground`, `chart-1`, `space-16`).
+- **Variable names use group prefixes** (added 2026-06-17) — the Figma variable
+  panel shows four top-level folders. Map code token names (without `--`) to
+  Figma names as follows:
+  - All color tokens → `Color/{token-name}` (e.g. `Color/primary`, `Color/border`,
+    `Color/gray-50`, `Color/destructive-tint`)
+  - Font family token → `Typography/font-sans`
+  - Radius tokens → `Sizing/radius`, `Sizing/radius-sm`, `Sizing/radius-md`,
+    `Sizing/radius-lg`, `Sizing/radius-xl`
+  - Spacing tokens (Scales collection) → `Spacing/space-4` … `Spacing/space-96`
+  - Breakpoint tokens (Scales collection) → `Sizing/breakpoint-sm` … `Sizing/breakpoint-2xl`
 - Color variable **scopes:** `["ALL_FILLS", "STROKE_COLOR"]`.
 - Color **values** are `{ r, g, b, a }` in 0–1. Code authors tokens in **oklch** —
   convert with `scripts/color.mjs` (`oklchStrToRgb`). The converter reproduces

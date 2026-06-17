@@ -120,18 +120,18 @@
     }
   },
   "radiusRamp": {
-    "$comment": "Derived radius variables in Tokens collection — computed from --radius (10px base). Scoped CORNER_RADIUS only; same value in both modes.",
-    "radius-sm": "VariableID:235:2",
-    "radius-md": "VariableID:235:3",
-    "radius-lg": "VariableID:235:4",
-    "radius-xl": "VariableID:235:5"
+    "$comment": "Derived radius variables in Tokens collection — computed from --radius (10px base). Scoped CORNER_RADIUS only; same value in both modes. Names use Sizing/ group prefix (grouped 2026-06-17).",
+    "Sizing/radius-sm": "VariableID:235:2",
+    "Sizing/radius-md": "VariableID:235:3",
+    "Sizing/radius-lg": "VariableID:235:4",
+    "Sizing/radius-xl": "VariableID:235:5"
   },
   "derivedVariables": {
-    "$comment": "Figma-only tint variables (alpha per mode) mirroring code utilities like bg-destructive/10 dark:/20 — created because paint-level opacity does not survive into instances.",
-    "destructive-tint": "VariableID:131:2",
-    "success-tint": "VariableID:131:3",
-    "neutral-tint": "VariableID:131:4",
-    "muted-tint": "VariableID:131:5",
-    "foreground-tint": "VariableID:131:6"
+    "$comment": "Figma-only tint variables (alpha per mode) mirroring code utilities like bg-destructive/10 dark:/20 — created because paint-level opacity does not survive into instances. Names use Color/ group prefix (grouped 2026-06-17).",
+    "Color/destructive-tint": "VariableID:131:2",
+    "Color/success-tint": "VariableID:131:3",
+    "Color/neutral-tint": "VariableID:131:4",
+    "Color/muted-tint": "VariableID:131:5",
+    "Color/foreground-tint": "VariableID:131:6"
   }
 }
