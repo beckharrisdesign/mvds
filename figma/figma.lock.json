@@ -120,7 +120,7 @@
     }
   },
   "radiusRamp": {
-    "$comment": "Derived radius variables in Tokens collection — computed from --radius (10px base). Scoped CORNER_RADIUS only; same value in both modes.",
+    "$comment": "Derived radius variables in Tokens collection — computed from --radius (0.625rem base, ~10px at 16px root). Scoped CORNER_RADIUS only; same value in both modes.",
     "radius-sm": "VariableID:235:2",
     "radius-md": "VariableID:235:3",
     "radius-lg": "VariableID:235:4",
