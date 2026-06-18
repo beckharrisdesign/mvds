@@ -67,6 +67,7 @@ import {
     and constrains children to `<Container size={containerSize}>`.
     `containerSize` defaults to `"xl"`; vertical padding defaults to `py-24`
     (96px) and is overridable via `className`.
+  ([#50](https://github.com/beckharrisdesign/mvds/pull/50))
 
 - Consumer packaging + docs, hardened by the first real ingestion
   (`bhd-headless-notion`): a `tokens.css` export (the token layer with external
