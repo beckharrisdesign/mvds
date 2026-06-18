@@ -43,7 +43,7 @@ function App() {
               Toggle {dark ? "light" : "dark"} mode
             </Button>
             <Button variant="outline" size="sm" asChild>
-              <a href="/storybook/" target="_blank" rel="noopener noreferrer">
+              <a href={import.meta.env.DEV ? "http://localhost:6006" : "/storybook/"} target="_blank" rel="noopener noreferrer">
                 Storybook →
               </a>
             </Button>
