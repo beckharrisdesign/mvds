@@ -2,7 +2,8 @@
 
 The ingestion runbook. Written so a human — or an agent with no other context —
 can wire `@beckharrisdesign/mvds` into an app from this document alone.
-Reference consumer: `bhd-headless-notion` (sibling repo), a Next.js 15 + Tailwind v4 site.
+Reference consumer: [beckharrisdesign/bhd-headless-notion](https://github.com/beckharrisdesign/bhd-headless-notion) (sibling
+repo), a Next.js 15 + Tailwind v4 site.
 
 ## Prerequisites
 
@@ -16,33 +17,57 @@ No `tailwind.config.js` is needed — Tailwind v4 is configured entirely from CS
 
 ## 1. Install
 
-**Local (today — no registry yet):** from a sibling checkout of this repo:
+### Auth (one-time per machine / CI environment)
 
-```bash
-# build the package artifacts the consumer will import
-( cd ../mvds && npm run build:lib )
+The package lives on GitHub Packages (`npm.pkg.github.com`). Add a project-level
+`.npmrc` to tell npm where to find `@beckharrisdesign` scoped packages:
+
+```ini
+# .npmrc  (commit this file; it has no secrets)
+@beckharrisdesign:registry=https://npm.pkg.github.com
 ```
 
+Then authenticate. For local dev, use a GitHub PAT with `read:packages` scope:
+
+```bash
+# one-time login — stores the token in ~/.npmrc
+npm login --registry=https://npm.pkg.github.com --scope=@beckharrisdesign
+# Username: your GitHub handle
+# Password: your PAT (not your GH password)
+# Email: your GitHub email
+```
+
+For CI (GitHub Actions), `GITHUB_TOKEN` works automatically — no extra secret needed:
+
+```yaml
+- uses: actions/setup-node@v5
+  with:
+    registry-url: "https://npm.pkg.github.com"
+    scope: "@beckharrisdesign"
+- run: npm ci
+  env:
+    NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+```
+
+### Install the package
+
+```bash
+npm install @beckharrisdesign/mvds
+```
+
+Pin to a version range in `package.json`:
+
 ```jsonc
-// consumer package.json
 "dependencies": {
-  "@beckharrisdesign/mvds": "file:../mvds"
+  "@beckharrisdesign/mvds": "^0.1.0"
 }
 ```
 
-Then pick an install mode — this matters:
-
-| Mode | Command | Behavior | Use when |
-| --- | --- | --- | --- |
-| **Symlink** (npm default) | `npm install` | `node_modules/@beckharrisdesign/mvds` → live checkout. Live dev loop, but CSS/font assets resolve through the symlink's real path — **breaks Next builds with Turbopack** (Next ≥16 default). | Active co-development, webpack-based builds (the reference consumer). |
-| **Copy** | `npm install --install-links` | Packs the package in (respects `files`), hoists its deps into the consumer tree. Survives Turbopack. Refresh after MVDS changes: rebuild lib, then `npm install @beckharrisdesign/mvds --install-links` again. | One-shot ingestion, Turbopack builds, anything CI-like. |
-
-> Either way the consumer sees whatever `dist-lib/` was last built — **after any
-> MVDS change: re-run `npm run build:lib` in `../mvds`** (symlink mode picks it
-> up immediately; copy mode needs the reinstall). Symlink consumers can automate
-> the rebuild with a `predev`/`prebuild` script (see the reference consumer's
-> `package.json`). Once published to a registry, this whole section becomes
-> `npm install @beckharrisdesign/mvds` + version bumps.
+> **Local co-development fallback** — if you need to work against an unpublished
+> change in a sibling checkout, the old `file:` path still works:
+> `"@beckharrisdesign/mvds": "file:../mvds"`. Run `npm run build:lib` in the
+> MVDS repo first; use `--install-links` if Turbopack is the bundler.
+> Switch back to the version pin before shipping.
 
 ## 2. Wire the CSS (the three lines that matter)
 
@@ -125,6 +150,7 @@ Never hand-merge a base component. Customization has exactly three layers:
 
 | Symptom | Cause / fix |
 | --- | --- |
+| `npm install` 404 / `ENEEDAUTH` for `@beckharrisdesign/mvds` | Missing `.npmrc` or not logged in — see §1 Auth setup. |
 | Components render but are unstyled | Missing `@source` line for `dist-lib` — Tailwind never generated the component utilities. |
 | Component or prop "doesn't exist" / stale behavior | Stale `dist-lib`: `( cd ../mvds && npm run build:lib )` then `npm install` in the consumer. |
 | Dark mode never activates | No `.dark` class on a root ancestor — see §3. |

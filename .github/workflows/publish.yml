@@ -1,0 +1,67 @@
+name: Publish
+
+# Publishes @beckharrisdesign/mvds to GitHub Packages on a version tag push,
+# or on demand via workflow_dispatch. The tag must match the version in
+# package.json — the workflow enforces this before publishing.
+#
+# To release:
+#   1. Bump version in package.json (+ CHANGELOG if maintained).
+#   2. Commit: git commit -m "chore: release vX.Y.Z"
+#   3. Tag:    git tag vX.Y.Z && git push origin vX.Y.Z
+#   The workflow fires automatically and publishes to npm.pkg.github.com.
+#
+# Manual publish (e.g. re-publish same version after a workflow fix):
+#   Actions → Publish → Run workflow → pick branch/tag.
+#   Note: npm will reject a re-publish of an already-published version.
+#   Bump the version first in that case.
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Set up Node (GitHub Packages registry)
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+          registry-url: "https://npm.pkg.github.com"
+          scope: "@beckharrisdesign"
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Guard: require a version tag, and ensure it matches package.json.
+      - name: Verify tag matches package version
+        run: |
+          if ! [[ "${GITHUB_REF}" == refs/tags/* ]]; then
+            echo "ERROR: Publish must run from a vX.Y.Z tag ref (current ref: ${GITHUB_REF})"
+            exit 1
+          fi
+
+          PKG_VERSION=$(node -p "require('./package.json').version")
+          TAG_VERSION="${GITHUB_REF_NAME#v}"
+          if [ "$PKG_VERSION" != "$TAG_VERSION" ]; then
+            echo "ERROR: package.json version ($PKG_VERSION) != tag ($TAG_VERSION)"
+            exit 1
+          fi
+
+          echo "Version verified: $PKG_VERSION"
+
+      # prepack hook runs build:lib (tsup) automatically — no explicit step needed.
+      - name: Publish to GitHub Packages
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
