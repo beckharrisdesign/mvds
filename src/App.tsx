@@ -21,7 +21,7 @@ function App() {
       <header className="border-b border-border">
         <Container size="xl" className="py-4">
           <Inline gap={8} justify="between" align="center">
-            <span className="text-h4">MVDS</span>
+            <h1 className="text-h4">MVDS</h1>
             <Inline gap={8}>
               <Button variant="outline" size="sm" onClick={toggleTheme}>
                 {dark ? "Light" : "Dark"} mode
