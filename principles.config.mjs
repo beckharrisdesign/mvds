@@ -137,6 +137,24 @@ export const baseManifest = {
       fix: "Cover the primitive in src/components/layout/layout.stories.tsx (the shared family story).",
       docs: "AGENTS.md (Storybook — a cohesive primitive family may share one story)",
     },
+    {
+      id: "story-coverage-blocks",
+      description: "Every content block primitive is covered by the shared blocks story.",
+      rationale:
+        "AGENTS.md: a cohesive primitive family may share one story (blocks.stories.tsx) rather than one per file.",
+      severity: "error",
+      enabled: true,
+      scope: {
+        include: ["src/components/blocks/**/*.tsx"],
+        exclude: [STORIES],
+      },
+      check: {
+        kind: "require-sibling-file",
+        companion: () => "src/components/blocks/blocks.stories.tsx",
+      },
+      fix: "Cover the primitive in src/components/blocks/blocks.stories.tsx (the shared family story).",
+      docs: "AGENTS.md (Storybook — a cohesive primitive family may share one story)",
+    },
   ],
 }
 
