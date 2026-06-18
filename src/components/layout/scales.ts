@@ -30,6 +30,13 @@ export const GAP = {
   80: "gap-20", // 80px
   96: "gap-24", // 96px
 } as const
+/**
+ * 8-point grid spacing in px. Valid values: 0 · 4 · 8 · 16 · 24 · 32 · 40 · 48 · 64 · 80 · 96
+ *
+ * (4 = ½ × 8 half-step; the rest are full 8× multiples.)
+ * Any other value is a compile-time error — the constraint is intentional:
+ * the 8-grid is enforced so the Tailwind purge-safe class map stays exhaustive.
+ */
 export type Gap = keyof typeof GAP
 
 /** Fixed block-axis sizes for Spacer (height), keyed by px on the 8-pt grid. */

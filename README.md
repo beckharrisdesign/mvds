@@ -67,11 +67,36 @@ npm run storybook        # the living component gallery at http://localhost:6006
 
 ## Using MVDS in an app
 
-MVDS is consumed as a package (`@beckharrisdesign/mvds`) — install, import the
-styles, `@source` the dist, done. The full ingestion runbook (written so an
-agent can follow it cold) is [`docs/CONSUMING.md`](docs/CONSUMING.md); putting
-a brand on it — colors, type, dark mode — is [`docs/THEMING.md`](docs/THEMING.md).
-Reference consumer: the `bhd-headless-notion` sibling repo.
+The package is published to GitHub Packages. Three steps to wire it up:
+
+**1. Add `.npmrc` to your project** (commit this — no secrets):
+```ini
+@beckharrisdesign:registry=https://npm.pkg.github.com
+```
+
+**2. Install:**
+```bash
+npm install @beckharrisdesign/mvds
+```
+> Auth required: GitHub Packages always needs a token, even for public packages.
+> Local dev: `npm login --registry=https://npm.pkg.github.com --scope=@beckharrisdesign`
+> (PAT with `read:packages`). Vercel: add `NODE_AUTH_TOKEN` in dashboard → Settings →
+> Environment Variables.
+
+**3. Wire the CSS** (in your global stylesheet, e.g. `app/globals.css`):
+```css
+@import "@beckharrisdesign/mvds/styles.css";
+@source "../node_modules/@beckharrisdesign/mvds/dist-lib/**/*.js";
+```
+
+Then import components:
+```tsx
+import { Button, Card, Stack, Inline, Grid, Container } from "@beckharrisdesign/mvds"
+```
+
+Full ingestion runbook (auth, dark mode, theming, troubleshooting):
+[`docs/CONSUMING.md`](docs/CONSUMING.md). Brand overrides (colors, font, radius):
+[`docs/THEMING.md`](docs/THEMING.md). Reference consumer: `bhd-headless-notion`.
 
 ## The code → Figma sync
 

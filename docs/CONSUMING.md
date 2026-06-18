@@ -49,6 +49,11 @@ For CI (GitHub Actions), `GITHUB_TOKEN` works automatically — no extra secret 
     NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
 
+**Vercel deploys** — GitHub Packages requires auth even for public packages (this is a GitHub
+constraint, not an MVDS one). Before your first Vercel deploy, add `NODE_AUTH_TOKEN` as an
+environment variable in the Vercel dashboard (Settings → Environment Variables), set to a
+GitHub PAT with `read:packages` scope. Without it the build fails at `npm install` with a 401.
+
 ### Install the package
 
 ```bash
