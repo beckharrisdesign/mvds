@@ -38,9 +38,16 @@ function App() {
             Minimum Viable Design System — agent-first foundations for startup
             prototyping
           </p>
-          <Button variant="outline" size="sm" onClick={toggleTheme}>
-            Toggle {dark ? "light" : "dark"} mode
-          </Button>
+          <Inline gap={8}>
+            <Button variant="outline" size="sm" onClick={toggleTheme}>
+              Toggle {dark ? "light" : "dark"} mode
+            </Button>
+            <Button variant="outline" size="sm" asChild>
+              <a href="/storybook/" target="_blank" rel="noopener noreferrer">
+                Storybook →
+              </a>
+            </Button>
+          </Inline>
         </Stack>
 
         {/* Card containing a Button — proves composition reaches Figma */}
