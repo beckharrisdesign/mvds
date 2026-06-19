@@ -58,8 +58,8 @@ export const MediaFrameStory: Story = {
 /**
  * Blockquote — semantic `<blockquote>` with a 4px `border-primary` left accent
  * and `text-body-lg italic` typography. Pure typographic; no interactivity.
- * Place a `<footer>` child for attribution (`not-italic` to break out of the
- * italic inherited from the parent).
+ * Place a `<p className="not-italic">` child for attribution (breaks out of the
+ * italic inherited from the parent) — avoid `<footer>`, which is a `contentinfo` landmark.
  */
 export const BlockquoteStory: Story = {
   name: "Blockquote",
