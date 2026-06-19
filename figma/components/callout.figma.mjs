@@ -38,7 +38,7 @@ export default {
     variant: {
       default: {},
       "with-icon": {
-        layout: { mode: "HORIZONTAL", counterAlign: "start" },
+        layout: { mode: "HORIZONTAL", counterAlign: "MIN" },
         gap: { var: "space-8" }, // gap-2
         // Icon slot precedes content — rendered as a small text placeholder
         prependChildren: [

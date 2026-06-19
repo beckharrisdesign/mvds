@@ -28,7 +28,7 @@ export default {
         type: "TEXT",
         content: "Media",
         textStyle: "Type/Small",
-        textFill: { var: "muted-foreground" },
+        textFill: { var: "foreground" }, // muted-foreground on bg-muted is disallowed (contrast rule)
       },
     ],
   },

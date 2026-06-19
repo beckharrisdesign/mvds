@@ -33,7 +33,7 @@ export default {
         name: "Input",
         layout: { mode: "HORIZONTAL", counterAlign: "CENTER" },
         height: { var: "space-32" }, // h-8
-        stroke: { var: "border" }, // border border-input
+        stroke: { var: "input" }, // border-input (--input, not --border)
         cornerRadius: { value: 8 }, // rounded-md
         paddingX: { var: "space-8" }, // px-2
         children: [

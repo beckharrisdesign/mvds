@@ -1,5 +1,5 @@
 {
-  "$comment": "Machine-recorded Figma reality — node IDs written by the mvds-figma-component-sync skill after each run (manifests are the human-reviewed intent; this is the package-lock analog). componentSetId null = not yet adopted/created. The sync's inspect phase resolves by name as a self-healing fallback and repairs this file if nodes were moved or renamed in Figma.",
+  "$comment": "Machine-recorded Figma reality — node IDs written by the mvds-figma-component-sync skill after each run (manifests are the human-reviewed intent; this is the package-lock analog). componentSetId null means either not yet adopted/created (for multi-variant components) OR a deliberate single-component with no variant axes (Label/Textarea/Blockquote — check for a sibling componentId field). The sync's inspect phase resolves by name as a self-healing fallback and repairs this file if nodes were moved or renamed in Figma.",
   "fileKey": "C20nU0mROzk3Zr0I9BELJF",
   "syncedAt": "2026-06-19",
   "syncedFromCommit": "17ac3776f1c50628d85328cb053e251b36660aa3",

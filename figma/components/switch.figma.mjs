@@ -26,7 +26,7 @@ export default {
   base: {
     layout: { mode: "HORIZONTAL", counterAlign: "CENTER" },
     cornerRadius: { value: 12 }, // rounded-full (half of h-6=24)
-    paddingX: { value: 4 }, // px-1 = 4px on each side
+    paddingX: { var: "space-4" }, // px-1 = space-4 (4px = ½×8)
     children: [
       {
         name: "Thumb",

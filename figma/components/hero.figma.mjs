@@ -42,7 +42,7 @@ export default {
             type: "TEXT",
             content: "Supporting copy that sits below the heading.",
             textStyle: "Type/Body Large",
-            textFill: { var: "muted-foreground" },
+            textFill: { var: "foreground" }, // muted-foreground on bg-muted is disallowed (contrast rule)
           },
         ],
       },

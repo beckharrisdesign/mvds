@@ -22,7 +22,7 @@ export default {
     layout: { mode: "HORIZONTAL", primaryAlign: "CENTER", counterAlign: "SPACE_BETWEEN" },
     width: { value: 160, resizable: true },
     cornerRadius: { var: "radius" }, // rounded-lg
-    stroke: { var: "border" }, // border border-input
+    stroke: { var: "input" }, // border-input (--input, not --border)
     paddingX: { var: "space-8" }, // pl-2 pr-2
     gap: { var: "space-8" }, // gap-2
     children: [
