@@ -12,13 +12,62 @@ All notable changes to MVDS are recorded here. The format follows
 
 ## [Unreleased]
 
-The code→Figma component mirror became real, and typography joined color and
-spacing as a fully gated foundation: the font family is now a declared token,
-enforced from code to manifest to recorded Figma reality. Color grew its first
-derived scales: a re-brand is now a one-token change that cascades down every
-ramp.
+## [0.2.0] - 2026-06-18
+
+The code→Figma component mirror became real, typography joined color and spacing
+as a fully gated foundation, and the first real consumer (`bhd-headless-notion`)
+prompted four new content block primitives: `MediaFrame`, `Blockquote`,
+`Callout`, and `Hero`.
+
+### Migration from 0.1.0
+
+**Breaking changes in this release (pre-1.0; no compat shims):**
+
+1. **`Badge` `secondary` variant removed** — replace with `variant="muted"`.
+2. **`chart-1`…`chart-5` tokens removed** — if you referenced them directly,
+   map to the gray scale: `chart-1` → `gray-300`, `chart-2` → `gray-500`,
+   `chart-3` → `gray-600`, `chart-4` → `gray-700`, `chart-5` → `gray-800`.
+3. **System typeface is now Inter** — if you relied on Geist Variable being the
+   default sans font, update your Figma text styles and any font imports in your
+   consuming app. `@fontsource-variable/inter` ships in the package.
+
+**New exports** (additive; no action required unless you want to use them):
+
+```ts
+import {
+  MediaFrame,   // type MediaRatio
+  Blockquote,
+  Callout,
+  Hero,
+} from "@beckharrisdesign/mvds"
+```
 
 ### Added
+
+- **Four content block primitives** (`MediaFrame`, `Blockquote`, `Callout`,
+  `Hero`) in a new `src/components/blocks/` family, covered by a shared
+  `blocks.stories.tsx` and a new `story-coverage-blocks` principle. Requested
+  by `bhd-headless-notion` as the layout atoms needed to render real CMS pages:
+  - **`MediaFrame`** — div wrapper that enforces an aspect ratio with
+    `overflow-hidden` clipping. `ratio` prop: `"video"` (16:9, default),
+    `"square"`, `"portrait"` (3:4), `"wide"` (2.35:1). Drop any embed,
+    `img`, `video`, or iframe inside; the frame contains and clips it.
+  - **`Blockquote`** — semantic `<blockquote>` with a 4px `border-primary` left
+    accent, 24px left padding, and `text-body-lg italic` typography. Pure
+    typographic; no interactivity. Use a `<p className="not-italic">`
+    child for attribution — not `<footer>`, which carries the `contentinfo`
+    ARIA landmark role and fails the duplicate-landmark gate when more than
+    one blockquote appears on a page.
+  - **`Callout`** — muted-background box with an optional `icon` prop slot
+    (any `ReactNode` — Lucide icon, emoji string, etc.) and a `children` content
+    area that accepts arbitrary block content, not just a single string. Uses
+    `<Inline>` internally to align icon and content.
+  - **`Hero`** — full-bleed `<section>` with an optional `backgroundImage` prop
+    (a URL string) that renders a `bg-gradient-to-t from-background/80` scrim
+    and constrains children to `<Container size={containerSize}>`.
+    `containerSize` defaults to `"xl"`; vertical padding defaults to `py-24`
+    (96px) and is overridable via `className`.
+  ([#50](https://github.com/beckharrisdesign/mvds/pull/50))
 
 - Consumer packaging + docs, hardened by the first real ingestion
   (`bhd-headless-notion`): a `tokens.css` export (the token layer with external
@@ -143,5 +192,6 @@ verification gates.
   `background`.
   ([#9](https://github.com/beckharrisdesign/mvds/pull/9))
 
-[Unreleased]: https://github.com/beckharrisdesign/mvds/compare/v0.1.0...main
+[Unreleased]: https://github.com/beckharrisdesign/mvds/compare/v0.2.0...main
+[0.2.0]: https://github.com/beckharrisdesign/mvds/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/beckharrisdesign/mvds/tree/v0.1.0

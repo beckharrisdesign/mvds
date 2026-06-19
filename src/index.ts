@@ -30,4 +30,5 @@ export {
 } from "./components/ui/select";
 export { Field } from "./components/forms";
 export * from "./components/layout";
+export * from "./components/blocks";
 export { cn } from "./lib/utils";
