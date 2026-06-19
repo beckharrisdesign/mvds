@@ -18,7 +18,7 @@ import liveSnapshot from "@/generated/manifest-snapshot.json"
 const meta = {
   title: "Site/ManifestDashboard",
   component: ManifestDashboard,
-  tags: ["autodocs"],
+  tags: ["autodocs", "!dev"],
   args: {
     snapshot: fixture as unknown as ManifestSnapshot,
   },

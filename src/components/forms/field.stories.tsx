@@ -12,7 +12,7 @@ import { Stack } from "@/components/layout"
  * re-implementing the anatomy.
  */
 const meta = {
-  title: "Forms/Field",
+  title: "UI/Field",
   component: Field,
   tags: ["autodocs"],
   argTypes: {
