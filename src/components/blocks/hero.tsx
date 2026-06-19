@@ -21,7 +21,7 @@ function Hero({
       style={
         backgroundImage
           ? {
-              backgroundImage: `url(${backgroundImage})`,
+              backgroundImage: `url("${backgroundImage}")`,
               backgroundSize: "cover",
               backgroundPosition: "center",
               ...style,
