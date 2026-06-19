@@ -18,7 +18,7 @@ function Callout({
     >
       {icon != null ? (
         <Inline gap={8} align="start">
-          <span data-slot="callout-icon" className="text-muted-foreground shrink-0">
+          <span data-slot="callout-icon" className="text-foreground shrink-0">
             {icon}
           </span>
           <div data-slot="callout-content" className="text-body text-foreground min-w-0">
