@@ -1,8 +1,8 @@
 {
   "$comment": "Machine-recorded Figma reality — node IDs written by the mvds-figma-component-sync skill after each run (manifests are the human-reviewed intent; this is the package-lock analog). componentSetId null = not yet adopted/created. The sync's inspect phase resolves by name as a self-healing fallback and repairs this file if nodes were moved or renamed in Figma.",
   "fileKey": "C20nU0mROzk3Zr0I9BELJF",
-  "syncedAt": "2026-06-17",
-  "syncedFromCommit": "dde681d",
+  "syncedAt": "2026-06-19",
+  "syncedFromCommit": "17ac3776f1c50628d85328cb053e251b36660aa3",
   "pages": { "components": "95:4", "syncReports": "136:2" },
   "components": {
     "Button": {
@@ -102,6 +102,92 @@
         "size=default": "3:115",
         "size=sm": "118:3"
       }
+    },
+    "Label": {
+      "componentId": "286:4",
+      "componentSetId": null,
+      "pageId": "95:4",
+      "note": "Single COMPONENT — no variant axes."
+    },
+    "Textarea": {
+      "componentId": "286:6",
+      "componentSetId": null,
+      "pageId": "95:4",
+      "note": "Single COMPONENT — no variant axes."
+    },
+    "Blockquote": {
+      "componentId": "286:8",
+      "componentSetId": null,
+      "pageId": "95:4",
+      "note": "Single COMPONENT — no variant axes."
+    },
+    "Checkbox": {
+      "componentSetId": "286:14",
+      "pageId": "95:4",
+      "variants": {
+        "state=unchecked": "286:10",
+        "state=checked": "286:12"
+      }
+    },
+    "RadioGroupItem": {
+      "componentSetId": "286:19",
+      "pageId": "95:4",
+      "variants": {
+        "state=unchecked": "286:15",
+        "state=checked": "286:17"
+      }
+    },
+    "Select": {
+      "componentSetId": "288:10",
+      "pageId": "95:4",
+      "variants": {
+        "size=default": "288:4",
+        "size=sm": "288:7"
+      }
+    },
+    "Switch": {
+      "componentSetId": "288:19",
+      "pageId": "95:4",
+      "variants": {
+        "size=default, state=unchecked": "288:11",
+        "size=default, state=checked": "288:13",
+        "size=sm, state=unchecked": "288:15",
+        "size=sm, state=checked": "288:17"
+      }
+    },
+    "Field": {
+      "componentSetId": "288:30",
+      "pageId": "95:4",
+      "variants": {
+        "state=default": "288:20",
+        "state=error": "288:25"
+      }
+    },
+    "Hero": {
+      "componentSetId": "289:12",
+      "pageId": "95:4",
+      "variants": {
+        "variant=plain": "289:4",
+        "variant=with-background": "289:8"
+      }
+    },
+    "MediaFrame": {
+      "componentSetId": "289:21",
+      "pageId": "95:4",
+      "variants": {
+        "ratio=video": "289:13",
+        "ratio=square": "289:15",
+        "ratio=portrait": "289:17",
+        "ratio=wide": "289:19"
+      }
+    },
+    "Callout": {
+      "componentSetId": "289:27",
+      "pageId": "95:4",
+      "variants": {
+        "variant=default": "289:22",
+        "variant=with-icon": "289:24"
+      }
     }
   },
   "typography": {
@@ -133,5 +219,8 @@
     "neutral-tint": "VariableID:131:4",
     "muted-tint": "VariableID:131:5",
     "foreground-tint": "VariableID:131:6"
+  },
+  "syncReports": {
+    "2026-06-19": "291:2"
   }
 }
