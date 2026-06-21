@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Container, Stack, Inline } from "@/components/layout"
+import { PackageDocs } from "@/components/site/package-docs"
 import { ManifestDashboard } from "@/components/site/manifest-dashboard"
 import type { ManifestSnapshot } from "@/components/site/manifest-snapshot.types"
 import snapshotData from "@/generated/manifest-snapshot.json"
@@ -41,7 +42,10 @@ function App() {
       </header>
       <main>
         <Container size="xl" className="py-8">
-          <ManifestDashboard snapshot={snapshot} />
+          <Stack gap={48}>
+            <PackageDocs />
+            <ManifestDashboard snapshot={snapshot} />
+          </Stack>
         </Container>
       </main>
     </Stack>
