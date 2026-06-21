@@ -17,8 +17,7 @@ const STEPS = [
     id: "install",
     label: "2 · Install",
     caption: "Authenticate first with a GitHub PAT (read:packages)",
-    code: `npm login --registry=https://npm.pkg.github.com \\
-  --scope=@beckharrisdesign
+    code: `npm login --registry=https://npm.pkg.github.com --scope=@beckharrisdesign
 
 npm install @beckharrisdesign/mvds`,
   },
