@@ -17,5 +17,7 @@ export const Default: Story = {
     await expect(canvas.getByText("Quick start")).toBeInTheDocument()
     await expect(canvas.getByText("Full install guide →")).toBeInTheDocument()
     await expect(canvas.getByText("1 · Configure .npmrc")).toBeInTheDocument()
+    await expect(canvas.getByText("2 · Install")).toBeInTheDocument()
+    await expect(canvas.getByText("3 · Wire CSS")).toBeInTheDocument()
   },
 }
