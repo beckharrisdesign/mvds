@@ -48,9 +48,10 @@ function PackageDocs() {
           <span className="text-h4 font-mono">{pkg.name}</span>
           <Badge variant="neutral">v{pkg.version}</Badge>
           <a
-            href={`${REGISTRY_URL}/${pkg.name}`}
+            href={`${REPO_URL}/packages`}
             target="_blank"
             rel="noopener noreferrer"
+            title={`Registry: ${REGISTRY_URL}`}
             className="text-caption text-muted-foreground hover:text-foreground"
           >
             {REGISTRY_LABEL} ↗
