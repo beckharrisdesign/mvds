@@ -33,7 +33,8 @@ npm install @beckharrisdesign/mvds`,
 
 function CodeBlock({ code }: { code: string }) {
   return (
-    <pre className="bg-muted rounded text-small font-mono overflow-x-auto whitespace-pre-wrap px-16 py-12">
+    // tabIndex={0}: scrollable regions must be keyboard-reachable (axe: scrollable-region-focusable)
+    <pre tabIndex={0} className="bg-muted rounded text-small font-mono overflow-x-auto whitespace-pre-wrap px-16 py-12">
       {code}
     </pre>
   )
