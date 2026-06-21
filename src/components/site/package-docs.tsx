@@ -26,8 +26,8 @@ npm install @beckharrisdesign/mvds`,
     label: "3 · Wire CSS",
     caption: "In your global stylesheet",
     code: `@import "@beckharrisdesign/mvds/styles.css";
-@source "../node_modules/@beckharrisdesign/mvds/dist-lib/**/*.js";`,
-  },
+@source "../node_modules/@beckharrisdesign/mvds/dist-lib/**/*.js";
+@source "../**/*.{ts,tsx}";`,
 ]
 
 function CodeBlock({ code }: { code: string }) {
