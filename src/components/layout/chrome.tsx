@@ -17,8 +17,8 @@ import { SURFACE_BG, type SurfaceBg } from "./scales"
 const CHROME_CLASSES = {
   top:    "sticky top-0 z-chrome w-full h-[var(--chrome-top-height)] overflow-hidden",
   bottom: "sticky bottom-0 z-chrome w-full h-[var(--chrome-bottom-height)] overflow-hidden",
-  left:   "sticky top-0 z-chrome h-dvh w-[var(--chrome-left-width)] shrink-0 overflow-y-auto",
-  right:  "sticky top-0 z-chrome h-dvh w-[var(--chrome-right-width)] shrink-0 overflow-y-auto",
+  left:   "sticky top-0 z-chrome h-full w-[var(--chrome-left-width)] shrink-0 overflow-y-auto",
+  right:  "sticky top-0 z-chrome h-full w-[var(--chrome-right-width)] shrink-0 overflow-y-auto",
 } as const
 
 export type ChromePosition = keyof typeof CHROME_CLASSES
