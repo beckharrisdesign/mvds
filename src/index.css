@@ -104,6 +104,17 @@
     --shadow-md: var(--elevation-md);
     --shadow-lg: var(--elevation-lg);
 
+    /* ---- Z-layer depth system — platform spatial vocabulary -------------------
+     * Five named stacking levels cover every use case. Chrome sits above
+     * scrolled content but below all overlays; toast is always topmost.
+     * Consumed as Tailwind utilities: z-chrome · z-overlay · z-float ·
+     * z-modal · z-toast. */
+    --z-chrome: 10;
+    --z-overlay: 100;
+    --z-float: 200;
+    --z-modal: 300;
+    --z-toast: 400;
+
     /* ---- Spacing scale — multiples & fractions of 8 ---------------------------
      * LAYOUT spacing is built from multiples and fractions of 8 (best practice
      * for pixel density & antialiasing). 4 is a fraction (½ × 8); everything
@@ -210,6 +221,15 @@
     --elevation-sm: 0 1px 2px 0 oklch(0 0 0 / 0.05);
     --elevation-md: 0 2px 4px -1px oklch(0 0 0 / 0.06), 0 4px 8px -2px oklch(0 0 0 / 0.08);
     --elevation-lg: 0 4px 8px -4px oklch(0 0 0 / 0.08), 0 12px 24px -4px oklch(0 0 0 / 0.14);
+
+    /* ---- Chrome dimensions — spatial DNA tokens --------------------------------
+     * These define how much viewport real estate persistent chrome regions claim.
+     * Override in your app's CSS to set the platform's structural proportions.
+     * Not mapped to Tailwind utilities — referenced via var() in Chrome component. */
+    --chrome-top-height: 4rem;      /* 64px — topbar / navbar */
+    --chrome-bottom-height: 4rem;   /* 64px — bottom bar / footer chrome */
+    --chrome-left-width: 15rem;     /* 240px — sidebar / nav rail */
+    --chrome-right-width: 20rem;    /* 320px — context panel / inspector */
 
     /* ---- Color scales — 11-step ramps (50…950) -------------------------------
      * `gray` is the fixed black↔white ladder (the same lightness rungs the

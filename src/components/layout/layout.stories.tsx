@@ -1,11 +1,15 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
-import { Container, Stack, Inline, Grid, GridItem, Spacer } from "./index"
+import { Container, Stack, Inline, Grid, GridItem, Spacer, Chrome, Section, Layer } from "./index"
 import { Button } from "@/components/ui/button"
 
 /**
  * Layout primitives — the "app DNA" beneath components. shadcn ships none of
  * these; they are thin, typed Tailwind wrappers whose props snap to the spacing
  * and breakpoint scales in src/index.css.
+ *
+ * The three spatial primitives (Chrome · Section · Layer) encode the structural
+ * vocabulary of a platform: what's persistent chrome, what's inline content,
+ * and what lives above the layout on the z-axis.
  */
 const meta: Meta = {
   title: "Foundations/Layout primitives",
@@ -125,5 +129,85 @@ export const ContainerStory: Story = {
         <Box>centered with responsive px-4 / sm:px-6 / lg:px-8</Box>
       </Stack>
     </Container>
+  ),
+}
+
+/**
+ * Section — full-width content band (the `page.tsx` layer). Background fills
+ * edge-to-edge; content is centered inside via an inner Container. All five
+ * surface tokens and both vertical rhythm values shown.
+ */
+export const SectionStory: Story = {
+  name: "Section",
+  parameters: { layout: "fullscreen" },
+  render: () => (
+    <Stack gap={0}>
+      <Section bg="background" py={24}><Box>bg=background · py=24</Box></Section>
+      <Section bg="muted"       py={24}><Box>bg=muted · py=24</Box></Section>
+      <Section bg="card"        py={24}><Box>bg=card · py=24</Box></Section>
+      <Section bg="primary"     py={24}><Box>bg=primary · py=24</Box></Section>
+      <Section bg="secondary"   py={24}><Box>bg=secondary · py=24</Box></Section>
+      <Section bg="background"  py={64}><Box>bg=background · py=64 (spacious)</Box></Section>
+    </Stack>
+  ),
+}
+
+/**
+ * Chrome — sticky structural regions that claim space from a viewport edge
+ * (the `layout.tsx` layer). Dimensions come from the chrome token variables
+ * in src/index.css; override those tokens per product to set the proportions.
+ *
+ * The composition below mirrors the logged-in app pattern from the MVDS
+ * spatial DNA diagrams: top chrome + left chrome + inline content.
+ */
+export const ChromeStory: Story = {
+  name: "Chrome",
+  parameters: { layout: "fullscreen" },
+  render: () => (
+    <Stack gap={0} className="h-screen overflow-hidden">
+      <Chrome position="top" bg="primary">
+        <div className="flex h-full items-center px-4">
+          <span className="text-small text-primary-foreground">Top chrome — position=&quot;top&quot; · bg=primary</span>
+        </div>
+      </Chrome>
+      <div className="flex flex-1 overflow-hidden">
+        <Chrome position="left" bg="muted">
+          <div className="flex h-full flex-col items-center justify-start pt-4">
+            <span className="text-caption text-foreground [writing-mode:vertical-lr]">left chrome</span>
+          </div>
+        </Chrome>
+        <div className="flex-1 overflow-y-auto">
+          <Section bg="background" py={24}><Box>Section — bg=background</Box></Section>
+          <Section bg="muted"      py={24}><Box>Section — bg=muted</Box></Section>
+          <Section bg="background" py={64}><Box>Section — py=64 spacious</Box></Section>
+        </div>
+      </div>
+    </Stack>
+  ),
+}
+
+/**
+ * Layer — z-elevated surfaces above the layout entirely (backdrop · float ·
+ * modal · toast). Shown here in a contained relative context; in production
+ * Layer uses `fixed inset-0` and renders above the full viewport.
+ *
+ * The z-tokens (--z-overlay … --z-toast) in src/index.css are the shared
+ * vocabulary — shadcn Dialog / Sheet / Toast reference these same values.
+ */
+export const LayerStory: Story = {
+  name: "Layer",
+  render: () => (
+    <Stack gap={16}>
+      {(["overlay", "float", "modal", "toast"] as const).map((level) => (
+        <div key={level} className="relative h-16 overflow-hidden rounded-md border border-border">
+          <div className="absolute inset-0 flex items-center justify-center bg-muted">
+            <span className="text-small text-muted-foreground">content beneath</span>
+          </div>
+          <Layer level={level} className="absolute inset-0 flex items-center justify-center bg-foreground/10">
+            <span className="text-small text-foreground">level=&quot;{level}&quot;</span>
+          </Layer>
+        </div>
+      ))}
+    </Stack>
   ),
 }

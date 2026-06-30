@@ -108,6 +108,25 @@ export function responsiveClasses(
     .join(" ")
 }
 
+/** Vertical padding for Section bands, keyed by px on the 8-pt grid.
+ *  24px = default (header / content bands); 64px = spacious (footer bands). */
+export const SECTION_PY = {
+  24: "py-6",
+  64: "py-16",
+} as const
+export type SectionPy = keyof typeof SECTION_PY
+
+/** Background surface token classes — shared by Section and Chrome.
+ *  Keys match the semantic token names so the prop reads like the token. */
+export const SURFACE_BG = {
+  background: "bg-background",
+  primary:    "bg-primary",
+  secondary:  "bg-secondary",
+  muted:      "bg-muted",
+  card:       "bg-card",
+} as const
+export type SurfaceBg = keyof typeof SURFACE_BG
+
 export const ALIGN = {
   start: "items-start",
   center: "items-center",
