@@ -19,7 +19,9 @@ function App() {
 
   return (
     <Stack gap={0} className="bg-background text-foreground min-h-svh">
-      <Chrome position="top" bg="background" className="border-b border-border">
+      {/* role="banner": Chrome renders a <div>, so restore the header landmark
+          that the old <header> element carried implicitly. */}
+      <Chrome position="top" bg="background" role="banner" className="border-b border-border">
         <Container size="xl" className="h-full">
           <Inline gap={8} justify="between" align="center" className="h-full">
             <h1 className="text-h4">MVDS</h1>
