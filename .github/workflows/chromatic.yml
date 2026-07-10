@@ -5,6 +5,14 @@ name: Chromatic
 # for review in Chromatic but do not fail the job or gate merges.
 #
 # Requires a repo secret CHROMATIC_PROJECT_TOKEN (Chromatic → Manage → Configure).
+#
+# Outage resilience: the local half (build Storybook + upload) finishes in seconds,
+# then the action WAITS on Chromatic's Capture Cloud for snapshot results. When
+# Capture Cloud is degraded that wait stalls indefinitely (observed 2026-07-10:
+# healthy runs snapshot 55 stories in ~40s; during the incident a single snapshot
+# took 4+ min then hung). The step-level timeout below caps that wait so a Chromatic
+# outage fails fast instead of burning the full job budget — just re-run the check
+# once status.chromatic.com shows Capture Cloud operational again.
 
 on:
   pull_request:
@@ -36,6 +44,11 @@ jobs:
 
       - name: Run Chromatic
         uses: chromaui/action@latest
+        # Cap the Capture Cloud wait. Healthy runs finish in well under a minute, so
+        # 8 min is generous headroom for a slow-but-working build while cutting an
+        # outage stall short (vs. the 20-min job budget). A timeout here surfaces as
+        # a failed check — re-run it, don't force-merge, once Chromatic recovers.
+        timeout-minutes: 8
         with:
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
           buildScriptName: build-storybook # reuse the repo's Storybook build
