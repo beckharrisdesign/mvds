@@ -6,9 +6,19 @@
 # locally. Prunes what shipped so merged branches and session worktrees don't
 # accumulate:
 #   1. prune remote-tracking refs for deleted branches
-#   2. remove worktrees whose branch is fully merged (clean ones only — a dirty
-#      worktree gets a warning, never a force-remove)
-#   3. delete local branches fully merged into main
+#   2. remove worktrees whose branch is genuinely merged (clean ones only — a
+#      dirty worktree gets a warning, never a force-remove)
+#   3. delete local branches genuinely merged into main
+#
+# "Genuinely merged" = the tip is reachable from main but NOT on main's
+# first-parent chain. "Ancestor of main" alone is not enough: a fresh session
+# worktree with no commits yet sits at some past main tip, which becomes an
+# ancestor the moment main advances — that once deleted an ACTIVE session
+# worktree. Old main tips live on the first-parent chain; merged side-branch
+# commits never do (this also survives GitHub's "update branch" flow, where the
+# PR's final tip is a merge-from-main and the local tip sits one level deeper).
+# Squash/ff-merged tips don't qualify → skipped; accepted trade-off — the hook
+# fails safe: a leftover worktree to clean by hand, never a deleted session.
 #
 # Everything here is the safe form (`git branch -d`, non-forced worktree remove);
 # nothing unmerged or uncommitted can be lost.
@@ -18,22 +28,22 @@ branch="$(git symbolic-ref --short HEAD 2>/dev/null)"
 
 git fetch --prune --quiet 2>/dev/null
 
+main_first_parents="$(git rev-list --first-parent main)"
+genuinely_merged() { # $1 = full sha
+  [ -n "$1" ] || return 1
+  git merge-base --is-ancestor "$1" main 2>/dev/null || return 1
+  ! printf '%s\n' "$main_first_parents" | grep -qx "$1"
+}
+
 # Worktrees on merged branches: remove if clean, warn if dirty.
-# A branch tip EQUAL to main's tip is skipped — that's a fresh session worktree
-# with no commits yet (it merely starts at main), not merged work. A fast-forward
-# merge would look identical and also be skipped; accepted trade-off — this repo
-# merges PRs via merge commits, and the guard fails safe (a leftover worktree to
-# clean by hand, never a deleted active session).
 # Porcelain output is parsed line-by-line in shell so paths with spaces survive.
-main_tip="$(git rev-parse main)"
 git worktree list --porcelain | while IFS= read -r line; do
   case "$line" in
     "worktree "*) wt="${line#worktree }" ;;
     "branch refs/heads/main") ;;
     "branch refs/heads/"*)
       wt_branch="${line#branch refs/heads/}"
-      [ "$(git rev-parse "$wt_branch" 2>/dev/null)" = "$main_tip" ] && continue
-      git merge-base --is-ancestor "$wt_branch" main 2>/dev/null || continue
+      genuinely_merged "$(git rev-parse "$wt_branch" 2>/dev/null)" || continue
       if [ -z "$(git -C "$wt" status --porcelain 2>/dev/null)" ]; then
         git worktree remove "$wt" && echo "✔ removed merged worktree $wt ($wt_branch)"
       else
@@ -44,10 +54,13 @@ git worktree list --porcelain | while IFS= read -r line; do
 done
 git worktree prune
 
-# Local branches fully merged into main (skips main and any checked-out branch).
-merged="$(git branch --merged main | grep -vE '^\*|^\+|^  main$')"
-if [ -n "$merged" ]; then
-  echo "$merged" | xargs git branch -d
-fi
+# Local branches genuinely merged into main (skips main and anything still
+# checked out in a worktree).
+git branch --format='%(refname:short)|%(worktreepath)' | while IFS='|' read -r b wtp; do
+  [ "$b" = "main" ] && continue
+  [ -n "$wtp" ] && continue
+  genuinely_merged "$(git rev-parse "$b" 2>/dev/null)" || continue
+  git branch -d "$b"
+done
 
 exit 0

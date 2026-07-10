@@ -212,7 +212,10 @@ re-asked; this is the standing default for the repo.
    from the branch should linger: remote-tracking refs pruned, the session
    worktree removed, the local branch deleted. The
    [`.githooks/post-merge`](.githooks/post-merge) hook automates this on every
-   `git pull` into main — it only ever uses the safe forms (`git branch -d`,
+   `git pull` into main — it only touches branches that were *genuinely
+   merged* (tip reachable from main but not on its first-parent chain; a fresh
+   session worktree with no commits sits on an old main tip and never
+   qualifies, so an active session can't be collateral), and only ever uses the safe forms (`git branch -d`,
    non-forced worktree remove), so a worktree with uncommitted changes is
    *warned about, never deleted*; inspect those by hand (uncommitted work in a
    "merged" worktree is usually a stale regen of a generated file, but confirm
