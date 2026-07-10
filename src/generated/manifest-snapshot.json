@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-06-18T14:16:01-05:00",
-  "commit": "c566b10",
-  "dirty": true,
+  "generatedAt": "2026-07-10T12:54:35-05:00",
+  "commit": "1e0a553",
+  "dirty": false,
   "lock": {
     "fileKey": "C20nU0mROzk3Zr0I9BELJF",
-    "syncedAt": "2026-06-17",
-    "syncedFromCommit": "dde681d",
+    "syncedAt": "2026-06-21",
+    "syncedFromCommit": "1430ce610674677d803b0a07c83430422d3085ab",
     "commitsBehind": 15
   },
   "manifests": [
@@ -74,20 +74,20 @@
       "counts": [
         {
           "label": "components",
-          "value": 3
+          "value": 14
         },
         {
           "label": "declared variants",
-          "value": 80
+          "value": 103
         },
         {
           "label": "synced variants",
-          "value": 80
+          "value": 100
         }
       ],
       "status": {
-        "level": "success",
-        "label": "synced 80/80"
+        "level": "neutral",
+        "label": "synced 100/103"
       },
       "items": [
         {
@@ -109,6 +109,94 @@
         {
           "name": "Card",
           "meta": "1 axis · 2 variants · src/components/ui/card.tsx",
+          "status": {
+            "level": "success",
+            "label": "synced 2/2"
+          }
+        },
+        {
+          "name": "Checkbox",
+          "meta": "1 axis · 2 variants · src/components/ui/checkbox.tsx",
+          "status": {
+            "level": "success",
+            "label": "synced 2/2"
+          }
+        },
+        {
+          "name": "Label",
+          "meta": "0 axes · 1 variants · src/components/ui/label.tsx",
+          "status": {
+            "level": "neutral",
+            "label": "not synced"
+          }
+        },
+        {
+          "name": "RadioGroupItem",
+          "meta": "1 axis · 2 variants · src/components/ui/radio-group.tsx",
+          "status": {
+            "level": "success",
+            "label": "synced 2/2"
+          }
+        },
+        {
+          "name": "Select",
+          "meta": "1 axis · 2 variants · src/components/ui/select.tsx",
+          "status": {
+            "level": "success",
+            "label": "synced 2/2"
+          }
+        },
+        {
+          "name": "Switch",
+          "meta": "2 axes · 4 variants · src/components/ui/switch.tsx",
+          "status": {
+            "level": "success",
+            "label": "synced 4/4"
+          }
+        },
+        {
+          "name": "Textarea",
+          "meta": "0 axes · 1 variants · src/components/ui/textarea.tsx",
+          "status": {
+            "level": "neutral",
+            "label": "not synced"
+          }
+        },
+        {
+          "name": "Field",
+          "meta": "1 axis · 2 variants · src/components/forms/field.tsx",
+          "status": {
+            "level": "success",
+            "label": "synced 2/2"
+          }
+        },
+        {
+          "name": "Hero",
+          "meta": "1 axis · 2 variants · src/components/blocks/hero.tsx",
+          "status": {
+            "level": "success",
+            "label": "synced 2/2"
+          }
+        },
+        {
+          "name": "MediaFrame",
+          "meta": "1 axis · 4 variants · src/components/blocks/media-frame.tsx",
+          "status": {
+            "level": "success",
+            "label": "synced 4/4"
+          }
+        },
+        {
+          "name": "Blockquote",
+          "meta": "0 axes · 1 variants · src/components/blocks/blockquote.tsx",
+          "status": {
+            "level": "neutral",
+            "label": "not synced"
+          }
+        },
+        {
+          "name": "Callout",
+          "meta": "1 axis · 2 variants · src/components/blocks/callout.tsx",
           "status": {
             "level": "success",
             "label": "synced 2/2"
@@ -155,7 +243,7 @@
       "counts": [
         {
           "label": "components",
-          "value": 3
+          "value": 14
         },
         {
           "label": "derived variables",
@@ -169,7 +257,7 @@
       "status": {
         "level": "neutral",
         "label": "15 commits behind",
-        "detail": "Synced 2026-06-17 from dde681d — code-first, the mirror trails until the next requested sync."
+        "detail": "Synced 2026-06-21 from 1430ce610674677d803b0a07c83430422d3085ab — code-first, the mirror trails until the next requested sync."
       }
     },
     {
@@ -185,7 +273,7 @@
         },
         {
           "label": "light tokens",
-          "value": 60
+          "value": 64
         },
         {
           "label": "dark tokens",
@@ -203,7 +291,7 @@
       "status": {
         "level": "destructive",
         "label": "mode drift",
-        "detail": "light-only: gray-50, gray-100, gray-200, gray-300, gray-400, gray-500, gray-600, gray-700, gray-800, gray-900, gray-950, primary-50, primary-100, primary-200, primary-300, primary-400, primary-500, primary-600, primary-700, primary-800, primary-900, primary-950, secondary-50, secondary-100, secondary-200, secondary-300, secondary-400, secondary-500, secondary-600, secondary-700, secondary-800, secondary-900, secondary-950"
+        "detail": "light-only: chrome-top-height, chrome-bottom-height, chrome-left-width, chrome-right-width, gray-50, gray-100, gray-200, gray-300, gray-400, gray-500, gray-600, gray-700, gray-800, gray-900, gray-950, primary-50, primary-100, primary-200, primary-300, primary-400, primary-500, primary-600, primary-700, primary-800, primary-900, primary-950, secondary-50, secondary-100, secondary-200, secondary-300, secondary-400, secondary-500, secondary-600, secondary-700, secondary-800, secondary-900, secondary-950"
       }
     },
     {
