@@ -13,6 +13,7 @@ function Stack({
   className,
   ...props
 }: React.ComponentProps<"div"> & {
+  /** 8-pt grid gap in px. Valid: 0 | 4 | 8 | 16 | 24 | 32 | 40 | 48 | 64 | 80 | 96 */
   gap?: Gap
   align?: Align
   justify?: Justify
