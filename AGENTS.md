@@ -208,6 +208,16 @@ re-asked; this is the standing default for the repo.
    stays a complete record.
 6. ✅ **When all checks come back green, flag the PR as ready to review.** ❌ Never
    approve or merge it yourself — **the founder always gives final approval.**
+7. ✅ **After the PR merges, clean up what shipped.** Once main is pulled, nothing
+   from the branch should linger: remote-tracking refs pruned, the session
+   worktree removed, the local branch deleted. The
+   [`.githooks/post-merge`](.githooks/post-merge) hook automates this on every
+   `git pull` into main — it only ever uses the safe forms (`git branch -d`,
+   non-forced worktree remove), so a worktree with uncommitted changes is
+   *warned about, never deleted*; inspect those by hand (uncommitted work in a
+   "merged" worktree is usually a stale regen of a generated file, but confirm
+   before forcing). ❌ Never leave merged branches/worktrees to accumulate —
+   stale checkouts hide unshipped work and made this rule necessary.
 
 ## Map of intent
 

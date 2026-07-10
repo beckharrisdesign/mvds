@@ -1,0 +1,44 @@
+#!/bin/sh
+# MVDS post-merge cleanup — enforces step 7 of the "Branch & PR workflow" in AGENTS.md.
+# Wired up via the `prepare` npm script (git config core.hooksPath .githooks).
+#
+# Fires on `git pull` / `git merge` into main — the moment a merged PR lands
+# locally. Prunes what shipped so merged branches and session worktrees don't
+# accumulate:
+#   1. prune remote-tracking refs for deleted branches
+#   2. remove worktrees whose branch is fully merged (clean ones only — a dirty
+#      worktree gets a warning, never a force-remove)
+#   3. delete local branches fully merged into main
+#
+# Everything here is the safe form (`git branch -d`, non-forced worktree remove);
+# nothing unmerged or uncommitted can be lost.
+
+branch="$(git symbolic-ref --short HEAD 2>/dev/null)"
+[ "$branch" = "main" ] || exit 0
+
+git fetch --prune --quiet 2>/dev/null
+
+# Worktrees on merged branches: remove if clean, warn if dirty.
+# A branch tip EQUAL to main's tip is skipped — that's a fresh session worktree
+# with no commits yet (it merely starts at main), not merged work.
+main_tip="$(git rev-parse main)"
+git worktree list --porcelain | awk '/^worktree /{wt=$2} /^branch /{sub("refs/heads/","",$2); print wt, $2}' |
+while read -r wt wt_branch; do
+  [ "$wt_branch" = "main" ] && continue
+  [ "$(git rev-parse "$wt_branch" 2>/dev/null)" = "$main_tip" ] && continue
+  git merge-base --is-ancestor "$wt_branch" main 2>/dev/null || continue
+  if [ -z "$(git -C "$wt" status --porcelain 2>/dev/null)" ]; then
+    git worktree remove "$wt" && echo "✔ removed merged worktree $wt ($wt_branch)"
+  else
+    echo "⚠ worktree $wt ($wt_branch) is merged but has uncommitted changes — review and remove manually." >&2
+  fi
+done
+git worktree prune
+
+# Local branches fully merged into main (skips main and any checked-out branch).
+merged="$(git branch --merged main | grep -vE '^\*|^\+|^  main$')"
+if [ -n "$merged" ]; then
+  echo "$merged" | xargs git branch -d
+fi
+
+exit 0
