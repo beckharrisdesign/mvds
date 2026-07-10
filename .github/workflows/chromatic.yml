@@ -43,7 +43,10 @@ jobs:
         run: npm ci
 
       - name: Run Chromatic
-        uses: chromaui/action@latest
+        # Pinned to a major tag (not @latest) so a new/compromised major can't be
+        # auto-adopted on a step that holds CHROMATIC_PROJECT_TOKEN — matches the
+        # @v5 pins on checkout/setup-node above.
+        uses: chromaui/action@v18
         # Cap the Capture Cloud wait. Healthy runs finish in well under a minute, so
         # 8 min is generous headroom for a slow-but-working build while cutting an
         # outage stall short (vs. the 20-min job budget). A timeout here surfaces as
