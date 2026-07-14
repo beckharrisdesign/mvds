@@ -78,8 +78,8 @@ export const conventions = {
   // (the --font-sans family, the @fontsource import + dependency, every ramp
   // weight mappable) and this record ↔ figma.lock.json's recorded reality.
   //
-  // In Figma the family lives as a STRING variable (`font-sans`, FONT_FAMILY
-  // scope, Tokens collection, same value in both modes) bound to every Type/*
+  // In Figma the family lives as a STRING variable (`Typography/font-sans`,
+  // FONT_FAMILY scope, Tokens collection, same value in both modes) bound to every Type/*
   // style's fontFamily — a rebrand is a one-variable change. Per-style weight
   // (fontStyle) is set directly from weightToFigmaStyle; it varies per ramp
   // step, so it is not variable-bound.
@@ -93,7 +93,7 @@ export const conventions = {
       code: "Inter Variable", // first family in --font-sans (variable font)
       package: "@fontsource-variable/inter", // the @import + package.json dep
       figma: "Inter", // Figma family name (static styles)
-      figmaVariable: "font-sans", // STRING variable, FONT_FAMILY scope, Tokens
+      figmaVariable: "Typography/font-sans", // STRING variable, FONT_FAMILY scope, Tokens
     },
     // code font-weight → Figma font style (the ramp uses exactly these three).
     weightToFigmaStyle: { 400: "Regular", 500: "Medium", 600: "Semi Bold" },

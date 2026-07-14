@@ -192,7 +192,7 @@
   },
   "typography": {
     "$comment": "Recorded text-style fonts at last sync (resolved values, even when variable-bound) — checked by check:figma T6/T7. fontFamily is bound to the font-sans STRING variable; fontStyle is set directly per ramp step.",
-    "fontFamilyVariable": { "name": "font-sans", "id": "VariableID:153:2", "value": "Inter" },
+    "fontFamilyVariable": { "name": "Typography/font-sans", "id": "VariableID:153:2", "value": "Inter" },
     "textStyles": {
       "Type/Display": { "id": "S:3f28cb750fd2e5cdb3b1be548a8c021703f579b1,", "fontFamily": "Inter", "fontStyle": "Semi Bold", "bound": true },
       "Type/Heading 1": { "id": "S:36cb15c693c99230cabf25b670b35d2fa603a907,", "fontFamily": "Inter", "fontStyle": "Semi Bold", "bound": true },
