@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { Container, Stack, Inline } from "@/components/layout"
+import { Container, Stack, Inline, Chrome, Section } from "@/components/layout"
 import { PackageDocs } from "@/components/site/package-docs"
 import { ManifestDashboard } from "@/components/site/manifest-dashboard"
 import type { ManifestSnapshot } from "@/components/site/manifest-snapshot.types"
@@ -19,9 +19,11 @@ function App() {
 
   return (
     <Stack gap={0} className="bg-background text-foreground min-h-svh">
-      <header className="border-b border-border">
-        <Container size="xl" className="py-4">
-          <Inline gap={8} justify="between" align="center">
+      {/* role="banner": Chrome renders a <div>, so restore the header landmark
+          that the old <header> element carried implicitly. */}
+      <Chrome position="top" bg="background" role="banner" className="border-b border-border">
+        <Container size="xl" className="h-full">
+          <Inline gap={8} justify="between" align="center" className="h-full">
             <h1 className="text-h4">MVDS</h1>
             <Inline gap={8}>
               <Button variant="outline" size="sm" onClick={toggleTheme}>
@@ -39,14 +41,14 @@ function App() {
             </Inline>
           </Inline>
         </Container>
-      </header>
+      </Chrome>
       <main>
-        <Container size="xl" className="py-8">
-          <Stack gap={48}>
-            <PackageDocs />
-            <ManifestDashboard snapshot={snapshot} />
-          </Stack>
-        </Container>
+        <Section py={24}>
+          <PackageDocs />
+        </Section>
+        <Section bg="card" py={24}>
+          <ManifestDashboard snapshot={snapshot} />
+        </Section>
       </main>
     </Stack>
   )

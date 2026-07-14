@@ -47,11 +47,10 @@ jobs:
         # auto-adopted on a step that holds CHROMATIC_PROJECT_TOKEN — matches the
         # @v5 pins on checkout/setup-node above.
         uses: chromaui/action@v18
-        # Cap the Capture Cloud wait. Healthy runs finish in well under a minute, so
-        # 8 min is generous headroom for a slow-but-working build while cutting an
-        # outage stall short (vs. the 20-min job budget). A timeout here surfaces as
-        # a failed check — re-run it, don't force-merge, once Chromatic recovers.
-        timeout-minutes: 8
+        # Cap the Capture Cloud wait. Healthy builds finish in well under a
+        # minute; 5 min is generous headroom while cutting an outage stall
+        # short (vs. the 20-min job budget). Re-run once Chromatic recovers.
+        timeout-minutes: 5
         with:
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
           buildScriptName: build-storybook # reuse the repo's Storybook build
