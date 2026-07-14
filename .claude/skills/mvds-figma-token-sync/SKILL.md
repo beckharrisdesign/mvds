@@ -69,7 +69,7 @@ file's structure isn't re-discovered each time.
    a. Inspect: dump every `Type/*` style's `fontName` and diff against
       `conventions.typography` — this is where live hand-drift in Figma is
       caught (the code↔manifest side is already gated in CI).
-   b. Ensure the `font-sans` STRING variable exists in Tokens (scope
+   b. Ensure the `Typography/font-sans` STRING variable exists in Tokens (scope
       `["FONT_FAMILY"]`), value `fontFamily.figma` in **both** modes.
    c. `await figma.loadFontAsync(...)` for every face in `weightToFigmaStyle`
       (family `fontFamily.figma`), then per style: set `fontName` per the map
