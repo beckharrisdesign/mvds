@@ -32,7 +32,8 @@ globs: []
   automated test that was implemented.
 - **Copilot review comments:** surface each one to the founder before acting;
   verify what Copilot actually landed against the real branch tip (see
-  AGENTS.md step 5).
+  AGENTS.md step 5). When resolving, **reply on each review thread** (with the
+  fix commit SHA) — not a standalone PR comment.
 
 ## After merge
 
