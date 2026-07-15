@@ -3,7 +3,15 @@
   "fileKey": "C20nU0mROzk3Zr0I9BELJF",
   "syncedAt": "2026-07-15",
   "syncedFromCommit": "50019850fd9e8695cb50bdcfb63e7bd12cda41c7",
-  "pages": { "components": "95:4", "syncReports": "136:2" },
+  "pages": { "components": "95:4", "syncReports": "136:2", "starters": "480:2" },
+  "starters": {
+    "$comment": "Figma-only mockup starters (page Starters) — full-size shell templates composed of live Chrome/Section INSTANCES, replacing the deleted rectangle-sketch 'Pages' component set (2026-07-15, founder-approved). Not part of the component mirror: no code counterpart, nothing publishes. Recorded so syncs know these frames hold instances of the mirrored sets.",
+    "Web · Section stripes": "480:3",
+    "App · top nav": "481:17",
+    "App · top + side nav": "481:25",
+    "App · full shell": "481:38",
+    "Native · side-first (IDE-like)": "481:51"
+  },
   "components": {
     "Button": {
       "componentSetId": "3:114",
