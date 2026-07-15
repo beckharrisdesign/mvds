@@ -1,8 +1,8 @@
 {
   "$comment": "Machine-recorded Figma reality — node IDs written by the mvds-figma-component-sync skill after each run (manifests are the human-reviewed intent; this is the package-lock analog). componentSetId null means either not yet adopted/created (for multi-variant components) OR a deliberate single-component with no variant axes (Label/Textarea/Blockquote — check for a sibling componentId field). The sync's inspect phase resolves by name as a self-healing fallback and repairs this file if nodes were moved or renamed in Figma.",
   "fileKey": "C20nU0mROzk3Zr0I9BELJF",
-  "syncedAt": "2026-06-21",
-  "syncedFromCommit": "1430ce610674677d803b0a07c83430422d3085ab",
+  "syncedAt": "2026-07-15",
+  "syncedFromCommit": "50019850fd9e8695cb50bdcfb63e7bd12cda41c7",
   "pages": { "components": "95:4", "syncReports": "136:2" },
   "components": {
     "Button": {
@@ -188,6 +188,61 @@
         "variant=default": "289:22",
         "variant=with-icon": "289:24"
       }
+    },
+    "Chrome": {
+      "componentSetId": "402:42",
+      "pageId": "95:4",
+      "note": "Adopted from an unrecorded sketch set 2026-07-15; heights/widths bound to Sizing/chrome-* variables.",
+      "variants": {
+        "position=top, bg=background": "402:34",
+        "position=bottom, bg=background": "402:36",
+        "position=left, bg=background": "402:38",
+        "position=right, bg=background": "402:40",
+        "position=top, bg=primary": "471:4",
+        "position=bottom, bg=primary": "471:6",
+        "position=left, bg=primary": "471:8",
+        "position=right, bg=primary": "471:10",
+        "position=top, bg=secondary": "471:12",
+        "position=bottom, bg=secondary": "471:14",
+        "position=left, bg=secondary": "471:16",
+        "position=right, bg=secondary": "471:18",
+        "position=top, bg=muted": "471:20",
+        "position=bottom, bg=muted": "471:22",
+        "position=left, bg=muted": "471:24",
+        "position=right, bg=muted": "471:26",
+        "position=top, bg=card": "471:28",
+        "position=bottom, bg=card": "471:30",
+        "position=left, bg=card": "471:32",
+        "position=right, bg=card": "471:34"
+      }
+    },
+    "Section": {
+      "componentSetId": "400:44",
+      "pageId": "95:4",
+      "note": "Adopted 2026-07-15. innerSize axis pinned to xl (founder decision — avoids the 70-variant matrix).",
+      "variants": {
+        "bg=background, py=24": "400:34",
+        "bg=primary, py=24": "400:36",
+        "bg=secondary, py=24": "400:38",
+        "bg=muted, py=24": "400:40",
+        "bg=card, py=24": "400:42",
+        "bg=background, py=64": "472:19",
+        "bg=primary, py=64": "472:23",
+        "bg=secondary, py=64": "472:27",
+        "bg=muted, py=64": "472:31",
+        "bg=card, py=64": "472:35"
+      }
+    },
+    "Layer": {
+      "componentSetId": "403:42",
+      "pageId": "95:4",
+      "note": "Adopted 2026-07-15; rebuilt from colored chips to transparent 1280×800 viewport stand-ins (code Layer paints nothing; z is not expressible in Figma). Default variant = modal.",
+      "variants": {
+        "level=modal": "403:38",
+        "level=overlay": "403:34",
+        "level=float": "403:36",
+        "level=toast": "403:40"
+      }
     }
   },
   "typography": {
@@ -220,8 +275,21 @@
     "Color/muted-tint": "VariableID:131:5",
     "Color/foreground-tint": "VariableID:131:6"
   },
+  "spatialVariables": {
+    "$comment": "Chrome dimension + z-layer FLOAT variables in the Scales collection (Sizing/ group) — adopted 2026-07-15 from hand-created Chrome//Z-Layer/ folders and renamed in place (IDs stable). chrome-* are WIDTH_HEIGHT-scoped and bound by the Chrome component set; z-* are documentation-only (empty scopes — Figma cannot express stacking).",
+    "Sizing/chrome-top-height": "VariableID:399:39",
+    "Sizing/chrome-bottom-height": "VariableID:399:40",
+    "Sizing/chrome-left-width": "VariableID:399:41",
+    "Sizing/chrome-right-width": "VariableID:399:42",
+    "Sizing/z-chrome": "VariableID:399:34",
+    "Sizing/z-overlay": "VariableID:399:35",
+    "Sizing/z-float": "VariableID:399:36",
+    "Sizing/z-modal": "VariableID:399:37",
+    "Sizing/z-toast": "VariableID:399:38"
+  },
   "syncReports": {
     "2026-06-19": "291:2",
-    "2026-06-21": "320:2"
+    "2026-06-21": "320:2",
+    "2026-07-15": "477:2"
   }
 }
