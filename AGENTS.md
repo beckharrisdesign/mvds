@@ -189,8 +189,9 @@ from the experiment-hub rules — keep the two in sync.)
 
 1. ✅ **One feature per branch.** Never bundle unrelated changes. Name the branch
    with a convention that describes the change — `feat/…`, `fix/…`, `docs/…`,
-   `chore/…` — and carry that name through to the PR. ❌ Never commit straight to
-   `main`.
+   `chore/…` — and carry that name through to the PR. Commits use
+   conventional-commit style matching the branch type (`feat(scope): …`,
+   `chore(scope): …`). ❌ Never commit straight to `main`.
 2. ✅ **You create and push the PR** for the branch (`gh pr create`), with the
    branch's naming convention carried into the PR title. Open it as a **draft**
    while iterating and flag it ready once checks are green. ❌ **Never two open

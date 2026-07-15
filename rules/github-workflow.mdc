@@ -1,6 +1,6 @@
 ---
 description: GitHub workflow and branching conventions for MVDS. Apply always — no file trigger. Mirrored from experiment-hub/rules/github-workflow.mdc (adapted 2026-07-15 — MVDS conventions win where they conflicted); canonical workflow lives in AGENTS.md "Branch & PR workflow" — keep the two in sync.
-globs:
+globs: []
 ---
 
 # GitHub workflow
