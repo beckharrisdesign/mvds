@@ -14,42 +14,43 @@
 
 export const conventions = {
   // ---- Color utilities → Figma color variables (Tokens collection) ----------
-  // Variable names are flat, matching the code token without `--` (the same
-  // convention as the token sync): bg-primary → fill bound to `primary`.
+  // Variable names use group prefixes (grouped 2026-06-17): the code token
+  // without `--`, under its group folder (the same convention as the token
+  // sync): bg-primary → fill bound to `Color/primary`.
   //
-  //   bg-X      → frame fill          bound to variable X
-  //   text-X    → text-node fill      bound to variable X
-  //   border-X  → frame stroke        bound to variable X
+  //   bg-X      → frame fill          bound to variable Color/X
+  //   text-X    → text-node fill      bound to variable Color/X
+  //   border-X  → frame stroke        bound to variable Color/X
   //
   // Opacity-modified utilities (`bg-destructive/10`) bind a DERIVED tint
-  // variable named `{token}-tint` whose rgba VALUE carries the alpha per mode
-  // (e.g. destructive-tint = destructive @ a0.10 light / a0.20 dark, mirroring
+  // variable named `Color/{token}-tint` whose rgba VALUE carries the alpha per mode
+  // (e.g. Color/destructive-tint = destructive @ a0.10 light / a0.20 dark, mirroring
   // `bg-destructive/10 dark:bg-destructive/20`). Alpha lives in the variable —
   // NOT as paint opacity, which Figma drops when instances re-resolve modes
   // (verified 2026-06-09 sync). Derived tints are Figma-only variables in the
   // Tokens collection; their IDs are recorded in figma.lock.json.
   color: {
-    fill: "bg-{token} → fill bound to {token}",
-    text: "text-{token} → text fill bound to {token}",
-    stroke: "border-{token} → stroke bound to {token}",
-    tint: "bg-{token}/N → fill bound to derived variable {token}-tint (alpha-in-value per mode)",
+    fill: "bg-{token} → fill bound to Color/{token}",
+    text: "text-{token} → text fill bound to Color/{token}",
+    stroke: "border-{token} → stroke bound to Color/{token}",
+    tint: "bg-{token}/N → fill bound to derived variable Color/{token}-tint (alpha-in-value per mode)",
   },
 
   // ---- Spacing utilities → Scales variables ---------------------------------
   // Tailwind unit n = n × 4 px (atomic unit --spacing: 0.25rem). The Scales
   // collection holds the 8-grid: space-4 · 8 · 16 · 24 · 32 · 40 · 48 · 64 ·
-  // 80 · 96. Bind paddings / itemSpacing / sizes to `space-{n*4}`:
+  // 80 · 96. Bind paddings / itemSpacing / sizes to `Spacing/space-{n*4}`:
   //
-  //   px-4  → paddingLeft/Right  bound to space-16
-  //   py-2  → paddingTop/Bottom  bound to space-8
-  //   gap-2 → itemSpacing        bound to space-8
-  //   h-8   → height 32          bound to space-32
+  //   px-4  → paddingLeft/Right  bound to Spacing/space-16
+  //   py-2  → paddingTop/Bottom  bound to Spacing/space-8
+  //   gap-2 → itemSpacing        bound to Spacing/space-8
+  //   h-8   → height 32          bound to Spacing/space-32
   //
   // Values with no matching scale variable (e.g. py-0.5 = 2px on Badge) are set
   // raw — they are component-internal metrics, not layout spacing.
   spacing: {
     unitPx: 4,
-    variable: "space-{px}",
+    variable: "Spacing/space-{px}",
     scale: [4, 8, 16, 24, 32, 40, 48, 64, 80, 96],
   },
 
@@ -78,8 +79,8 @@ export const conventions = {
   // (the --font-sans family, the @fontsource import + dependency, every ramp
   // weight mappable) and this record ↔ figma.lock.json's recorded reality.
   //
-  // In Figma the family lives as a STRING variable (`font-sans`, FONT_FAMILY
-  // scope, Tokens collection, same value in both modes) bound to every Type/*
+  // In Figma the family lives as a STRING variable (`Typography/font-sans`,
+  // FONT_FAMILY scope, Tokens collection, same value in both modes) bound to every Type/*
   // style's fontFamily — a rebrand is a one-variable change. Per-style weight
   // (fontStyle) is set directly from weightToFigmaStyle; it varies per ramp
   // step, so it is not variable-bound.
@@ -93,20 +94,20 @@ export const conventions = {
       code: "Inter Variable", // first family in --font-sans (variable font)
       package: "@fontsource-variable/inter", // the @import + package.json dep
       figma: "Inter", // Figma family name (static styles)
-      figmaVariable: "font-sans", // STRING variable, FONT_FAMILY scope, Tokens
+      figmaVariable: "Typography/font-sans", // STRING variable, FONT_FAMILY scope, Tokens
     },
     // code font-weight → Figma font style (the ramp uses exactly these three).
     weightToFigmaStyle: { 400: "Regular", 500: "Medium", 600: "Semi Bold" },
   },
 
   // ---- Radius ----------------------------------------------------------------
-  // Only the BASE radius exists as a variable (`radius` in Tokens, 10px). The
+  // Only the BASE radius exists as a variable (`Sizing/radius` in Tokens, 10px). The
   // other steps are calc() multiples in code, so they sync as raw px values.
   // Radius is a dimension, not spacing — it is exempt from the 8-grid.
   radius: {
     "rounded-sm": { px: 6 },
     "rounded-md": { px: 8 },
-    "rounded-lg": { var: "radius" }, // 10px — the one bindable step
+    "rounded-lg": { var: "Sizing/radius" }, // 10px — the one bindable step
     "rounded-xl": { px: 14 },
     "rounded-2xl": { px: 18 },
     "rounded-3xl": { px: 22 },

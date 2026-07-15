@@ -192,7 +192,7 @@
   },
   "typography": {
     "$comment": "Recorded text-style fonts at last sync (resolved values, even when variable-bound) — checked by check:figma T6/T7. fontFamily is bound to the font-sans STRING variable; fontStyle is set directly per ramp step.",
-    "fontFamilyVariable": { "name": "font-sans", "id": "VariableID:153:2", "value": "Inter" },
+    "fontFamilyVariable": { "name": "Typography/font-sans", "id": "VariableID:153:2", "value": "Inter" },
     "textStyles": {
       "Type/Display": { "id": "S:3f28cb750fd2e5cdb3b1be548a8c021703f579b1,", "fontFamily": "Inter", "fontStyle": "Semi Bold", "bound": true },
       "Type/Heading 1": { "id": "S:36cb15c693c99230cabf25b670b35d2fa603a907,", "fontFamily": "Inter", "fontStyle": "Semi Bold", "bound": true },
@@ -206,19 +206,19 @@
     }
   },
   "radiusRamp": {
-    "$comment": "Derived radius variables in Tokens collection — computed from --radius (0.625rem base, ~10px at 16px root). Scoped CORNER_RADIUS only; same value in both modes.",
-    "radius-sm": "VariableID:235:2",
-    "radius-md": "VariableID:235:3",
-    "radius-lg": "VariableID:235:4",
-    "radius-xl": "VariableID:235:5"
+    "$comment": "Derived radius variables in Tokens collection — computed from --radius (0.625rem base, ~10px at 16px root). Scoped CORNER_RADIUS only; same value in both modes. Names use Sizing/ group prefix (grouped 2026-06-17).",
+    "Sizing/radius-sm": "VariableID:235:2",
+    "Sizing/radius-md": "VariableID:235:3",
+    "Sizing/radius-lg": "VariableID:235:4",
+    "Sizing/radius-xl": "VariableID:235:5"
   },
   "derivedVariables": {
-    "$comment": "Figma-only tint variables (alpha per mode) mirroring code utilities like bg-destructive/10 dark:/20 — created because paint-level opacity does not survive into instances.",
-    "destructive-tint": "VariableID:131:2",
-    "success-tint": "VariableID:131:3",
-    "neutral-tint": "VariableID:131:4",
-    "muted-tint": "VariableID:131:5",
-    "foreground-tint": "VariableID:131:6"
+    "$comment": "Figma-only tint variables (alpha per mode) mirroring code utilities like bg-destructive/10 dark:/20 — created because paint-level opacity does not survive into instances. Names use Color/ group prefix (grouped 2026-06-17).",
+    "Color/destructive-tint": "VariableID:131:2",
+    "Color/success-tint": "VariableID:131:3",
+    "Color/neutral-tint": "VariableID:131:4",
+    "Color/muted-tint": "VariableID:131:5",
+    "Color/foreground-tint": "VariableID:131:6"
   },
   "syncReports": {
     "2026-06-19": "291:2",
