@@ -25,11 +25,20 @@ import mediaFrame from "./components/media-frame.figma.mjs"
 import blockquote from "./components/blockquote.figma.mjs"
 import callout from "./components/callout.figma.mjs"
 
+// Spatial layout primitives (Chrome/Section/Layer are visual surfaces, so they
+// get component corollaries; Stack/Inline/Grid/Container/Spacer stay native
+// auto-layout — see the mvds-figma-component-sync skill's out-of-scope list)
+import chrome from "./components/chrome.figma.mjs"
+import section from "./components/section.figma.mjs"
+import layer from "./components/layer.figma.mjs"
+
 export const componentManifests = [
   // UI
   button, badge, card, checkbox, label, radioGroup, select, switchComp, textarea, field,
   // Blocks
   hero, mediaFrame, blockquote, callout,
+  // Spatial layout primitives
+  chrome, section, layer,
 ]
 
 export default componentManifests

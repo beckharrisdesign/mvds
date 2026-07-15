@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-07-10T12:54:35-05:00",
-  "commit": "1e0a553",
-  "dirty": false,
+  "generatedAt": "2026-07-15T11:12:05-05:00",
+  "commit": "ef08d16",
+  "dirty": true,
   "lock": {
     "fileKey": "C20nU0mROzk3Zr0I9BELJF",
-    "syncedAt": "2026-06-21",
-    "syncedFromCommit": "1430ce610674677d803b0a07c83430422d3085ab",
-    "commitsBehind": 15
+    "syncedAt": "2026-07-15",
+    "syncedFromCommit": "50019850fd9e8695cb50bdcfb63e7bd12cda41c7",
+    "commitsBehind": 7
   },
   "manifests": [
     {
@@ -74,20 +74,20 @@
       "counts": [
         {
           "label": "components",
-          "value": 14
+          "value": 17
         },
         {
           "label": "declared variants",
-          "value": 103
+          "value": 137
         },
         {
           "label": "synced variants",
-          "value": 100
+          "value": 134
         }
       ],
       "status": {
         "level": "neutral",
-        "label": "synced 100/103"
+        "label": "synced 134/137"
       },
       "items": [
         {
@@ -201,6 +201,30 @@
             "level": "success",
             "label": "synced 2/2"
           }
+        },
+        {
+          "name": "Chrome",
+          "meta": "2 axes · 20 variants · src/components/layout/chrome.tsx",
+          "status": {
+            "level": "success",
+            "label": "synced 20/20"
+          }
+        },
+        {
+          "name": "Section",
+          "meta": "2 axes · 10 variants · src/components/layout/section.tsx",
+          "status": {
+            "level": "success",
+            "label": "synced 10/10"
+          }
+        },
+        {
+          "name": "Layer",
+          "meta": "1 axis · 4 variants · src/components/layout/layer.tsx",
+          "status": {
+            "level": "success",
+            "label": "synced 4/4"
+          }
         }
       ]
     },
@@ -243,7 +267,7 @@
       "counts": [
         {
           "label": "components",
-          "value": 14
+          "value": 17
         },
         {
           "label": "derived variables",
@@ -251,13 +275,13 @@
         },
         {
           "label": "pages",
-          "value": 2
+          "value": 3
         }
       ],
       "status": {
         "level": "neutral",
-        "label": "15 commits behind",
-        "detail": "Synced 2026-06-21 from 1430ce610674677d803b0a07c83430422d3085ab — code-first, the mirror trails until the next requested sync."
+        "label": "7 commits behind",
+        "detail": "Synced 2026-07-15 from 50019850fd9e8695cb50bdcfb63e7bd12cda41c7 — code-first, the mirror trails until the next requested sync."
       }
     },
     {
