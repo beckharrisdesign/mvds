@@ -46,8 +46,11 @@ jobs:
           scope: "@beckharrisdesign"
 
       # Trusted publishing needs npm >= 11.5.1; Node 22 ships an older npm.
+      # Major-pinned so a future npm major can't silently change release behavior.
       - name: Update npm for trusted publishing
-        run: npm install -g npm@latest
+        run: |
+          npm install -g npm@^11.5.1
+          npm --version
 
       - name: Install dependencies
         run: npm ci
@@ -67,6 +70,8 @@ jobs:
           echo "Version verified: $PKG_VERSION"
 
       # prepack hook runs build:lib (tsup) automatically — no explicit step needed.
-      # OIDC auth — provenance is generated automatically with trusted publishing.
+      # Auth comes from the OIDC token (id-token: write above) exchanged with
+      # npm via the Trusted Publisher config; npm also attaches provenance to
+      # the publish when authenticated this way, so no --provenance flag.
       - name: Publish to npm
         run: npm publish --access public
