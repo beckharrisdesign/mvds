@@ -2,7 +2,7 @@
   "name": "@beckharrisdesign/mvds",
   "version": "0.2.0",
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com",
+    "registry": "https://registry.npmjs.org",
     "access": "public"
   },
   "description": "MVDS — Minimum Viable Design System. An agent-first design system for early startup prototyping with solid foundational design strategy.",
