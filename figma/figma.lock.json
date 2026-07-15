@@ -296,7 +296,7 @@
     "Sizing/z-toast": "VariableID:399:38"
   },
   "syncReports": {
-    "$comment": "One standalone report frame per change/publish cycle — never appended to after publish; same-day follow-ups get a -N suffix. Every report lives INSIDE the $container wrap frame, never loose on the page.",
+    "$comment": "One standalone report frame per change/publish cycle — never appended to after publish; same-day follow-ups get a -N suffix. Every report lives INSIDE the $container wrap frame, never loose on the page, inserted NEWEST-FIRST (insertChild at index 0). Three pre-lock reports (2026-06-09 · 136:3, 2026-06-10 · 170:2, 2026-06-17 · 239:4) also sit in the container but are not indexed here — deliberate, they predate this map.",
     "$container": "316:9",
     "2026-06-19": "291:2",
     "2026-06-21": "320:2",
