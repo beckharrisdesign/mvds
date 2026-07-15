@@ -128,5 +128,8 @@ branch-review description. Nothing else changes.)
 - Hover/focus/active states — code-only (see `figma/conventions.mjs`).
 - Publishing the library — always the founder's click, never the agent's.
 - The hand-built specimen boards and swatch frames — only touch if asked.
-- Layout primitives (Stack/Inline/Grid) — they map to auto-layout settings,
-  not components; don't mirror them as component sets.
+- Flow layout primitives (Stack/Inline/Grid/Container/Spacer) — they map to
+  auto-layout settings, not components; don't mirror them as component sets.
+  The SPATIAL primitives (Chrome/Section/Layer) are the exception — they are
+  visual surfaces and ARE mirrored (founder decision 2026-07-15; Section pins
+  its innerSize axis to xl to avoid the Button-scale variant explosion).
