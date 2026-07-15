@@ -1,0 +1,46 @@
+---
+description: GitHub workflow and branching conventions for MVDS. Apply always — no file trigger. Mirrored from experiment-hub/rules/github-workflow.mdc (adapted 2026-07-15 — MVDS conventions win where they conflicted); canonical workflow lives in AGENTS.md "Branch & PR workflow" — keep the two in sync.
+globs:
+---
+
+# GitHub workflow
+
+## Branches
+
+- **Always create a branch** for any feature, fix, or test task. One per logical
+  unit of work, like the PR. Never commit directly to `main`.
+- **Naming (MVDS convention):** `<type>/<short-descriptor>` in kebab-case, where
+  type is `feat` / `fix` / `docs` / `chore`. The descriptor reflects the actual
+  work, not the chat title (e.g. `feat/figma-spatial-primitives`, not
+  `claude/review-ad-campaign-abc123`). Carry the name through to the PR title.
+
+## Pull requests
+
+- **Always open a PR** when the work is complete, via the GitHub CLI
+  (`gh pr create`). Open as a **draft** while iterating; flag it **ready for
+  review** once all checks come back green. The founder always gives final
+  approval.
+- **One PR per logical unit of work.** Don't bundle unrelated changes.
+- **Never have two PRs open for the same work item.** If a PR exists for the
+  current task, push follow-up commits to that branch and note them in the PR
+  description; keep iterating on the existing PR until all checks pass.
+- **Never merge or approve a PR.** The founder reviews and merges. Agents must
+  not run `gh pr merge` or approve reviews.
+- **PR description** must include: (a) a list of **all** code changes in the PR,
+  and (b) the **founder's original intent** in the founder's own framing — the
+  *why*, not just the *what*. Don't include a test plan unless it's an actual
+  automated test that was implemented.
+- **Copilot review comments:** surface each one to the founder before acting;
+  verify what Copilot actually landed against the real branch tip (see
+  AGENTS.md step 5).
+
+## After merge
+
+- **Clean up what shipped:** prune remote-tracking refs, remove the session
+  worktree, delete the local branch. The `.githooks/post-merge` hook automates
+  this on every `git pull` into main (safe forms only — see AGENTS.md step 7).
+
+## Commits
+
+- Conventional-commit style matching the branch type: `feat(scope): …`,
+  `fix(scope): …`, `docs(scope): …`, `chore(scope): …`.

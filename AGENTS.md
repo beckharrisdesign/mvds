@@ -183,18 +183,24 @@ Figma is synced **only when explicitly asked** — not automatically after a cha
 
 Every change rides this lifecycle. The agent owns it end to end — **except the
 final approval, which is always the founder's.** Do not skip a step or wait to be
-re-asked; this is the standing default for the repo.
+re-asked; this is the standing default for the repo. (A portable quick-reference
+mirror lives in [`rules/github-workflow.mdc`](rules/github-workflow.mdc), adapted
+from the experiment-hub rules — keep the two in sync.)
 
 1. ✅ **One feature per branch.** Never bundle unrelated changes. Name the branch
    with a convention that describes the change — `feat/…`, `fix/…`, `docs/…`,
    `chore/…` — and carry that name through to the PR. ❌ Never commit straight to
    `main`.
 2. ✅ **You create and push the PR** for the branch (`gh pr create`), with the
-   branch's naming convention carried into the PR title.
+   branch's naming convention carried into the PR title. Open it as a **draft**
+   while iterating and flag it ready once checks are green. ❌ **Never two open
+   PRs for the same work item** — follow-ups push to the existing branch and get
+   noted in the PR description, until the founder merges.
 3. ✅ **Write a PR description that has both:** (a) a list of **all** the code
    changes in the PR, and (b) a summary of the **founder's original intent** for
    the change, in the founder's own framing as it was explained to you — the
-   *why*, not just the *what*.
+   *why*, not just the *what*. ❌ No test plan unless it's an actual automated
+   test the PR implements.
 4. ✅ **Watch for Copilot review comments/suggestions.** Surface every one to the
    founder for approval first — ❌ never act on them unilaterally — then wait for
    Copilot to resolve them. Evaluate each on its merits against *these* house rules,
