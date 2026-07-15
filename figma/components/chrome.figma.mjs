@@ -36,11 +36,12 @@ export default {
     fill: { var: "background" },
     children: [
       {
+        // No textFill here — the bg axis owns text color (Button precedent:
+        // base children stay colorless, every axis option supplies textFill).
         name: "Label",
         type: "TEXT",
         content: "Chrome",
         textStyle: "Type/Small",
-        textFill: { var: "foreground" },
       },
     ],
   },

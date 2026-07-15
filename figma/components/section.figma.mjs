@@ -40,19 +40,20 @@ export default {
         gap: { var: "space-16" },
         width: { value: 640, resizable: true },
         children: [
+          // No textFill on either text node — the bg axis owns text color
+          // (Button precedent: base children stay colorless, every axis
+          // option supplies textFill).
           {
             name: "Heading",
             type: "TEXT",
             content: "Section heading",
             textStyle: "Type/Heading 2",
-            textFill: { var: "foreground" },
           },
           {
             name: "Body",
             type: "TEXT",
             content: "Content band copy — Sections stack top-to-bottom to build a page.",
             textStyle: "Type/Body",
-            textFill: { var: "foreground" },
           },
         ],
       },
