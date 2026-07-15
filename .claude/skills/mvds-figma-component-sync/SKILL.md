@@ -106,6 +106,19 @@ branch-review description. Nothing else changes.)
    same content as markdown in chat: repo commit SHA, per-component
    added/renamed/rebound/removed/raw-fallback lists. Tell the founder explicitly:
    review, then **Publish library** with this text as the version description.
+   **One standalone frame per change — NEVER append to an existing report.** The
+   founder copy-pastes a whole report as the publish description, so a report's
+   content is frozen the moment it may have been published; follow-up work the
+   same day gets its own frame with a sequence suffix (`Sync Report — YYYY-MM-DD
+   · 2`). (Rule from founder feedback 2026-07-15, after an appended addendum
+   landed inside an already-published report.)
+   **Every report frame goes INSIDE the "Sync Reports" container** (auto-layout
+   wrap frame, `syncReports.$container` in the lock — currently `316:9`), never
+   loose on the page — inserted **newest-first**: `container.insertChild(0,
+   reportFrame)` so the latest report is the first thing the founder sees. If
+   the container has moved/renamed, adopt the page's wrap frame that holds the
+   prior reports and repair the lock. (Founder feedback 2026-07-15 — the day's
+   reports had been left as page-level floaters.)
 6. **Validate.**
    - Re-read each set: variant count = product of non-skipped axis options
      (today: Button 72, Badge 6, Card 2); spot-check tricky bindings — the
@@ -128,5 +141,8 @@ branch-review description. Nothing else changes.)
 - Hover/focus/active states — code-only (see `figma/conventions.mjs`).
 - Publishing the library — always the founder's click, never the agent's.
 - The hand-built specimen boards and swatch frames — only touch if asked.
-- Layout primitives (Stack/Inline/Grid) — they map to auto-layout settings,
-  not components; don't mirror them as component sets.
+- Flow layout primitives (Stack/Inline/Grid/Container/Spacer) — they map to
+  auto-layout settings, not components; don't mirror them as component sets.
+  The SPATIAL primitives (Chrome/Section/Layer) are the exception — they are
+  visual surfaces and ARE mirrored (founder decision 2026-07-15; Section pins
+  its innerSize axis to xl to avoid the Button-scale variant explosion).

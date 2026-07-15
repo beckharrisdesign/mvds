@@ -114,6 +114,18 @@ export const conventions = {
     "rounded-4xl": { px: 26 },
   },
 
+  // ---- Spatial tokens — chrome dimensions & z-layers --------------------------
+  // Chrome dimension tokens (--chrome-top-height etc.) are FLOAT variables in
+  // the Scales collection, Sizing/ group, scoped WIDTH_HEIGHT — Chrome variant
+  // heights/widths bind them, so a rebrand's structural proportions flow to
+  // Figma. Z-layer tokens (--z-chrome … --z-toast) also live as Sizing/z-*
+  // FLOAT variables but are DOCUMENTATION-ONLY: Figma cannot express stacking
+  // (layer order does), so they carry empty scopes ([]) and bind to nothing.
+  spatial: {
+    chrome: "chrome-{edge}-{dim} → Sizing/chrome-{edge}-{dim} (Scales, WIDTH_HEIGHT)",
+    zLayers: "z-{level} → Sizing/z-{level} (Scales, scopes [] — doc-only)",
+  },
+
   // ---- Layer naming -----------------------------------------------------------
   // Child layers are named after the code subcomponent or role, capitalized:
   // Header, Title, Description, Action, Content, Footer, Label, Icon. Variant
