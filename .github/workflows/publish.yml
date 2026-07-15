@@ -4,9 +4,10 @@ name: Publish
 # push, or on demand via workflow_dispatch. The tag must match the version in
 # package.json — the workflow enforces this before publishing.
 #
-# Requires the NPM_TOKEN repo secret: an npmjs.com granular automation token
-# with read/write on the @beckharrisdesign scope. Consumers need NO auth —
-# that is the point (GitHub Packages requires a token even for public reads).
+# Auth is npm Trusted Publishing (OIDC): the job proves its identity to npm
+# directly — no long-lived token, no 2FA bypass (npm is phasing those out).
+# One-time setup: npmjs.com -> package -> Settings -> Trusted Publisher ->
+# GitHub Actions (repo beckharrisdesign/mvds, workflow publish.yml).
 #
 # To release:
 #   1. Bump version in package.json (+ CHANGELOG if maintained).
@@ -44,6 +45,10 @@ jobs:
           registry-url: "https://registry.npmjs.org"
           scope: "@beckharrisdesign"
 
+      # Trusted publishing needs npm >= 11.5.1; Node 22 ships an older npm.
+      - name: Update npm for trusted publishing
+        run: npm install -g npm@latest
+
       - name: Install dependencies
         run: npm ci
 
@@ -62,7 +67,6 @@ jobs:
           echo "Version verified: $PKG_VERSION"
 
       # prepack hook runs build:lib (tsup) automatically — no explicit step needed.
+      # OIDC auth — provenance is generated automatically with trusted publishing.
       - name: Publish to npm
-        run: npm publish --provenance --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --access public
