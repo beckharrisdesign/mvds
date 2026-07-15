@@ -296,8 +296,10 @@
     "Sizing/z-toast": "VariableID:399:38"
   },
   "syncReports": {
+    "$comment": "One standalone report frame per change/publish cycle — never appended to after publish; same-day follow-ups get a -N suffix.",
     "2026-06-19": "291:2",
     "2026-06-21": "320:2",
-    "2026-07-15": "477:2"
+    "2026-07-15": "477:2",
+    "2026-07-15-2": "485:39"
   }
 }

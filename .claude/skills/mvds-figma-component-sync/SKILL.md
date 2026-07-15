@@ -106,6 +106,12 @@ branch-review description. Nothing else changes.)
    same content as markdown in chat: repo commit SHA, per-component
    added/renamed/rebound/removed/raw-fallback lists. Tell the founder explicitly:
    review, then **Publish library** with this text as the version description.
+   **One standalone frame per change — NEVER append to an existing report.** The
+   founder copy-pastes a whole report as the publish description, so a report's
+   content is frozen the moment it may have been published; follow-up work the
+   same day gets its own frame with a sequence suffix (`Sync Report — YYYY-MM-DD
+   · 2`). (Rule from founder feedback 2026-07-15, after an appended addendum
+   landed inside an already-published report.)
 6. **Validate.**
    - Re-read each set: variant count = product of non-skipped axis options
      (today: Button 72, Badge 6, Card 2); spot-check tricky bindings — the
