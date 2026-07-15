@@ -112,6 +112,12 @@ branch-review description. Nothing else changes.)
    same day gets its own frame with a sequence suffix (`Sync Report — YYYY-MM-DD
    · 2`). (Rule from founder feedback 2026-07-15, after an appended addendum
    landed inside an already-published report.)
+   **Every report frame goes INSIDE the "Sync Reports" container** (auto-layout
+   wrap frame, `syncReports.$container` in the lock — currently `316:9`), never
+   loose on the page: `container.appendChild(reportFrame)` and let the wrap
+   place it. If the container has moved/renamed, adopt the page's wrap frame
+   that holds the prior reports and repair the lock. (Founder feedback
+   2026-07-15 — the day's reports had been left as page-level floaters.)
 6. **Validate.**
    - Re-read each set: variant count = product of non-skipped axis options
      (today: Button 72, Badge 6, Card 2); spot-check tricky bindings — the
