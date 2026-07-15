@@ -1,14 +1,18 @@
 name: Publish
 
-# Publishes @beckharrisdesign/mvds to GitHub Packages on a version tag push,
-# or on demand via workflow_dispatch. The tag must match the version in
+# Publishes @beckharrisdesign/mvds to the PUBLIC npm registry on a version tag
+# push, or on demand via workflow_dispatch. The tag must match the version in
 # package.json — the workflow enforces this before publishing.
+#
+# Requires the NPM_TOKEN repo secret: an npmjs.com granular automation token
+# with read/write on the @beckharrisdesign scope. Consumers need NO auth —
+# that is the point (GitHub Packages requires a token even for public reads).
 #
 # To release:
 #   1. Bump version in package.json (+ CHANGELOG if maintained).
 #   2. Commit: git commit -m "chore: release vX.Y.Z"
 #   3. Tag:    git tag vX.Y.Z && git push origin vX.Y.Z
-#   The workflow fires automatically and publishes to npm.pkg.github.com.
+#   The workflow fires automatically and publishes to registry.npmjs.org.
 #
 # Manual publish (e.g. re-publish same version after a workflow fix):
 #   Actions → Publish → Run workflow → pick branch/tag.
@@ -27,17 +31,17 @@ jobs:
     timeout-minutes: 15
     permissions:
       contents: read
-      packages: write
+      id-token: write # npm --provenance attestation
 
     steps:
       - uses: actions/checkout@v5
 
-      - name: Set up Node (GitHub Packages registry)
+      - name: Set up Node (public npm registry)
         uses: actions/setup-node@v5
         with:
           node-version: 22
           cache: npm
-          registry-url: "https://npm.pkg.github.com"
+          registry-url: "https://registry.npmjs.org"
           scope: "@beckharrisdesign"
 
       - name: Install dependencies
@@ -58,7 +62,7 @@ jobs:
           echo "Version verified: $PKG_VERSION"
 
       # prepack hook runs build:lib (tsup) automatically — no explicit step needed.
-      - name: Publish to GitHub Packages
-        run: npm publish
+      - name: Publish to npm
+        run: npm publish --provenance --access public
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
