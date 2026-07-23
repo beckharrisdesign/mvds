@@ -202,6 +202,26 @@ const worstLevel = (statuses) =>
   statuses.reduce((a, s) => (WORST[s.level] > WORST[a] ? s.level : a), "success")
 
 // --- cards ------------------------------------------------------------------------
+// The principles, in full, for the landing page's first-class section. Carries
+// provenance so a reader can tell what MVDS asserts on its own authority from
+// what it adopted from published work — and follow the citation either way.
+const principleRecords = principles.map((p) => ({
+  id: p.id,
+  description: p.description,
+  rationale: p.rationale,
+  fix: p.fix,
+  severity: p.severity,
+  enforcement: p.check.kind === "guiding" ? "judgment" : "automated",
+  checkKind: p.check.kind,
+  docs: p.docs ?? null,
+  source: {
+    kind: p.source.kind,
+    name: p.source.name,
+    url: p.source.url ?? null,
+    ref: p.source.ref ?? null,
+  },
+}))
+
 const principlesCard = {
   id: "principles",
   name: "Principles",
@@ -211,10 +231,17 @@ const principlesCard = {
     "Golden rules encoded as data — machine-enforced by check:principles and the edit-guard hook.",
   counts: [
     { label: "principles", value: principles.length },
-    { label: "enabled", value: principles.filter((p) => p.enabled).length },
     {
-      label: "error severity",
-      value: principles.filter((p) => p.severity === "error").length,
+      label: "automated",
+      value: principleRecords.filter((p) => p.enforcement === "automated").length,
+    },
+    {
+      label: "by judgment",
+      value: principleRecords.filter((p) => p.enforcement === "judgment").length,
+    },
+    {
+      label: "externally sourced",
+      value: principleRecords.filter((p) => p.source.kind === "external").length,
     },
   ],
   status: { level: "neutral", label: "code-only", detail: "No Figma mapping applies." },
@@ -371,6 +398,7 @@ const snapshot = {
     commitsBehind,
   },
   gates,
+  principles: principleRecords,
   manifests: [
     principlesCard,
     componentsCard,

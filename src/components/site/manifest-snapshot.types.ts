@@ -47,6 +47,35 @@ export interface Gate {
   status: ManifestStatus
 }
 
+/**
+ * A design principle, with its provenance.
+ *
+ * `enforcement` is the honest half: `automated` means a check fails the build,
+ * `judgment` means it is upheld by the people and agents doing the work. Both
+ * are real rules; only one is mechanised, and the page says which is which.
+ *
+ * `source.kind` separates what MVDS asserts on its own authority (`founder`)
+ * from what it adopted from published work (`external`, always with a URL).
+ */
+export interface PrincipleRecord {
+  id: string
+  description: string
+  rationale: string
+  fix: string
+  severity: Severity
+  enforcement: "automated" | "judgment"
+  checkKind: string
+  docs: string | null
+  source: {
+    kind: "founder" | "external"
+    name: string
+    url: string | null
+    ref: string | null
+  }
+}
+
+export type Severity = "error" | "warn" | "off"
+
 export interface ManifestSnapshot {
   generatedAt: string
   commit: string
@@ -58,5 +87,6 @@ export interface ManifestSnapshot {
     commitsBehind: number | null
   }
   gates: Gate[]
+  principles: PrincipleRecord[]
   manifests: ManifestCard[]
 }

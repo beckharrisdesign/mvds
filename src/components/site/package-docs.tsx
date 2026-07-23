@@ -3,9 +3,9 @@ import { Button } from "@/components/ui/button"
 import { Grid, Inline, Stack } from "@/components/layout"
 import pkg from "../../../package.json"
 
-const REPO_URL = "https://github.com/beckharrisdesign/mvds"
+import { repoFileUrl, starterUrl } from "./repo-links"
+
 const NPM_URL = "https://www.npmjs.com/package/@beckharrisdesign/mvds"
-const STARTER_URL = `${REPO_URL}/tree/main/examples/starter`
 
 /**
  * PackageDocs — the install path, as it actually is: public npm, no auth.
@@ -48,7 +48,7 @@ function CodeBlock({ code }: { code: string }) {
   )
 }
 
-function PackageDocs() {
+function PackageDocs({ commit }: { commit: string }) {
   return (
     <Stack gap={32}>
       <Stack gap={8}>
@@ -76,7 +76,7 @@ function PackageDocs() {
         <Inline gap={8} align="center" justify="between" wrap>
           <h2 className="text-h3">Quick start</h2>
           <a
-            href={`${REPO_URL}/blob/main/docs/CONSUMING.md`}
+            href={repoFileUrl(commit, "docs/CONSUMING.md")}
             target="_blank"
             rel="noopener noreferrer"
             className="text-small text-muted-foreground hover:text-foreground"
@@ -117,7 +117,11 @@ function PackageDocs() {
         </Stack>
         <Inline gap={8} wrap>
           <Button variant="outline" size="sm" asChild>
-            <a href={STARTER_URL} target="_blank" rel="noopener noreferrer">
+            <a
+              href={starterUrl(commit)}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               Open the starter →
             </a>
           </Button>

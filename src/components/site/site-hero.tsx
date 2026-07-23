@@ -3,7 +3,8 @@ import { Button } from "@/components/ui/button"
 import { Inline, Stack } from "@/components/layout"
 import pkg from "../../../package.json"
 
-const REPO_URL = "https://github.com/beckharrisdesign/mvds"
+import { starterUrl } from "./repo-links"
+
 const NPM_URL = "https://www.npmjs.com/package/@beckharrisdesign/mvds"
 
 /**
@@ -11,10 +12,16 @@ const NPM_URL = "https://www.npmjs.com/package/@beckharrisdesign/mvds"
  * makes it different, then routes to the two things a visitor actually wants:
  * the gallery (look at it) and the install (use it).
  *
- * `storybookHref` is injected rather than read from import.meta.env so the
- * story can render deterministically.
+ * `storybookHref` and `commit` are injected rather than read from
+ * import.meta.env / the snapshot so the story renders deterministically.
  */
-function SiteHero({ storybookHref }: { storybookHref: string }) {
+function SiteHero({
+  storybookHref,
+  commit,
+}: {
+  storybookHref: string
+  commit: string
+}) {
   return (
     <Stack gap={24} align="start">
       <Inline gap={8} align="center">
@@ -42,11 +49,7 @@ function SiteHero({ storybookHref }: { storybookHref: string }) {
           </a>
         </Button>
         <Button variant="outline" asChild>
-          <a
-            href={`${REPO_URL}/tree/main/examples/starter`}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+          <a href={starterUrl(commit)} target="_blank" rel="noopener noreferrer">
             Copy the starter app
           </a>
         </Button>

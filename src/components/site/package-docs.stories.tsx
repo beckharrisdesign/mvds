@@ -6,6 +6,9 @@ const meta = {
   title: "Site/PackageDocs",
   component: PackageDocs,
   tags: ["autodocs", "!dev"],
+  args: {
+    commit: "abc1234",
+  },
 } satisfies Meta<typeof PackageDocs>
 
 export default meta

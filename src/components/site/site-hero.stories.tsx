@@ -13,6 +13,7 @@ const meta = {
   tags: ["autodocs", "!dev"],
   args: {
     storybookHref: "https://example.com/storybook/",
+    commit: "abc1234",
   },
 } satisfies Meta<typeof SiteHero>
 

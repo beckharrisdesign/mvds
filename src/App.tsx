@@ -10,6 +10,8 @@ import {
 } from "@/components/layout"
 import { SiteHero } from "@/components/site/site-hero"
 import { VerificationPanel } from "@/components/site/verification-panel"
+import { PrinciplesPanel } from "@/components/site/principles-panel"
+import { figmaUrl, REPO_URL } from "@/components/site/repo-links"
 import { PackageDocs } from "@/components/site/package-docs"
 import { ManifestDashboard } from "@/components/site/manifest-dashboard"
 import type { ManifestSnapshot } from "@/components/site/manifest-snapshot.types"
@@ -17,7 +19,6 @@ import snapshotData from "@/generated/manifest-snapshot.json"
 
 const snapshot = snapshotData as unknown as ManifestSnapshot
 
-const REPO_URL = "https://github.com/beckharrisdesign/mvds"
 const STORYBOOK_HREF = import.meta.env.DEV
   ? "http://localhost:6006"
   : "/storybook/"
@@ -43,10 +44,22 @@ function App() {
       >
         <Container size="xl" className="h-full">
           <Inline gap={8} justify="between" align="center" className="h-full">
-            <h1 className="text-h4">MVDS</h1>
+            {/* A wordmark, not the page heading — the hero owns the single h1. */}
+            <span className="text-h4 font-semibold">MVDS</span>
             <Inline gap={8}>
               <Button variant="outline" size="sm" onClick={toggleTheme}>
                 {dark ? "Light" : "Dark"} mode
+              </Button>
+              {/* Built from the lock's fileKey, so it can only point at the
+                  Figma file the sync actually wrote to. */}
+              <Button variant="outline" size="sm" asChild>
+                <a
+                  href={figmaUrl(snapshot.lock.fileKey)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Figma ↗
+                </a>
               </Button>
               <Button variant="outline" size="sm" asChild>
                 <a href={REPO_URL} target="_blank" rel="noopener noreferrer">
@@ -69,18 +82,25 @@ function App() {
 
       <main>
         <Section py={64}>
-          <SiteHero storybookHref={STORYBOOK_HREF} />
+          <SiteHero
+            storybookHref={STORYBOOK_HREF}
+            commit={snapshot.commit}
+          />
         </Section>
 
         <Section bg="card" py={64}>
-          <VerificationPanel gates={snapshot.gates} commit={snapshot.commit} />
+          <PrinciplesPanel principles={snapshot.principles} />
         </Section>
 
         <Section py={64}>
-          <PackageDocs />
+          <VerificationPanel gates={snapshot.gates} commit={snapshot.commit} />
         </Section>
 
         <Section bg="card" py={64}>
+          <PackageDocs commit={snapshot.commit} />
+        </Section>
+
+        <Section py={64}>
           <ManifestDashboard snapshot={snapshot} />
         </Section>
       </main>

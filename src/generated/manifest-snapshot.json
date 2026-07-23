@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-07-23T10:57:53-05:00",
-  "commit": "11da9eb",
+  "generatedAt": "2026-07-23T11:02:21-05:00",
+  "commit": "05b9643",
   "dirty": true,
   "lock": {
     "fileKey": "C20nU0mROzk3Zr0I9BELJF",
     "syncedAt": "2026-07-15",
     "syncedFromCommit": "50019850fd9e8695cb50bdcfb63e7bd12cda41c7",
-    "commitsBehind": 22
+    "commitsBehind": 23
   },
   "gates": [
     {
@@ -27,7 +27,7 @@
       "detail": "The golden rules, machine-enforced from the principle manifest.",
       "command": "npm run check:principles",
       "verifiedAt": "build",
-      "result": "67 files clear 7 enabled MVDS principles (light + dark).",
+      "result": "70 files clear 7 enforced MVDS principles (light + dark) (+5 guiding, by judgment).",
       "status": {
         "level": "success",
         "label": "passing"
@@ -70,6 +70,200 @@
       }
     }
   ],
+  "principles": [
+    {
+      "id": "no-hardcoded-color",
+      "description": "No hardcoded color — use the token utilities.",
+      "rationale": "Color must flow through the token layer so it themes per context. AGENTS.md: never a generic Tailwind palette (text-slate-*), hex, or bg-white. The gray/primary/secondary ramps ARE tokens (src/index.css scales), so gray-* passes.",
+      "fix": "Use bg-background / text-foreground / text-muted-foreground, the semantic triad (success / neutral / destructive), or a scale-ramp step (gray-* / primary-* / secondary-*).",
+      "severity": "error",
+      "enforcement": "automated",
+      "checkKind": "forbid-source",
+      "docs": "AGENTS.md (Golden rules — Color via tokens)",
+      "source": {
+        "kind": "founder",
+        "name": "MVDS house rules",
+        "url": "https://github.com/beckharrisdesign/mvds/blob/main/AGENTS.md",
+        "ref": null
+      }
+    },
+    {
+      "id": "no-margin-spacing",
+      "description": "No margins for spacing — space siblings via the parent primitive's gap.",
+      "rationale": "Spacing is one number in one place (the parent's gap). AGENTS.md: the only sanctioned margin is mx-auto to center a Container.",
+      "fix": "Remove the margin; wrap siblings in <Stack gap> / <Inline gap> / <Grid gap>. To center a Container, mx-auto is allowed.",
+      "severity": "error",
+      "enforcement": "automated",
+      "checkKind": "forbid-classname",
+      "docs": "AGENTS.md (Golden rules — Gap is the ONLY way to space siblings)",
+      "source": {
+        "kind": "founder",
+        "name": "MVDS house rules",
+        "url": "https://github.com/beckharrisdesign/mvds/blob/main/AGENTS.md",
+        "ref": null
+      }
+    },
+    {
+      "id": "no-raw-flex-grid",
+      "description": "No raw flex/grid layout utilities outside the layout primitives.",
+      "rationale": "Layout is owned by Stack/Inline/Grid. AGENTS.md: never raw flex/grid utilities for layout.",
+      "fix": "Use a layout primitive: <Stack>/<Inline> (flex) or <Grid> (grid) from src/components/layout.",
+      "severity": "error",
+      "enforcement": "automated",
+      "checkKind": "forbid-classname",
+      "docs": "AGENTS.md (Golden rules — Never raw flex/grid utilities for layout)",
+      "source": {
+        "kind": "founder",
+        "name": "MVDS house rules",
+        "url": "https://github.com/beckharrisdesign/mvds/blob/main/AGENTS.md",
+        "ref": null
+      }
+    },
+    {
+      "id": "story-coverage-ui",
+      "description": "Every UI component has a co-located *.stories.tsx.",
+      "rationale": "Storybook is the verification gate. AGENTS.md: one story file per UI component.",
+      "fix": "Add a co-located *.stories.tsx enumerating every variant/state in light + dark.",
+      "severity": "error",
+      "enforcement": "automated",
+      "checkKind": "require-sibling-file",
+      "docs": "AGENTS.md (Storybook — first-class verification surface)",
+      "source": {
+        "kind": "founder",
+        "name": "MVDS house rules",
+        "url": "https://github.com/beckharrisdesign/mvds/blob/main/AGENTS.md",
+        "ref": null
+      }
+    },
+    {
+      "id": "story-coverage-site",
+      "description": "Every site section component has a co-located *.stories.tsx.",
+      "rationale": "Storybook is the verification gate for site/ sections (the landing-page surface) exactly as for ui/ components.",
+      "fix": "Add a co-located *.stories.tsx exercising the section in light + dark.",
+      "severity": "error",
+      "enforcement": "automated",
+      "checkKind": "require-sibling-file",
+      "docs": "AGENTS.md (Storybook — first-class verification surface)",
+      "source": {
+        "kind": "founder",
+        "name": "MVDS house rules",
+        "url": "https://github.com/beckharrisdesign/mvds/blob/main/AGENTS.md",
+        "ref": null
+      }
+    },
+    {
+      "id": "story-coverage-layout",
+      "description": "Every layout primitive is covered by the shared layout story.",
+      "rationale": "AGENTS.md: a cohesive primitive family may share one story (layout.stories.tsx) rather than one per file.",
+      "fix": "Cover the primitive in src/components/layout/layout.stories.tsx (the shared family story).",
+      "severity": "error",
+      "enforcement": "automated",
+      "checkKind": "require-sibling-file",
+      "docs": "AGENTS.md (Storybook — a cohesive primitive family may share one story)",
+      "source": {
+        "kind": "founder",
+        "name": "MVDS house rules",
+        "url": "https://github.com/beckharrisdesign/mvds/blob/main/AGENTS.md",
+        "ref": null
+      }
+    },
+    {
+      "id": "story-coverage-blocks",
+      "description": "Every content block primitive is covered by the shared blocks story.",
+      "rationale": "AGENTS.md: a cohesive primitive family may share one story (blocks.stories.tsx) rather than one per file.",
+      "fix": "Cover the primitive in src/components/blocks/blocks.stories.tsx (the shared family story).",
+      "severity": "error",
+      "enforcement": "automated",
+      "checkKind": "require-sibling-file",
+      "docs": "AGENTS.md (Storybook — a cohesive primitive family may share one story)",
+      "source": {
+        "kind": "founder",
+        "name": "MVDS house rules",
+        "url": "https://github.com/beckharrisdesign/mvds/blob/main/AGENTS.md",
+        "ref": null
+      }
+    },
+    {
+      "id": "consistency-and-standards",
+      "description": "One concept, one expression — a thing that behaves the same should look the same everywhere.",
+      "rationale": "This is the whole argument for a token layer and a fixed variant set. Every ad-hoc value is a second dialect a reader has to learn, and an agent has to guess between. The mechanical half is enforced (no-hardcoded-color, no-raw-flex-grid); the judgment half is deciding when a genuinely new case deserves a new variant instead of a one-off.",
+      "fix": "Before adding a variant or a bespoke style, find the existing expression of the same idea and reuse it. If none fits, add it to the system rather than to the screen.",
+      "severity": "error",
+      "enforcement": "judgment",
+      "checkKind": "guiding",
+      "docs": "AGENTS.md (Golden rules)",
+      "source": {
+        "kind": "external",
+        "name": "Nielsen Norman Group",
+        "url": "https://www.nngroup.com/articles/ten-usability-heuristics/",
+        "ref": "Heuristic 4: Consistency and standards"
+      }
+    },
+    {
+      "id": "aesthetic-and-minimalist-design",
+      "description": "Every element competes for attention with every other one — so carry no surface you cannot justify.",
+      "rationale": "Why the component set is deliberately tiny and why pre-1.0 MVDS deletes rather than deprecates. Unused variants are not free: they dilute the signal of the ones that matter and enlarge the space an agent chooses from.",
+      "fix": "Cut it. If a variant, prop, or export is not earning its place, remove it outright — there are no external consumers to protect yet.",
+      "severity": "error",
+      "enforcement": "judgment",
+      "checkKind": "guiding",
+      "docs": "AGENTS.md (Pre-1.0: breaking changes are fine)",
+      "source": {
+        "kind": "external",
+        "name": "Nielsen Norman Group",
+        "url": "https://www.nngroup.com/articles/ten-usability-heuristics/",
+        "ref": "Heuristic 8: Aesthetic and minimalist design"
+      }
+    },
+    {
+      "id": "visibility-of-system-status",
+      "description": "The system tells you what it knows about itself, in time to matter.",
+      "rationale": "The reason this landing page reports gate results and sync state rather than claiming quality in prose. A drifted mirror or a failing check should be legible at a glance and distinguishable from the expected state — which is why the status triad separates 'trailing by design' from 'genuinely disagrees'.",
+      "fix": "Surface real state from a generated source. Never hand-write a status that could go stale without anything failing.",
+      "severity": "error",
+      "enforcement": "judgment",
+      "checkKind": "guiding",
+      "docs": "AGENTS.md (Storybook — first-class verification surface)",
+      "source": {
+        "kind": "external",
+        "name": "Nielsen Norman Group",
+        "url": "https://www.nngroup.com/articles/ten-usability-heuristics/",
+        "ref": "Heuristic 1: Visibility of system status"
+      }
+    },
+    {
+      "id": "error-prevention",
+      "description": "Make the wrong thing impossible to express, rather than catching it later.",
+      "rationale": "Why primitive props are typed to the 8-grid: gap={12} is a compile error, not a review comment. Prevention beats detection beats documentation, in that order — the principles gate and the edit-guard hook exist for the cases the type system cannot reach.",
+      "fix": "Prefer a narrowed type or a constrained prop over a lint rule; prefer a lint rule over a line in the docs.",
+      "severity": "error",
+      "enforcement": "judgment",
+      "checkKind": "guiding",
+      "docs": "AGENTS.md (Spacing — the 8 grid)",
+      "source": {
+        "kind": "external",
+        "name": "Nielsen Norman Group",
+        "url": "https://www.nngroup.com/articles/ten-usability-heuristics/",
+        "ref": "Heuristic 5: Error prevention"
+      }
+    },
+    {
+      "id": "recognition-rather-than-recall",
+      "description": "Names should say what they mean, so nobody has to hold a mapping in their head.",
+      "rationale": "Why the type ramp is semantic (text-h1, not text-2xl font-bold) and why primitive props take pixels (gap={16}, not gap-4 meaning 16px). A name that must be translated before use is a name that will be used wrongly — by a person at 5pm, and by an agent every time.",
+      "fix": "Name for the intent, not the implementation. If a value needs a comment to explain what it maps to, the name is wrong.",
+      "severity": "error",
+      "enforcement": "judgment",
+      "checkKind": "guiding",
+      "docs": "AGENTS.md (Golden rules — Type via the semantic ramp)",
+      "source": {
+        "kind": "external",
+        "name": "Nielsen Norman Group",
+        "url": "https://www.nngroup.com/articles/ten-usability-heuristics/",
+        "ref": "Heuristic 6: Recognition rather than recall"
+      }
+    }
+  ],
   "manifests": [
     {
       "id": "principles",
@@ -80,15 +274,19 @@
       "counts": [
         {
           "label": "principles",
+          "value": 12
+        },
+        {
+          "label": "automated",
           "value": 7
         },
         {
-          "label": "enabled",
-          "value": 7
+          "label": "by judgment",
+          "value": 5
         },
         {
-          "label": "error severity",
-          "value": 7
+          "label": "externally sourced",
+          "value": 5
         }
       ],
       "status": {
@@ -124,6 +322,26 @@
         {
           "name": "story-coverage-blocks",
           "meta": "require-sibling-file · error"
+        },
+        {
+          "name": "consistency-and-standards",
+          "meta": "guiding · error"
+        },
+        {
+          "name": "aesthetic-and-minimalist-design",
+          "meta": "guiding · error"
+        },
+        {
+          "name": "visibility-of-system-status",
+          "meta": "guiding · error"
+        },
+        {
+          "name": "error-prevention",
+          "meta": "guiding · error"
+        },
+        {
+          "name": "recognition-rather-than-recall",
+          "meta": "guiding · error"
         }
       ]
     },
@@ -342,7 +560,7 @@
       ],
       "status": {
         "level": "neutral",
-        "label": "22 commits behind",
+        "label": "23 commits behind",
         "detail": "Synced 2026-07-15 from 50019850fd9e8695cb50bdcfb63e7bd12cda41c7 — code-first, the mirror trails until the next requested sync."
       }
     },
