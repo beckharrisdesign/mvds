@@ -35,9 +35,13 @@ const STEPS = [
 function CodeBlock({ code }: { code: string }) {
   return (
     // tabIndex={0}: scrollable regions must be keyboard-reachable (axe: scrollable-region-focusable)
+    //
+    // p-4 is 16px. The previous px-16/py-12 read as MVDS px props but are
+    // Tailwind steps — 64px and 48px — which is why the snippets sat marooned
+    // in the middle of their block.
     <pre
       tabIndex={0}
-      className="bg-muted text-small overflow-x-auto rounded px-16 py-12 font-mono whitespace-pre-wrap"
+      className="bg-muted text-small overflow-x-auto rounded p-4 font-mono whitespace-pre-wrap"
     >
       {code}
     </pre>
