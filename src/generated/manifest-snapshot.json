@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-07-15T18:44:24-05:00",
-  "commit": "dcc4f08",
-  "dirty": true,
+  "generatedAt": "2026-07-23T10:57:40-05:00",
+  "commit": "b12c971",
+  "dirty": false,
   "lock": {
     "fileKey": "C20nU0mROzk3Zr0I9BELJF",
     "syncedAt": "2026-07-15",
     "syncedFromCommit": "50019850fd9e8695cb50bdcfb63e7bd12cda41c7",
-    "commitsBehind": 20
+    "commitsBehind": 21
   },
   "gates": [
     {
@@ -27,7 +27,7 @@
       "detail": "The golden rules, machine-enforced from the principle manifest.",
       "command": "npm run check:principles",
       "verifiedAt": "build",
-      "result": "68 files clear 7 enabled MVDS principles (light + dark).",
+      "result": "67 files clear 7 enabled MVDS principles (light + dark).",
       "status": {
         "level": "success",
         "label": "passing"
@@ -342,7 +342,7 @@
       ],
       "status": {
         "level": "neutral",
-        "label": "20 commits behind",
+        "label": "21 commits behind",
         "detail": "Synced 2026-07-15 from 50019850fd9e8695cb50bdcfb63e7bd12cda41c7 — code-first, the mirror trails until the next requested sync."
       }
     },
