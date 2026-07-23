@@ -1,0 +1,26 @@
+{
+  "name": "mvds-starter",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "Minimal consuming app for @beckharrisdesign/mvds — copy this directory to start an experiment.",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@beckharrisdesign/mvds": "^0.2.0",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.3.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.1",
+    "tailwindcss": "^4.3.0",
+    "typescript": "~6.0.2",
+    "vite": "^8.0.12"
+  }
+}

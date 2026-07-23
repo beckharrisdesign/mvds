@@ -82,14 +82,21 @@ function ManifestCard({ manifest }: { manifest: ManifestCardData }) {
 
 function ManifestDashboard({ snapshot }: { snapshot: ManifestSnapshot }) {
   return (
-    <Stack gap={16}>
-      <Stack gap={4}>
-        <h2 className="text-h3">Manifests</h2>
-        <Inline gap={8} align="center">
+    <Stack gap={24}>
+      <Stack gap={8}>
+        <h2 className="text-h2">What the system knows about itself</h2>
+        <p className="text-body text-muted-foreground max-w-prose">
+          Every manifest in the repo, with its real counts and its code-vs-Figma
+          state. Code is the single source of truth and Figma is a generated
+          mirror synced only on request — so a lock that trails HEAD is the{" "}
+          <em>designed</em> state, not a fault. Amber means the mirror has yet to
+          catch up; only red means something genuinely disagrees.
+        </p>
+        <Inline gap={8} align="center" wrap>
           <p className="text-caption text-muted-foreground">
             Generated {snapshot.generatedAt.slice(0, 10)} · commit{" "}
             {snapshot.commit} · Figma synced {snapshot.lock.syncedAt} from{" "}
-            {snapshot.lock.syncedFromCommit}
+            {snapshot.lock.syncedFromCommit.slice(0, 7)}
           </p>
           {snapshot.dirty && (
             <Badge variant="neutral">uncommitted changes</Badge>

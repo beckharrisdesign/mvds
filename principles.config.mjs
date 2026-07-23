@@ -12,6 +12,11 @@
 
 // Reusable scope globs.
 const SRC = "src/**/*.{ts,tsx}"
+// The starter app under examples/ is held to the same style rules as the system:
+// it is the code a newcomer copies, so it must model the golden rules, not just
+// describe them. (Story-coverage principles stay scoped to src/ — the starter is
+// a consuming app, not DS surface, so it ships no stories.)
+const EXAMPLES = "examples/**/*.{ts,tsx}"
 const VENDORED_UI = "src/components/ui/**"
 const LAYOUT = "src/components/layout/**"
 const STORIES = "src/**/*.stories.tsx"
@@ -31,7 +36,7 @@ export const baseManifest = {
       enabled: true,
       // Stories stay IN scope — a specimen must still source color from tokens.
       // Only vendored ui/ (deliberate oklch()/color-mix()) is carved out.
-      scope: { include: [SRC], exclude: [VENDORED_UI] },
+      scope: { include: [SRC, EXAMPLES], exclude: [VENDORED_UI] },
       check: {
         kind: "forbid-source",
         // hex; Tailwind palette color utilities with a numeric step; bg-white/black;
@@ -51,7 +56,7 @@ export const baseManifest = {
         "Spacing is one number in one place (the parent's gap). AGENTS.md: the only sanctioned margin is mx-auto to center a Container.",
       severity: "error",
       enabled: true,
-      scope: { include: [SRC], exclude: [VENDORED_UI, STORIES] },
+      scope: { include: [SRC, EXAMPLES], exclude: [VENDORED_UI, STORIES] },
       check: {
         kind: "forbid-classname",
         // m / mt / mr / mb / ml / mx / my followed by a VALUE (digit, px, or [arb]),
@@ -72,7 +77,7 @@ export const baseManifest = {
       enabled: true,
       // Widest carve-out: vendored ui/, the primitives themselves, and specimen stories
       // are all legitimate flex/grid containers.
-      scope: { include: [SRC], exclude: [VENDORED_UI, LAYOUT, STORIES] },
+      scope: { include: [SRC, EXAMPLES], exclude: [VENDORED_UI, LAYOUT, STORIES] },
       check: {
         kind: "forbid-classname",
         // `flex`/`grid` as a DISPLAY utility only. Lookbehind excludes inline-flex/

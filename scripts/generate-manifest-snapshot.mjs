@@ -85,13 +85,116 @@ const propsOf = (block) =>
   new Set([...block.matchAll(/--([\w-]+)\s*:/g)].map((m) => m[1]))
 const lightProps = propsOf(css.match(/:root\s*\{([\s\S]*?)\n\}/)?.[1] ?? "")
 const darkProps = propsOf(css.match(/\.dark\s*\{([\s\S]*?)\n\}/)?.[1] ?? "")
-// `radius` is a dimension, identical across modes — defined once in :root.
-const MODE_INVARIANT = new Set(["radius"])
+// Mode-INVARIANT tokens are declared once in :root by design, so their absence
+// from .dark is correct — not drift. Three families qualify (see src/index.css):
+//
+//   radius       a dimension, identical in both modes
+//   chrome-*     spatial DNA (bar heights / rail widths) — dimensions, not color
+//   the ramps    gray-* is a fixed black↔white ladder; primary-* / secondary-*
+//                are DERIVED via relative oklch() from their base token, which
+//                re-resolves against whichever mode is active at use time.
+//                Re-declaring them in .dark would defeat that derivation.
+//
+// Everything else must appear in BOTH blocks: a color token present in one mode
+// only is genuine drift and stays destructive.
+const RAMP_STEP = /^(?:gray|primary|secondary)-(?:50|100|200|300|400|500|600|700|800|900|950)$/
+const isModeInvariant = (p) =>
+  p === "radius" || p.startsWith("chrome-") || RAMP_STEP.test(p)
+
 const lightOnly = [...lightProps].filter(
-  (p) => !darkProps.has(p) && !MODE_INVARIANT.has(p)
+  (p) => !darkProps.has(p) && !isModeInvariant(p)
 )
 const darkOnly = [...darkProps].filter((p) => !lightProps.has(p))
 const parityOk = lightOnly.length === 0 && darkOnly.length === 0
+
+// --- gates ------------------------------------------------------------------------
+// The landing page states that MVDS verifies itself. That claim must be EARNED at
+// build time, not typed into a component — so the three fast, hermetic gates are
+// actually executed here and their real exit status is recorded.
+//
+// `npm test` (every story in headless Chromium, light + dark) and
+// `verify:consumer` (a fresh registry install) are deliberately NOT run here:
+// one needs a browser, the other needs the network, and neither belongs in a
+// snapshot regenerated on every build. They are recorded as `ci` gates — a
+// statement about what every PR must pass, which is verifiable in ci.yml, rather
+// than a claim about this particular build.
+function runGate(cmd) {
+  try {
+    const out = execSync(cmd, {
+      cwd: ROOT,
+      stdio: ["ignore", "pipe", "pipe"],
+    }).toString()
+    return { ok: true, out: out.trim() }
+  } catch (err) {
+    return { ok: false, out: (err.stdout?.toString() ?? "").trim() }
+  }
+}
+
+// Pull the summary line the check scripts already print (the one starting ✓/✗).
+const summarize = (out, fallback) =>
+  out
+    .split("\n")
+    .map((l) => l.trim())
+    .filter((l) => l.startsWith("✓") || l.startsWith("✗"))
+    .pop()
+    ?.replace(/^[✓✗]\s*/, "") ?? fallback
+
+const LIVE_GATES = [
+  {
+    id: "contrast",
+    name: "Token contrast",
+    detail: "Every foreground/background pairing at WCAG AA 4.5:1, light + dark.",
+    command: "npm run check:contrast",
+  },
+  {
+    id: "principles",
+    name: "Design principles",
+    detail: "The golden rules, machine-enforced from the principle manifest.",
+    command: "npm run check:principles",
+  },
+  {
+    id: "figma-drift",
+    name: "Figma manifest drift",
+    detail: "Declared component axes checked against their real code sources.",
+    command: "npm run check:figma",
+  },
+]
+
+const gates = LIVE_GATES.map((gate) => {
+  const { ok, out } = runGate(gate.command)
+  return {
+    id: gate.id,
+    name: gate.name,
+    detail: gate.detail,
+    command: gate.command,
+    verifiedAt: "build",
+    result: summarize(out, ok ? "passed" : "failed"),
+    status: ok
+      ? { level: "success", label: "passing" }
+      : { level: "destructive", label: "failing" },
+  }
+}).concat([
+  {
+    id: "stories",
+    name: "Stories · render + a11y",
+    detail:
+      "Every story runs in headless Chromium with axe, in BOTH light and dark.",
+    command: "npm test",
+    verifiedAt: "ci",
+    result: "Required on every pull request.",
+    status: { level: "success", label: "enforced in CI" },
+  },
+  {
+    id: "consumer",
+    name: "Consumer install path",
+    detail:
+      "The published package installed with no auth into examples/starter, built, and its CSS asserted.",
+    command: "npm run verify:consumer",
+    verifiedAt: "ci",
+    result: "Required on every pull request.",
+    status: { level: "success", label: "enforced in CI" },
+  },
+])
 
 // --- status helpers --------------------------------------------------------------
 const WORST = { destructive: 2, neutral: 1, success: 0 }
@@ -267,6 +370,7 @@ const snapshot = {
     syncedFromCommit: lock.syncedFromCommit,
     commitsBehind,
   },
+  gates,
   manifests: [
     principlesCard,
     componentsCard,

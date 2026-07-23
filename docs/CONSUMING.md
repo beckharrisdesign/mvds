@@ -17,54 +17,24 @@ No `tailwind.config.js` is needed — Tailwind v4 is configured entirely from CS
 
 ## 1. Install
 
-### Auth (one-time per machine / CI environment)
-
-The package lives on GitHub Packages (`npm.pkg.github.com`). Add a project-level
-`.npmrc` to tell npm where to find `@beckharrisdesign` scoped packages:
-
-```ini
-# .npmrc  (commit this file; it has no secrets)
-@beckharrisdesign:registry=https://npm.pkg.github.com
-```
-
-Then authenticate. For local dev, use a GitHub PAT with `read:packages` scope:
-
-```bash
-# one-time login — stores the token in ~/.npmrc
-npm login --registry=https://npm.pkg.github.com --scope=@beckharrisdesign
-# Username: your GitHub handle
-# Password: your PAT (not your GH password)
-# Email: your GitHub email
-```
-
-For CI (GitHub Actions), `GITHUB_TOKEN` works automatically — no extra secret needed:
-
-```yaml
-- uses: actions/setup-node@v5
-  with:
-    registry-url: "https://npm.pkg.github.com"
-    scope: "@beckharrisdesign"
-- run: npm ci
-  env:
-    NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-```
-
-**Vercel deploys** — GitHub Packages requires auth even for public packages (this is a GitHub
-constraint, not an MVDS one). Before your first Vercel deploy, add `NODE_AUTH_TOKEN` as an
-environment variable in the Vercel dashboard (Settings → Environment Variables), set to a
-GitHub PAT with `read:packages` scope. Without it the build fails at `npm install` with a 401.
-
-### Install the package
+The package is published to the **public npm registry**. There is no auth step:
+no `.npmrc`, no login, no token — locally, in CI, or on Vercel.
 
 ```bash
 npm install @beckharrisdesign/mvds
 ```
 
+> **Prefer to start from a working app?** [`examples/starter/`](../examples/starter)
+> is a complete, minimal consuming app. Copy the directory, `npm install`,
+> `npm run dev`. CI builds that exact app against the published package on every
+> PR (`npm run verify:consumer`), so it is known-good rather than merely written
+> down.
+
 Pin to a version range in `package.json`:
 
 ```jsonc
 "dependencies": {
-  "@beckharrisdesign/mvds": "^0.1.0"
+  "@beckharrisdesign/mvds": "^0.2.0"
 }
 ```
 
@@ -155,7 +125,7 @@ Never hand-merge a base component. Customization has exactly three layers:
 
 | Symptom | Cause / fix |
 | --- | --- |
-| `npm install` 404 / `ENEEDAUTH` for `@beckharrisdesign/mvds` | Missing `.npmrc` or not logged in — see §1 Auth setup. |
+| `npm install` 404 / `ENEEDAUTH` for `@beckharrisdesign/mvds` | A stale `.npmrc` is redirecting the `@beckharrisdesign` scope to GitHub Packages. The package moved to public npm — delete that line from the project and `~/.npmrc`. |
 | Components render but are unstyled | Missing `@source` line for `dist-lib` — Tailwind never generated the component utilities. |
 | Component or prop "doesn't exist" / stale behavior | Stale `dist-lib`: `( cd ../mvds && npm run build:lib )` then `npm install` in the consumer. |
 | Dark mode never activates | No `.dark` class on a root ancestor — see §3. |

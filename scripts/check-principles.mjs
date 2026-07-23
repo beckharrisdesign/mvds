@@ -61,7 +61,12 @@ function globToRegExp(glob) {
 const matchesAny = (path, globs) => globs.some((g) => globToRegExp(g).test(path))
 
 // --- file enumeration --------------------------------------------------------
-// Walk src/ once; principles filter this set by their own include/exclude globs.
+// Walk the source roots once; principles filter this set by their own
+// include/exclude globs. `examples/` is in the walk so the starter app a
+// newcomer copies is held to the same golden rules as the system itself —
+// a starter that broke the rules would teach them wrong.
+const ROOTS = ["src", "examples"]
+
 function walk(dir, acc = []) {
   for (const name of readdirSync(dir)) {
     if (name === "node_modules" || name === "dist" || name === ".git") continue
@@ -78,7 +83,9 @@ const ALL_FILES = (() => {
     const rel = relative(ROOT, singleFile).split(sep).join("/")
     return [rel]
   }
-  return walk(join(ROOT, "src"))
+  return ROOTS.filter((r) => existsSync(join(ROOT, r))).flatMap((r) =>
+    walk(join(ROOT, r))
+  )
 })()
 
 function filesFor(principle) {

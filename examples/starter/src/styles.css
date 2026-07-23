@@ -1,0 +1,23 @@
+/* The three lines that matter. Everything else in this app is ordinary Vite.
+ *
+ * 1. the MVDS token layer + Tailwind + base styles + Inter, all in one import
+ * 2. let Tailwind scan the installed package, so the utilities the MVDS
+ *    components use are actually generated — WITHOUT this the components
+ *    render unstyled
+ * 3. and this app's own files
+ *
+ * Paths are relative to THIS file (examples/starter/src/styles.css). */
+@import "@beckharrisdesign/mvds/styles.css";
+@source "../node_modules/@beckharrisdesign/mvds/dist-lib/**/*.js";
+@source "./**/*.{ts,tsx}";
+
+/* ---- Brand overrides (optional) -------------------------------------------
+ * Redefine MVDS tokens AFTER the import and they win through the cascade — no
+ * component is touched, and the primary-* / secondary-* ramps re-derive from
+ * the new base automatically. Uncomment to see it happen.
+ * Full recipes: docs/THEMING.md in the MVDS repo. */
+/*
+:root {
+  --primary: oklch(0.55 0.18 265);
+}
+*/

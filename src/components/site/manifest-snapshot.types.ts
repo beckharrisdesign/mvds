@@ -30,6 +30,23 @@ export interface ManifestCard {
   items?: ManifestItem[]
 }
 
+/**
+ * One verification gate. `verifiedAt` distinguishes two very different claims,
+ * and the UI must not blur them:
+ *   "build" — the generator actually ran this command and recorded its result.
+ *   "ci"    — too slow or too impure to run per build (needs a browser or the
+ *             network); enforced on every pull request instead.
+ */
+export interface Gate {
+  id: string
+  name: string
+  detail: string
+  command: string
+  verifiedAt: "build" | "ci"
+  result: string
+  status: ManifestStatus
+}
+
 export interface ManifestSnapshot {
   generatedAt: string
   commit: string
@@ -40,5 +57,6 @@ export interface ManifestSnapshot {
     syncedFromCommit: string
     commitsBehind: number | null
   }
+  gates: Gate[]
   manifests: ManifestCard[]
 }

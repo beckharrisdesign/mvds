@@ -46,7 +46,9 @@ export const LiveSnapshot: Story = {
     snapshot: liveSnapshot as unknown as ManifestSnapshot,
   },
   play: async ({ canvas }) => {
-    await expect(canvas.getByText("Manifests")).toBeInTheDocument()
+    await expect(
+      canvas.getByRole("heading", { name: "What the system knows about itself" })
+    ).toBeInTheDocument()
     await expect(canvas.getByText("principles.config.mjs")).toBeInTheDocument()
   },
 }
