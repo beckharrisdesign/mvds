@@ -88,5 +88,15 @@ export interface ManifestSnapshot {
   }
   gates: Gate[]
   principles: PrincipleRecord[]
+  /**
+   * Checked-in previews of the Figma mirror, or null if none are committed.
+   * The page presence-gates on this: a raw link to the live Figma file 403s for
+   * anyone outside the team, so the shareable artifact is these versioned PNGs.
+   */
+  figmaExports: {
+    fileKey: string
+    capturedAt: string
+    pages: { id: string; name: string; file: string }[]
+  } | null
   manifests: ManifestCard[]
 }

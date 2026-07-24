@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-07-23T11:02:21-05:00",
-  "commit": "05b9643",
+  "generatedAt": "2026-07-23T11:29:03-05:00",
+  "commit": "cf00b02",
   "dirty": true,
   "lock": {
     "fileKey": "C20nU0mROzk3Zr0I9BELJF",
     "syncedAt": "2026-07-15",
     "syncedFromCommit": "50019850fd9e8695cb50bdcfb63e7bd12cda41c7",
-    "commitsBehind": 23
+    "commitsBehind": 24
   },
   "gates": [
     {
@@ -27,7 +27,7 @@
       "detail": "The golden rules, machine-enforced from the principle manifest.",
       "command": "npm run check:principles",
       "verifiedAt": "build",
-      "result": "70 files clear 7 enforced MVDS principles (light + dark) (+5 guiding, by judgment).",
+      "result": "72 files clear 7 enforced MVDS principles (light + dark) (+5 guiding, by judgment).",
       "status": {
         "level": "success",
         "label": "passing"
@@ -264,6 +264,22 @@
       }
     }
   ],
+  "figmaExports": {
+    "fileKey": "C20nU0mROzk3Zr0I9BELJF",
+    "capturedAt": "2026-07-23",
+    "pages": [
+      {
+        "id": "components",
+        "name": "Components",
+        "file": "mvds-components.png"
+      },
+      {
+        "id": "foundations",
+        "name": "Foundations & Starters",
+        "file": "mvds-foundations.png"
+      }
+    ]
+  },
   "manifests": [
     {
       "id": "principles",
@@ -560,7 +576,7 @@
       ],
       "status": {
         "level": "neutral",
-        "label": "23 commits behind",
+        "label": "24 commits behind",
         "detail": "Synced 2026-07-15 from 50019850fd9e8695cb50bdcfb63e7bd12cda41c7 — code-first, the mirror trails until the next requested sync."
       }
     },

@@ -11,7 +11,8 @@ import {
 import { SiteHero } from "@/components/site/site-hero"
 import { VerificationPanel } from "@/components/site/verification-panel"
 import { PrinciplesPanel } from "@/components/site/principles-panel"
-import { figmaUrl, REPO_URL } from "@/components/site/repo-links"
+import { FigmaMirror } from "@/components/site/figma-mirror"
+import { REPO_URL } from "@/components/site/repo-links"
 import { PackageDocs } from "@/components/site/package-docs"
 import { ManifestDashboard } from "@/components/site/manifest-dashboard"
 import type { ManifestSnapshot } from "@/components/site/manifest-snapshot.types"
@@ -50,17 +51,14 @@ function App() {
               <Button variant="outline" size="sm" onClick={toggleTheme}>
                 {dark ? "Light" : "Dark"} mode
               </Button>
-              {/* Built from the lock's fileKey, so it can only point at the
-                  Figma file the sync actually wrote to. */}
-              <Button variant="outline" size="sm" asChild>
-                <a
-                  href={figmaUrl(snapshot.lock.fileKey)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Figma ↗
-                </a>
-              </Button>
+              {/* Jump to the in-page mirror (checked-in previews), not the live
+                  file — which is private and 403s for a shared-link visitor.
+                  Only shown when previews are actually committed. */}
+              {snapshot.figmaExports && (
+                <Button variant="outline" size="sm" asChild>
+                  <a href="#figma-mirror">Figma</a>
+                </Button>
+              )}
               <Button variant="outline" size="sm" asChild>
                 <a href={REPO_URL} target="_blank" rel="noopener noreferrer">
                   GitHub ↗
@@ -100,7 +98,16 @@ function App() {
           <PackageDocs commit={snapshot.commit} />
         </Section>
 
-        <Section py={64}>
+        {snapshot.figmaExports && (
+          <Section py={64} id="figma-mirror">
+            <FigmaMirror
+              figmaExports={snapshot.figmaExports}
+              lock={snapshot.lock}
+            />
+          </Section>
+        )}
+
+        <Section bg="card" py={64}>
           <ManifestDashboard snapshot={snapshot} />
         </Section>
       </main>

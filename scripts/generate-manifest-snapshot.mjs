@@ -40,6 +40,13 @@ const { default: conventions } = await import(
   pathToFileURL(join(ROOT, "figma", "conventions.mjs"))
 )
 const lock = JSON.parse(readFileSync(join(ROOT, "figma", "figma.lock.json"), "utf8"))
+// Checked-in Figma mirror previews — metadata only (the PNGs are imported as
+// Vite assets by the component). Absent is fine: the section presence-gates on
+// it, so it simply doesn't render rather than 404-ing.
+const exportsPath = join(ROOT, "figma", "exports", "exports.json")
+const figmaExports = existsSync(exportsPath)
+  ? JSON.parse(readFileSync(exportsPath, "utf8"))
+  : null
 const css = readFileSync(join(ROOT, "src", "index.css"), "utf8")
 
 const principles = resolveManifest(baseManifest, selectContextLayers()).principles
@@ -399,6 +406,17 @@ const snapshot = {
   },
   gates,
   principles: principleRecords,
+  figmaExports: figmaExports
+    ? {
+        fileKey: figmaExports.fileKey,
+        capturedAt: figmaExports.capturedAt,
+        pages: figmaExports.pages.map((p) => ({
+          id: p.id,
+          name: p.name,
+          file: p.file,
+        })),
+      }
+    : null,
   manifests: [
     principlesCard,
     componentsCard,
