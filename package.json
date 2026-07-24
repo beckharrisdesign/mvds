@@ -6,6 +6,7 @@
     "access": "public"
   },
   "description": "MVDS — Minimum Viable Design System. An agent-first design system for early startup prototyping with solid foundational design strategy.",
+  "license": "MIT",
   "type": "module",
   "exports": {
     ".": {
@@ -36,6 +37,8 @@
     "build-storybook": "storybook build",
     "build:site": "node scripts/build-site.mjs",
     "check:contrast": "node scripts/check-contrast.mjs",
+    "verify:consumer": "node scripts/verify-consumer.mjs",
+    "export:figma": "node scripts/export-figma.mjs",
     "check:principles": "node scripts/check-principles.mjs",
     "check:figma": "node scripts/check-figma-manifest.mjs",
     "test": "npm run test:light && npm run test:dark",

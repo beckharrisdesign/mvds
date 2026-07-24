@@ -61,7 +61,12 @@ function globToRegExp(glob) {
 const matchesAny = (path, globs) => globs.some((g) => globToRegExp(g).test(path))
 
 // --- file enumeration --------------------------------------------------------
-// Walk src/ once; principles filter this set by their own include/exclude globs.
+// Walk the source roots once; principles filter this set by their own
+// include/exclude globs. `examples/` is in the walk so the starter app a
+// newcomer copies is held to the same golden rules as the system itself —
+// a starter that broke the rules would teach them wrong.
+const ROOTS = ["src", "examples"]
+
 function walk(dir, acc = []) {
   for (const name of readdirSync(dir)) {
     if (name === "node_modules" || name === "dist" || name === ".git") continue
@@ -78,7 +83,9 @@ const ALL_FILES = (() => {
     const rel = relative(ROOT, singleFile).split(sep).join("/")
     return [rel]
   }
-  return walk(join(ROOT, "src"))
+  return ROOTS.filter((r) => existsSync(join(ROOT, r))).flatMap((r) =>
+    walk(join(ROOT, r))
+  )
 })()
 
 function filesFor(principle) {
@@ -148,7 +155,13 @@ const DISPATCH = {
 const base = (await import(pathToFileURL(join(ROOT, "principles.config.mjs")))).default
 const manifest = resolveManifest(base, selectContextLayers())
 
-const active = manifest.principles.filter((p) => p.enabled && p.severity !== "off")
+const enabled = manifest.principles.filter((p) => p.enabled && p.severity !== "off")
+
+// Guiding principles carry no automated check — they are upheld by human and
+// agent judgment at design time. They are counted and reported, never run, and
+// an unknown kind still throws so a typo can't silently disable a real check.
+const guiding = enabled.filter((p) => p.check.kind === "guiding")
+const active = enabled.filter((p) => p.check.kind !== "guiding")
 const findings = [] // { principle, severity, file, line, snippet }
 
 for (const p of active) {
@@ -166,8 +179,14 @@ const errors = findings.filter((f) => f.severity === "error")
 const warns = findings.filter((f) => f.severity === "warn")
 const scope = singleFile ? ALL_FILES[0] : `${ALL_FILES.length} files`
 
+const guidingNote = guiding.length
+  ? ` (+${guiding.length} guiding, by judgment)`
+  : ""
+
 if (!findings.length) {
-  console.log(`✓ ${scope} clear ${active.length} enabled MVDS principles (light + dark).`)
+  console.log(
+    `✓ ${scope} clear ${active.length} enforced MVDS principles (light + dark)${guidingNote}.`
+  )
   process.exit(0)
 }
 
@@ -189,7 +208,7 @@ for (const [id, list] of byPrinciple) {
   console.error(`    → ${p.fix}${p.docs ? `  (${p.docs})` : ""}\n`)
 }
 console.error(
-  `Scanned ${scope} against ${active.length} enabled principles. ${errors.length} error(s), ${warns.length} warning(s).`
+  `Scanned ${scope} against ${active.length} enforced principles${guidingNote}. ${errors.length} error(s), ${warns.length} warning(s).`
 )
 
 if (errors.length) process.exit(singleFile ? 2 : 1)

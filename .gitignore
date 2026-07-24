@@ -13,6 +13,7 @@ dist-lib
 dist-site
 dist-ssr
 *.local
+*.tsbuildinfo
 
 # Editor directories and files
 .vscode/*
@@ -27,3 +28,8 @@ dist-ssr
 
 *storybook.log
 storybook-static
+
+# The starter is verified with a FRESH resolve every run (scripts/verify-consumer.mjs),
+# so its lockfile is deliberately not committed — a stale lock would hide exactly
+# the registry/version drift the check exists to catch.
+examples/starter/package-lock.json

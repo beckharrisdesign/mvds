@@ -67,27 +67,26 @@ npm run storybook        # the living component gallery at http://localhost:6006
 
 ## Using MVDS in an app
 
-The package is published to GitHub Packages. Three steps to wire it up:
+Published to the **public npm registry** — no `.npmrc`, no login, no token.
+Two steps:
 
-**1. Add `.npmrc` to your project** (commit this — no secrets):
-```ini
-@beckharrisdesign:registry=https://npm.pkg.github.com
-```
-
-**2. Install:**
+**1. Install:**
 ```bash
 npm install @beckharrisdesign/mvds
 ```
-> Auth required: GitHub Packages always needs a token, even for public packages.
-> Local dev: `npm login --registry=https://npm.pkg.github.com --scope=@beckharrisdesign`
-> (PAT with `read:packages`). Vercel: add `NODE_AUTH_TOKEN` in dashboard → Settings →
-> Environment Variables.
 
-**3. Wire the CSS** (in your global stylesheet, e.g. `app/globals.css`):
+**2. Wire the CSS** (in your global stylesheet, e.g. `app/globals.css`):
 ```css
 @import "@beckharrisdesign/mvds/styles.css";
 @source "../node_modules/@beckharrisdesign/mvds/dist-lib/**/*.js";
+@source "../**/*.{ts,tsx}";
 ```
+> The `@source` line pointing at `dist-lib` is the one people forget — without it
+> Tailwind never generates the components' utilities and they render unstyled.
+
+Or skip the wiring entirely and copy [`examples/starter/`](examples/starter) — a
+complete working app. CI builds it against the published package on every PR
+(`npm run verify:consumer`), so those instructions are verified, not just written.
 
 Then import components:
 ```tsx

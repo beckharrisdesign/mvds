@@ -27,12 +27,40 @@ export interface RequireSiblingFileCheck {
   companion: (file: string) => string
 }
 
+/**
+ * No automated check exists — the principle is upheld by human and agent
+ * judgment at design/review time.
+ *
+ * This is deliberately a first-class member of the union rather than a separate
+ * "guidelines" list. A design system's most important rules are often the least
+ * mechanisable ones ("match the user's mental model"), and parking those outside
+ * the manifest would quietly imply that only what a regex can catch is real.
+ * They live in the same record, carry the same provenance, and are simply
+ * skipped by the runner.
+ */
+export interface GuidingCheck {
+  kind: "guiding"
+}
+
 export type CheckSpec =
   | ForbidClassNameCheck
   | ForbidSourceCheck
   | RequireSiblingFileCheck
+  | GuidingCheck
 // Seam for a future `kind: "ast"` strategy — add it here without touching the
 // manifest schema or the runner's dispatch shape.
+
+/**
+ * Where a principle comes from, so the system can show its work.
+ *
+ * `founder` — authored for MVDS. Authority is the founder's judgment.
+ * `external` — adopted from a published, citable body of work. `url` is REQUIRED
+ *   for these: a citation nobody can check is not a citation, and the whole point
+ *   of naming an outside source is that a reader can go and verify it.
+ */
+export type PrincipleSource =
+  | { kind: "founder"; name: string; url?: string; ref?: string }
+  | { kind: "external"; name: string; url: string; ref?: string }
 
 export interface Principle {
   /** Stable slug, e.g. "no-hardcoded-color". */
@@ -54,6 +82,8 @@ export interface Principle {
   fix: string
   /** Optional AGENTS.md anchor or URL. */
   docs?: string
+  /** Provenance — who says so, and where a reader can verify it. */
+  source: PrincipleSource
 }
 
 export interface PrincipleManifest {

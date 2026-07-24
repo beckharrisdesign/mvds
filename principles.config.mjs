@@ -12,9 +12,40 @@
 
 // Reusable scope globs.
 const SRC = "src/**/*.{ts,tsx}"
+// The starter app under examples/ is held to the same style rules as the system:
+// it is the code a newcomer copies, so it must model the golden rules, not just
+// describe them. (Story-coverage principles stay scoped to src/ — the starter is
+// a consuming app, not DS surface, so it ships no stories.)
+const EXAMPLES = "examples/**/*.{ts,tsx}"
 const VENDORED_UI = "src/components/ui/**"
 const LAYOUT = "src/components/layout/**"
 const STORIES = "src/**/*.stories.tsx"
+
+// --- provenance ----------------------------------------------------------------
+// Every principle declares WHERE IT COMES FROM. Two kinds carry very different
+// authority and the manifest must not blur them: a rule MVDS authored is the
+// founder's call and can change when she changes her mind; a rule adopted from
+// published work is answerable to that source, so it carries a URL a reader can
+// go and check. `url` is mandatory on external sources for exactly that reason.
+/** @type {import('./principles.types').PrincipleSource} */
+const FOUNDER = {
+  kind: "founder",
+  name: "MVDS house rules",
+  url: "https://github.com/beckharrisdesign/mvds/blob/main/AGENTS.md",
+}
+
+/** Jakob Nielsen's 10 usability heuristics (Nielsen Norman Group). */
+const nng = (ref) => ({
+  kind: "external",
+  name: "Nielsen Norman Group",
+  url: "https://www.nngroup.com/articles/ten-usability-heuristics/",
+  ref,
+})
+
+// Guiding principles apply to design work, not to a file glob, so they carry an
+// empty scope. The runner skips them; they exist here so the manifest is the
+// WHOLE set of rules rather than only the regex-shaped ones.
+const NO_FILES = { include: [], exclude: [] }
 
 /** @type {PrincipleManifest} */
 export const baseManifest = {
@@ -31,7 +62,7 @@ export const baseManifest = {
       enabled: true,
       // Stories stay IN scope — a specimen must still source color from tokens.
       // Only vendored ui/ (deliberate oklch()/color-mix()) is carved out.
-      scope: { include: [SRC], exclude: [VENDORED_UI] },
+      scope: { include: [SRC, EXAMPLES], exclude: [VENDORED_UI] },
       check: {
         kind: "forbid-source",
         // hex; Tailwind palette color utilities with a numeric step; bg-white/black;
@@ -43,6 +74,7 @@ export const baseManifest = {
       },
       fix: "Use bg-background / text-foreground / text-muted-foreground, the semantic triad (success / neutral / destructive), or a scale-ramp step (gray-* / primary-* / secondary-*).",
       docs: "AGENTS.md (Golden rules — Color via tokens)",
+      source: FOUNDER,
     },
     {
       id: "no-margin-spacing",
@@ -51,7 +83,7 @@ export const baseManifest = {
         "Spacing is one number in one place (the parent's gap). AGENTS.md: the only sanctioned margin is mx-auto to center a Container.",
       severity: "error",
       enabled: true,
-      scope: { include: [SRC], exclude: [VENDORED_UI, STORIES] },
+      scope: { include: [SRC, EXAMPLES], exclude: [VENDORED_UI, STORIES] },
       check: {
         kind: "forbid-classname",
         // m / mt / mr / mb / ml / mx / my followed by a VALUE (digit, px, or [arb]),
@@ -62,6 +94,7 @@ export const baseManifest = {
       },
       fix: "Remove the margin; wrap siblings in <Stack gap> / <Inline gap> / <Grid gap>. To center a Container, mx-auto is allowed.",
       docs: "AGENTS.md (Golden rules — Gap is the ONLY way to space siblings)",
+      source: FOUNDER,
     },
     {
       id: "no-raw-flex-grid",
@@ -72,7 +105,7 @@ export const baseManifest = {
       enabled: true,
       // Widest carve-out: vendored ui/, the primitives themselves, and specimen stories
       // are all legitimate flex/grid containers.
-      scope: { include: [SRC], exclude: [VENDORED_UI, LAYOUT, STORIES] },
+      scope: { include: [SRC, EXAMPLES], exclude: [VENDORED_UI, LAYOUT, STORIES] },
       check: {
         kind: "forbid-classname",
         // `flex`/`grid` as a DISPLAY utility only. Lookbehind excludes inline-flex/
@@ -81,6 +114,7 @@ export const baseManifest = {
       },
       fix: "Use a layout primitive: <Stack>/<Inline> (flex) or <Grid> (grid) from src/components/layout.",
       docs: "AGENTS.md (Golden rules — Never raw flex/grid utilities for layout)",
+      source: FOUNDER,
     },
     {
       id: "story-coverage-ui",
@@ -99,6 +133,7 @@ export const baseManifest = {
       },
       fix: "Add a co-located *.stories.tsx enumerating every variant/state in light + dark.",
       docs: "AGENTS.md (Storybook — first-class verification surface)",
+      source: FOUNDER,
     },
     {
       id: "story-coverage-site",
@@ -117,6 +152,7 @@ export const baseManifest = {
       },
       fix: "Add a co-located *.stories.tsx exercising the section in light + dark.",
       docs: "AGENTS.md (Storybook — first-class verification surface)",
+      source: FOUNDER,
     },
     {
       id: "story-coverage-layout",
@@ -136,6 +172,7 @@ export const baseManifest = {
       },
       fix: "Cover the primitive in src/components/layout/layout.stories.tsx (the shared family story).",
       docs: "AGENTS.md (Storybook — a cohesive primitive family may share one story)",
+      source: FOUNDER,
     },
     {
       id: "story-coverage-blocks",
@@ -154,6 +191,84 @@ export const baseManifest = {
       },
       fix: "Cover the primitive in src/components/blocks/blocks.stories.tsx (the shared family story).",
       docs: "AGENTS.md (Storybook — a cohesive primitive family may share one story)",
+      source: FOUNDER,
+    },
+
+    // --- Guiding principles ------------------------------------------------------
+    // Adopted from published usability work rather than invented here. They are
+    // NOT machine-checkable, and pretending otherwise would be the failure mode
+    // this manifest exists to avoid — so each states the judgment it asks for and
+    // links its source. `description` and `rationale` are MVDS's own words about
+    // how the heuristic applies to a design system; the `ref` names the original.
+    {
+      id: "consistency-and-standards",
+      description:
+        "One concept, one expression — a thing that behaves the same should look the same everywhere.",
+      rationale:
+        "This is the whole argument for a token layer and a fixed variant set. Every ad-hoc value is a second dialect a reader has to learn, and an agent has to guess between. The mechanical half is enforced (no-hardcoded-color, no-raw-flex-grid); the judgment half is deciding when a genuinely new case deserves a new variant instead of a one-off.",
+      severity: "error",
+      enabled: true,
+      scope: NO_FILES,
+      check: { kind: "guiding" },
+      fix: "Before adding a variant or a bespoke style, find the existing expression of the same idea and reuse it. If none fits, add it to the system rather than to the screen.",
+      docs: "AGENTS.md (Golden rules)",
+      source: nng("Heuristic 4: Consistency and standards"),
+    },
+    {
+      id: "aesthetic-and-minimalist-design",
+      description:
+        "Every element competes for attention with every other one — so carry no surface you cannot justify.",
+      rationale:
+        "Why the component set is deliberately tiny and why pre-1.0 MVDS deletes rather than deprecates. Unused variants are not free: they dilute the signal of the ones that matter and enlarge the space an agent chooses from.",
+      severity: "error",
+      enabled: true,
+      scope: NO_FILES,
+      check: { kind: "guiding" },
+      fix: "Cut it. If a variant, prop, or export is not earning its place, remove it outright — there are no external consumers to protect yet.",
+      docs: "AGENTS.md (Pre-1.0: breaking changes are fine)",
+      source: nng("Heuristic 8: Aesthetic and minimalist design"),
+    },
+    {
+      id: "visibility-of-system-status",
+      description:
+        "The system tells you what it knows about itself, in time to matter.",
+      rationale:
+        "The reason this landing page reports gate results and sync state rather than claiming quality in prose. A drifted mirror or a failing check should be legible at a glance and distinguishable from the expected state — which is why the status triad separates 'trailing by design' from 'genuinely disagrees'.",
+      severity: "error",
+      enabled: true,
+      scope: NO_FILES,
+      check: { kind: "guiding" },
+      fix: "Surface real state from a generated source. Never hand-write a status that could go stale without anything failing.",
+      docs: "AGENTS.md (Storybook — first-class verification surface)",
+      source: nng("Heuristic 1: Visibility of system status"),
+    },
+    {
+      id: "error-prevention",
+      description:
+        "Make the wrong thing impossible to express, rather than catching it later.",
+      rationale:
+        "Why primitive props are typed to the 8-grid: gap={12} is a compile error, not a review comment. Prevention beats detection beats documentation, in that order — the principles gate and the edit-guard hook exist for the cases the type system cannot reach.",
+      severity: "error",
+      enabled: true,
+      scope: NO_FILES,
+      check: { kind: "guiding" },
+      fix: "Prefer a narrowed type or a constrained prop over a lint rule; prefer a lint rule over a line in the docs.",
+      docs: "AGENTS.md (Spacing — the 8 grid)",
+      source: nng("Heuristic 5: Error prevention"),
+    },
+    {
+      id: "recognition-rather-than-recall",
+      description:
+        "Names should say what they mean, so nobody has to hold a mapping in their head.",
+      rationale:
+        "Why the type ramp is semantic (text-h1, not text-2xl font-bold) and why primitive props take pixels (gap={16}, not gap-4 meaning 16px). A name that must be translated before use is a name that will be used wrongly — by a person at 5pm, and by an agent every time.",
+      severity: "error",
+      enabled: true,
+      scope: NO_FILES,
+      check: { kind: "guiding" },
+      fix: "Name for the intent, not the implementation. If a value needs a comment to explain what it maps to, the name is wrong.",
+      docs: "AGENTS.md (Golden rules — Type via the semantic ramp)",
+      source: nng("Heuristic 6: Recognition rather than recall"),
     },
   ],
 }
