@@ -112,11 +112,17 @@ if (!cssFile) {
     "the @import of @beckharrisdesign/mvds/styles.css did not resolve"
   )
 
-  // Dark mode ships as the `.dark` class variant, not prefers-color-scheme.
+  // Dark mode ships as a `.dark` class on a root ancestor, not
+  // prefers-color-scheme. The DIRECT proof it survived the build is the raw
+  // `.dark { --token: … }` override block from styles.css passing through as
+  // plain CSS — this holds regardless of whether any component happens to use a
+  // `dark:` utility. (A `dark:` utility ALSO compiles, against the token layer's
+  // `@custom-variant dark (&:is(.dark *))`, into `:is(.dark *)` selectors — but
+  // that is the indirect signal; assert the token block head-on.)
   assert(
-    css.includes(":is(.dark"),
-    "dark-mode variant is emitted",
-    "the .dark custom variant is missing from the token layer"
+    /\.dark\s*\{[^}]*--background/.test(css),
+    "dark-mode token overrides are emitted",
+    "the .dark { … } token block from styles.css did not survive the build"
   )
 
   // The semantic type ramp made it through as real utilities.
