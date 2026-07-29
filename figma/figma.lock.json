@@ -1,8 +1,8 @@
 {
   "$comment": "Machine-recorded Figma reality — node IDs written by the mvds-figma-component-sync skill after each run (manifests are the human-reviewed intent; this is the package-lock analog). componentSetId null means either not yet adopted/created (for multi-variant components) OR a deliberate single-component with no variant axes (Label/Textarea/Blockquote — check for a sibling componentId field). The sync's inspect phase resolves by name as a self-healing fallback and repairs this file if nodes were moved or renamed in Figma.",
   "fileKey": "C20nU0mROzk3Zr0I9BELJF",
-  "syncedAt": "2026-07-15",
-  "syncedFromCommit": "50019850fd9e8695cb50bdcfb63e7bd12cda41c7",
+  "syncedAt": "2026-07-29",
+  "syncedFromCommit": "8f791b1634e16e8c4ea9a135061084126dfcfa7c",
   "pages": { "foundations": "0:1", "components": "95:4", "syncReports": "136:2" },
   "starters": {
     "$comment": "Figma-only mockup starters — full-size shell templates composed of live Chrome/Section INSTANCES, replacing the deleted rectangle-sketch 'Pages' component set (2026-07-15, founder-approved). Consolidated onto the 'Foundations & Starters' page (0:1) same day — the separate Starters page was merged away per founder choice. Not part of the component mirror: no code counterpart, nothing publishes. Recorded so syncs know these frames hold instances of the mirrored sets.",
@@ -302,6 +302,7 @@
     "2026-06-21": "320:2",
     "2026-07-15": "477:2",
     "2026-07-15-2": "485:39",
-    "2026-07-15-3": "490:41"
+    "2026-07-15-3": "490:41",
+    "2026-07-29": "571:39"
   }
 }
