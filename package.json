@@ -38,6 +38,7 @@
     "build:site": "node scripts/build-site.mjs",
     "check:contrast": "node scripts/check-contrast.mjs",
     "verify:consumer": "node scripts/verify-consumer.mjs",
+    "verify:figma-share": "node scripts/verify-figma-share.mjs",
     "export:figma": "node scripts/export-figma.mjs",
     "check:principles": "node scripts/check-principles.mjs",
     "check:figma": "node scripts/check-figma-manifest.mjs",

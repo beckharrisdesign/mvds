@@ -3,7 +3,9 @@
 **Code is law. Figma is a generated mirror.**
 
 > **Generated Figma file:** ["MVDS Core"](https://www.figma.com/design/C20nU0mROzk3Zr0I9BELJF/MVDS-Core?node-id=0-1&t=w5EqXarr3p4eYxpC-1)
-> (public view-only; team: Beck Harris Design). Generated from this repo:
+> (public view-only; team: Beck Harris Design). The share URL is owned by
+> [`src/components/site/figma-public-share.json`](../src/components/site/figma-public-share.json)
+> and gated by `npm run verify:figma-share`. Generated from this repo:
 > - `Tokens` variable collection — colors with Light/Dark modes, plus the
 >   `font-sans` font-family token (STRING variable bound to every text style)
 > - `Scales` variable collection — spacing + breakpoint numbers

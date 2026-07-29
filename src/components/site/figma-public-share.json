@@ -1,0 +1,7 @@
+{
+  "fileName": "MVDS-Core",
+  "token": "w5EqXarr3p4eYxpC-1",
+  "topPageNodeId": "0-1",
+  "syncReportsNodeId": "136-2",
+  "$comment": "Public view-only share of MVDS Core. topPageNodeId is Foundations & Starters (lock.pages.foundations = 0:1); syncReportsNodeId is the internal page we must never open (lock.pages.syncReports = 136:2). Consumed by repo-links.ts and scripts/verify-figma-share.mjs."
+}
