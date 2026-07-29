@@ -113,6 +113,12 @@ exact app against the published package on every PR (`npm run verify:consumer`).
 
 ### Fixed
 
+- `verify:consumer` auto-falls back to packing the working tree when the
+  starter's version pin is not on the public registry yet — so a release PR that
+  bumps to `^0.3.0` before the tag publish no longer fails the consumer-path
+  gate with `ETARGET`. After publish, the same command gates the live install
+  again.
+  ([#69](https://github.com/beckharrisdesign/mvds/pull/69))
 - Token-layer parity check no longer false-flags intentional `:root`-only ramps
   (`gray-*` / `primary-*` / `secondary-*`) or chrome dimension tokens as mode
   drift.
