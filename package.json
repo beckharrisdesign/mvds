@@ -7,6 +7,14 @@
   },
   "description": "MVDS — Minimum Viable Design System. An agent-first design system for early startup prototyping with solid foundational design strategy.",
   "license": "MIT",
+  "homepage": "https://github.com/beckharrisdesign/mvds#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/beckharrisdesign/mvds"
+  },
+  "bugs": {
+    "url": "https://github.com/beckharrisdesign/mvds/issues"
+  },
   "type": "module",
   "exports": {
     ".": {
