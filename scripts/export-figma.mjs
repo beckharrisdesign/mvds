@@ -3,9 +3,9 @@
 //   npm run export:figma
 //
 // Code is the source of truth; the Figma file is a generated one-way mirror.
-// These PNGs are a versioned snapshot of that mirror so the landing page has a
-// shareable, viewable artifact that does NOT depend on the live file's private
-// sharing settings (a raw link to the file 403s for anyone outside the team).
+// These PNGs are a versioned snapshot of that mirror so the landing page can
+// show parity inline with no click. The live file is also a public view-only
+// share (opens Foundations & Starters — not Sync Reports).
 //
 // This script does NOT call Figma itself — the Figma MCP lives in the agent
 // session, not in Node. It prints the exact tool calls to run and then, once the

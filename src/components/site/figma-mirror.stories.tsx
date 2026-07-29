@@ -45,8 +45,12 @@ export const Default: Story = {
     await expect(
       canvas.getByRole("link", { name: /checked-in exports/ })
     ).toHaveAttribute("href")
-    await expect(
-      canvas.getByRole("link", { name: /Open the live file/ })
-    ).toHaveAttribute("href")
+
+    // Public share must open Foundations & Starters (0:1), never Sync Reports (136:2).
+    const live = canvas.getByRole("link", { name: /Open MVDS Core in Figma/ })
+    await expect(live).toHaveAttribute(
+      "href",
+      `https://www.figma.com/design/${args.figmaExports.fileKey}/MVDS-Core?node-id=0-1&t=w5EqXarr3p4eYxpC-1`
+    )
   },
 }

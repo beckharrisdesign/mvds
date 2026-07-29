@@ -8,10 +8,22 @@
  * on the page already describes one commit; the links now agree with them.
  *
  * The Figma link is built from the fileKey recorded in figma.lock.json, so it
- * can only ever point at the file the sync actually wrote to.
+ * can only ever point at the file the sync actually wrote to. The share token
+ * is the public view-only link the founder published; the node-id is pinned to
+ * Foundations & Starters (lock.pages.foundations = "0:1") — never Sync Reports
+ * (lock.pages.syncReports = "136:2"), which is the internal audit page.
  */
 
 const REPO_URL = "https://github.com/beckharrisdesign/mvds"
+
+/** Public view-only share token for MVDS Core (founder-published). */
+const FIGMA_SHARE_TOKEN = "w5EqXarr3p4eYxpC-1"
+
+/**
+ * Top page of the file — Foundations & Starters. Figma URL form uses hyphens
+ * (`0-1`); the lock records colon form (`0:1`).
+ */
+const FIGMA_TOP_PAGE_NODE_ID = "0-1"
 
 /** A repo path at the exact commit this page was built from. */
 export function repoUrl(commit: string, path: string): string {
@@ -27,9 +39,12 @@ export function starterUrl(commit: string): string {
   return repoUrl(commit, "examples/starter")
 }
 
-/** The Figma mirror this repo syncs into (fileKey comes from figma.lock.json). */
+/**
+ * Public view-only link to the Figma mirror this repo syncs into.
+ * Opens Foundations & Starters — the top page — not Sync Reports.
+ */
 export function figmaUrl(fileKey: string): string {
-  return `https://www.figma.com/design/${fileKey}/MVDS`
+  return `https://www.figma.com/design/${fileKey}/MVDS-Core?node-id=${FIGMA_TOP_PAGE_NODE_ID}&t=${FIGMA_SHARE_TOKEN}`
 }
 
 export { REPO_URL }

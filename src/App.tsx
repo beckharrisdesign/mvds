@@ -51,9 +51,8 @@ function App() {
               <Button variant="outline" size="sm" onClick={toggleTheme}>
                 {dark ? "Light" : "Dark"} mode
               </Button>
-              {/* Jump to the in-page mirror (checked-in previews), not the live
-                  file — which is private and 403s for a shared-link visitor.
-                  Only shown when previews are actually committed. */}
+              {/* Jump to the in-page mirror (checked-in previews). Only shown
+                  when previews are actually committed. */}
               {snapshot.figmaExports && (
                 <Button variant="outline" size="sm" asChild>
                   <a href="#figma-mirror">Figma</a>

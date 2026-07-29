@@ -11,7 +11,7 @@ components, with **code as the single source of truth**.
 > Built for a **Figma Pro** plan (not Enterprise). The sync is intentionally
 > **one-way, code → Figma**, and re-runnable. See [`docs/SYNC.md`](docs/SYNC.md).
 >
-> **Live Figma mirror:** [MVDS · Figma](https://www.figma.com/design/C20nU0mROzk3Zr0I9BELJF/MVDS-Test)
+> **Live Figma mirror:** [MVDS Core](https://www.figma.com/design/C20nU0mROzk3Zr0I9BELJF/MVDS-Core?node-id=0-1&t=w5EqXarr3p4eYxpC-1) (public view-only)
 
 ## Stack
 

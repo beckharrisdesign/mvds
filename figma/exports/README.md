@@ -1,9 +1,10 @@
 # Figma exports
 
 Checked-in, versioned previews of the **MVDS Figma mirror** (`fileKey
-C20nU0mROzk3Zr0I9BELJF`). The landing page renders these inline so a shared-link
-visitor sees the code→Figma parity **without needing access to the live file** —
-the file itself is private, so a raw link to it 403s for anyone outside the team.
+C20nU0mROzk3Zr0I9BELJF`). The landing page renders these inline so a visitor
+sees the code→Figma parity with no click required. The live file is also a
+[public view-only share](https://www.figma.com/design/C20nU0mROzk3Zr0I9BELJF/MVDS-Core?node-id=0-1&t=w5EqXarr3p4eYxpC-1)
+(opens Foundations & Starters — not Sync Reports).
 
 Code is the single source of truth; Figma is a generated, one-way mirror (see
 [`../../docs/SYNC.md`](../../docs/SYNC.md)). These images are a snapshot of that

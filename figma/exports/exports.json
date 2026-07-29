@@ -1,7 +1,7 @@
 {
   "fileKey": "C20nU0mROzk3Zr0I9BELJF",
   "capturedAt": "2026-07-23",
-  "note": "Checked-in previews of the MVDS Figma mirror. The Figma file is a generated, one-way mirror of the code (see docs/SYNC.md); these PNGs are versioned snapshots of it so the landing page has a shareable, viewable artifact that does not depend on the live file's private sharing settings. Regenerate with scripts/export-figma.mjs after a sync.",
+  "note": "Checked-in previews of the MVDS Figma mirror. The Figma file is a generated, one-way mirror of the code (see docs/SYNC.md); these PNGs are versioned snapshots of it so the landing page can show parity inline. The live file is also a public view-only share. Regenerate with scripts/export-figma.mjs after a sync.",
   "pages": [
     {
       "id": "components",
