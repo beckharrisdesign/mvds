@@ -70,8 +70,14 @@ jobs:
           echo "Version verified: $PKG_VERSION"
 
       # prepack hook runs build:lib (tsup) automatically — no explicit step needed.
-      # Auth comes from the OIDC token (id-token: write above) exchanged with
-      # npm via the Trusted Publisher config; npm also attaches provenance to
-      # the publish when authenticated this way, so no --provenance flag.
+      # Auth is OIDC Trusted Publishing (id-token: write above). setup-node's
+      # registry-url writes `_authToken=${NODE_AUTH_TOKEN}` into .npmrc; when that
+      # expands to empty/placeholder, npm tries classic auth and never starts the
+      # OIDC exchange → E404. Strip the line and unset the env var so OIDC wins.
+      # See actions/setup-node#1551, npm/documentation#1960.
       - name: Publish to npm
-        run: npm publish --access public
+        run: |
+          if [ -n "${NPM_CONFIG_USERCONFIG:-}" ] && [ -f "$NPM_CONFIG_USERCONFIG" ]; then
+            sed -i '/_authToken/d' "$NPM_CONFIG_USERCONFIG"
+          fi
+          env -u NODE_AUTH_TOKEN npm publish --access public
