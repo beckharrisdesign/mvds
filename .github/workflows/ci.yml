@@ -60,14 +60,18 @@ jobs:
   # job above: it installs the PUBLISHED package into examples/starter with no
   # auth and no .npmrc, builds it, and asserts the emitted CSS proves both the
   # token layer and the `@source dist-lib` line landed. It therefore validates
-  # what is documented and shipped today — not this branch's source. (For the
-  # next release, run `npm run verify:consumer -- --local` before tagging.)
+  # what is documented and shipped today — not this branch's source.
   #
-  # No `npm ci` here on purpose: needing the repo's own dependencies would mean
-  # we were no longer reproducing a stranger's machine.
+  # Release-PR exception: if the starter pin (e.g. ^0.3.0) is not on the
+  # registry yet, verify:consumer auto-falls back to --local (packs this tree).
+  # That path installs repo deps itself when needed — still no auth / no .npmrc.
+  #
+  # No upfront `npm ci` here on purpose: the published path must not need the
+  # repo's own dependencies, or we would no longer be reproducing a stranger's
+  # machine.
   consumer-path:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v5
 
@@ -76,7 +80,7 @@ jobs:
         with:
           node-version: 22
 
-      - name: Verify the documented install path (published package, no auth)
+      - name: Verify the documented install path (published, or local on release bumps)
         run: npm run verify:consumer
 
   # The public view-only Figma share a LinkedIn visitor actually clicks. Independent

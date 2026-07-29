@@ -13,6 +13,10 @@
 //            tree via npm pack and installs that tarball instead. Run it before
 //            cutting a release.
 //
+// Auto-fallback: if the starter's pin (e.g. ^0.3.0) is not on the public
+// registry yet — the release-PR chicken-and-egg — default mode falls back to
+// --local automatically and says so. Forced `--local` always packs.
+//
 // Either way the assertions are the same: the starter must install clean, build
 // clean, and emit CSS that proves the token layer AND the `@source` line landed.
 //
@@ -25,6 +29,7 @@ import {
   readFileSync,
   readdirSync,
   rmSync,
+  writeFileSync,
 } from "node:fs"
 import { tmpdir } from "node:os"
 import { dirname, join } from "node:path"
@@ -32,7 +37,8 @@ import { fileURLToPath } from "node:url"
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..")
 const STARTER = join(ROOT, "examples", "starter")
-const LOCAL = process.argv.includes("--local")
+const STARTER_PKG = join(STARTER, "package.json")
+const FORCED_LOCAL = process.argv.includes("--local")
 
 function run(cmd, args, cwd, label) {
   process.stdout.write(`\n$ ${cmd} ${args.join(" ")}   (${label})\n`)
@@ -49,10 +55,45 @@ function assert(condition, what, why) {
   }
 }
 
+/** True when the public registry has at least one version matching `range`. */
+function rangeOnRegistry(range) {
+  try {
+    execFileSync(
+      "npm",
+      ["view", `@beckharrisdesign/mvds@${range}`, "version"],
+      { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] }
+    )
+    return true
+  } catch {
+    return false
+  }
+}
+
 // --- 0. sanity ------------------------------------------------------------------
-if (!existsSync(join(STARTER, "package.json"))) {
+if (!existsSync(STARTER_PKG)) {
   console.error(`No starter app at ${STARTER}`)
   process.exit(1)
+}
+
+const starterPkg = JSON.parse(readFileSync(STARTER_PKG, "utf8"))
+const pin = starterPkg.dependencies?.["@beckharrisdesign/mvds"]
+if (!pin) {
+  console.error(
+    `examples/starter/package.json has no @beckharrisdesign/mvds dependency`
+  )
+  process.exit(1)
+}
+
+// --- mode -----------------------------------------------------------------------
+let useLocal = FORCED_LOCAL
+if (!FORCED_LOCAL && !rangeOnRegistry(pin)) {
+  console.log(
+    `\nPinned range @beckharrisdesign/mvds@${pin} is not on the public registry yet.`
+  )
+  console.log(
+    `Falling back to --local (pack this working tree) so a release bump stays verifiable.\n`
+  )
+  useLocal = true
 }
 
 // --- 1. clean the starter so the install is genuinely fresh ---------------------
@@ -65,7 +106,12 @@ for (const junk of ["node_modules", "package-lock.json", "dist"]) {
 // No .npmrc is written anywhere: if the package needed auth, this step fails —
 // which is precisely the regression we want to catch.
 let tarball = null
-if (LOCAL) {
+if (useLocal) {
+  // build:lib needs the repo's own deps (consumer-path CI skips npm ci on
+  // purpose for the published path — install them here only when packing).
+  if (!existsSync(join(ROOT, "node_modules"))) {
+    run("npm", ["ci", "--no-audit", "--no-fund"], ROOT, "repo deps for build:lib")
+  }
   const packDir = mkdtempSync(join(tmpdir(), "mvds-pack-"))
   run("npm", ["run", "build:lib"], ROOT, "build the library first")
   const packed = execFileSync("npm", ["pack", "--pack-destination", packDir], {
@@ -77,15 +123,30 @@ if (LOCAL) {
     .pop()
   tarball = join(packDir, packed)
   console.log(`\nPacked working tree → ${tarball}`)
-}
 
-run("npm", ["install", "--no-audit", "--no-fund"], STARTER, "fresh install")
-if (LOCAL) {
+  // Point the starter at the tarball for this install only — a fresh
+  // `npm install` against an unpublished ^X.Y.Z pin would ETARGET before we
+  // could overlay. Restore package.json afterwards so the tree stays clean.
+  const original = readFileSync(STARTER_PKG, "utf8")
+  const pkg = JSON.parse(original)
+  pkg.dependencies["@beckharrisdesign/mvds"] = tarball
+  writeFileSync(STARTER_PKG, `${JSON.stringify(pkg, null, 2)}\n`)
+  try {
+    run(
+      "npm",
+      ["install", "--no-audit", "--no-fund"],
+      STARTER,
+      "fresh install from local tarball"
+    )
+  } finally {
+    writeFileSync(STARTER_PKG, original)
+  }
+} else {
   run(
     "npm",
-    ["install", tarball, "--no-audit", "--no-fund"],
+    ["install", "--no-audit", "--no-fund"],
     STARTER,
-    "overlay the local tarball"
+    "fresh install from public npm"
   )
 }
 
@@ -152,7 +213,7 @@ if (!cssFile) {
 }
 
 // --- 5. report --------------------------------------------------------------------
-const source = LOCAL ? "the LOCAL working tree" : "the PUBLISHED npm package"
+const source = useLocal ? "the LOCAL working tree" : "the PUBLISHED npm package"
 if (failures.length) {
   console.error(`\n✗ Consumer path is broken against ${source}:\n`)
   for (const f of failures) console.error(`  · ${f}`)
@@ -160,4 +221,11 @@ if (failures.length) {
   process.exit(1)
 }
 console.log(`\n✓ Consumer path verified against ${source}.`)
-console.log("  A fresh clone can install with no auth and build a styled app.\n")
+if (useLocal && !FORCED_LOCAL) {
+  console.log(
+    `  (auto-fallback: ${pin} was not on the registry yet — re-run after publish to gate the live install)`
+  )
+} else if (!useLocal) {
+  console.log("  A fresh clone can install with no auth and build a styled app.")
+}
+console.log("")
