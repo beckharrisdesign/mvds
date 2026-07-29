@@ -34,7 +34,7 @@ Pin to a version range in `package.json`:
 
 ```jsonc
 "dependencies": {
-  "@beckharrisdesign/mvds": "^0.2.0"
+  "@beckharrisdesign/mvds": "^0.3.0"
 }
 ```
 

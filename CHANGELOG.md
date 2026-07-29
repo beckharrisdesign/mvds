@@ -12,6 +12,115 @@ All notable changes to MVDS are recorded here. The format follows
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-07-29
+
+Spatial layout became a first-class vocabulary (`Chrome`, `Section`, `Layer`),
+the package moved to public npm so a stranger can install with zero auth, and
+the landing page became a shareable proof of the system — validated install
+path, honest gate statuses, principles with provenance, and a public Figma
+mirror.
+
+### Migration from 0.2.0
+
+**Install path (breaking for anyone still on GitHub Packages):**
+
+1. **Delete any `@beckharrisdesign:registry=https://npm.pkg.github.com` line**
+   from `.npmrc` (local, CI, Vercel). Auth tokens for GitHub Packages are no
+   longer needed or used.
+2. **Install from the public registry** — `npm install @beckharrisdesign/mvds`
+   with no `.npmrc` and no `NODE_AUTH_TOKEN`.
+3. **Bump the pin** — `"@beckharrisdesign/mvds": "^0.3.0"`.
+
+**New exports** (additive; no action required unless you want to use them):
+
+```ts
+import {
+  Chrome,   // type ChromePosition
+  Section,  // bg / py / innerSize
+  Layer,    // type LayerLevel
+} from "@beckharrisdesign/mvds"
+```
+
+Prefer starting from [`examples/starter/`](examples/starter) — CI builds that
+exact app against the published package on every PR (`npm run verify:consumer`).
+
+### Added
+
+- **Spatial layout primitives** (`Chrome`, `Section`, `Layer`) — the vocabulary
+  for how much of the viewport is persistent chrome vs. page content vs. what
+  floats above the layout entirely:
+  - **`Chrome`** — sticky structural region at `position` `top` | `bottom` |
+    `left` | `right`; dimensions from `--chrome-*` tokens; `bg` from the
+    semantic surface set.
+  - **`Section`** — full-width content band with `bg`, `py` (`24` | `64`), and
+    an inner `Container` via `innerSize`.
+  - **`Layer`** — fixed full-viewport surface at `level` `overlay` | `float` |
+    `modal` | `toast`, backed by `--z-*` tokens (`z-chrome` … `z-toast`).
+  Covered in `layout.stories.tsx`. Mirrored into MVDS Core as Figma component
+  sets (with Foundations & Starters templates composed from live instances).
+  ([#55](https://github.com/beckharrisdesign/mvds/pull/55),
+  [#62](https://github.com/beckharrisdesign/mvds/pull/62))
+
+- **Public npm + Trusted Publishing** — `@beckharrisdesign/mvds` publishes to
+  `registry.npmjs.org` via OIDC (no long-lived `NPM_TOKEN`). A stranger installs
+  with zero config.
+  ([#64](https://github.com/beckharrisdesign/mvds/pull/64),
+  [#65](https://github.com/beckharrisdesign/mvds/pull/65))
+
+- **Validated consumer path** — `examples/starter/` (copy to start an
+  experiment) plus `npm run verify:consumer`, which installs the published
+  package with no auth and asserts the token layer and `@source dist-lib` both
+  landed. Wired as a CI job that deliberately skips `npm ci` so it reproduces a
+  stranger's machine.
+  ([#66](https://github.com/beckharrisdesign/mvds/pull/66))
+
+- **Design principles as a first-class surface** — provenance (founder vs
+  external) and enforcement (automated vs judgment) on every principle; five
+  guiding principles adopted from Nielsen's heuristics with mandatory citation
+  URLs. Shown on the landing page; guiding principles are skipped by
+  `check:principles` (judgment, not a build failure).
+  ([#66](https://github.com/beckharrisdesign/mvds/pull/66))
+
+- **Shareable landing page** — hero, principles, real gate statuses (build-time
+  execution of the fast checks), install docs that match public npm, checked-in
+  Figma mirror previews, and a public view-only link to MVDS Core that opens
+  Foundations & Starters (not Sync Reports). Live share reachability is gated by
+  `npm run verify:figma-share`.
+  ([#53](https://github.com/beckharrisdesign/mvds/pull/53),
+  [#60](https://github.com/beckharrisdesign/mvds/pull/60),
+  [#66](https://github.com/beckharrisdesign/mvds/pull/66),
+  [#67](https://github.com/beckharrisdesign/mvds/pull/67),
+  [#68](https://github.com/beckharrisdesign/mvds/pull/68))
+
+- Figma variable panel grouped into `Color/` · `Typography/` · `Spacing/` ·
+  `Sizing/` (recorded in the lock so future syncs target the real names).
+  ([#61](https://github.com/beckharrisdesign/mvds/pull/61))
+
+- 8-grid `gap` values documented on Stack / Inline / Grid JSDoc (editor
+  tooltips + Storybook autodocs at the point of use).
+  ([#56](https://github.com/beckharrisdesign/mvds/pull/56))
+
+### Changed
+
+- Landing shell dogfoods `Chrome` + `Section` instead of a hand-rolled header /
+  `Container` scaffold.
+  ([#60](https://github.com/beckharrisdesign/mvds/pull/60))
+- Branch & PR workflow mirrored from experiment-hub (adapted to MVDS naming);
+  post-merge cleanup hook so merged branches/worktrees do not accumulate.
+  ([#57](https://github.com/beckharrisdesign/mvds/pull/57),
+  [#58](https://github.com/beckharrisdesign/mvds/pull/58),
+  [#63](https://github.com/beckharrisdesign/mvds/pull/63))
+
+### Fixed
+
+- Token-layer parity check no longer false-flags intentional `:root`-only ramps
+  (`gray-*` / `primary-*` / `secondary-*`) or chrome dimension tokens as mode
+  drift.
+  ([#66](https://github.com/beckharrisdesign/mvds/pull/66))
+- Chromatic Capture Cloud hangs fail fast (step timeout) instead of burning the
+  full job budget.
+  ([#59](https://github.com/beckharrisdesign/mvds/pull/59))
+
 ## [0.2.0] - 2026-06-18
 
 The code→Figma component mirror became real, typography joined color and spacing
@@ -192,6 +301,7 @@ verification gates.
   `background`.
   ([#9](https://github.com/beckharrisdesign/mvds/pull/9))
 
-[Unreleased]: https://github.com/beckharrisdesign/mvds/compare/v0.2.0...main
+[Unreleased]: https://github.com/beckharrisdesign/mvds/compare/v0.3.0...main
+[0.3.0]: https://github.com/beckharrisdesign/mvds/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/beckharrisdesign/mvds/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/beckharrisdesign/mvds/tree/v0.1.0

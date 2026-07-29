@@ -24,7 +24,7 @@ Only two things make this an MVDS app. Everything else is a stock Vite + React
 **1. The dependency** — [`package.json`](package.json):
 
 ```json
-"@beckharrisdesign/mvds": "^0.2.0"
+"@beckharrisdesign/mvds": "^0.3.0"
 ```
 
 **2. Three lines of CSS** — [`src/styles.css`](src/styles.css):
