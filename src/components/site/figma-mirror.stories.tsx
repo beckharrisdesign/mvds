@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import { expect } from "storybook/test"
 import { FigmaMirror } from "./figma-mirror"
+import { figmaUrl } from "./repo-links"
 import type { ManifestSnapshot } from "./manifest-snapshot.types"
 import liveSnapshot from "@/generated/manifest-snapshot.json"
 
@@ -47,10 +48,13 @@ export const Default: Story = {
     ).toHaveAttribute("href")
 
     // Public share must open Foundations & Starters (0:1), never Sync Reports (136:2).
+    // Live reachability is gated by `npm run verify:figma-share` (CI job figma-share).
     const live = canvas.getByRole("link", { name: /Open MVDS Core in Figma/ })
     await expect(live).toHaveAttribute(
       "href",
-      `https://www.figma.com/design/${args.figmaExports.fileKey}/MVDS-Core?node-id=0-1&t=w5EqXarr3p4eYxpC-1`
+      figmaUrl(args.figmaExports.fileKey)
     )
+    await expect(live.getAttribute("href")).toMatch(/node-id=0-1/)
+    await expect(live.getAttribute("href")).not.toMatch(/node-id=136-2/)
   },
 }

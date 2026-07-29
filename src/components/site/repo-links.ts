@@ -7,23 +7,14 @@
  * PR preview), and rots silently if a path is ever renamed. Every other number
  * on the page already describes one commit; the links now agree with them.
  *
- * The Figma link is built from the fileKey recorded in figma.lock.json, so it
- * can only ever point at the file the sync actually wrote to. The share token
- * is the public view-only link the founder published; the node-id is pinned to
- * Foundations & Starters (lock.pages.foundations = "0:1") — never Sync Reports
- * (lock.pages.syncReports = "136:2"), which is the internal audit page.
+ * The Figma link is built from the fileKey recorded in figma.lock.json plus
+ * `figma-public-share.json` (token + Foundations page). Live reachability is
+ * gated by `npm run verify:figma-share`.
  */
+
+import share from "./figma-public-share.json"
 
 const REPO_URL = "https://github.com/beckharrisdesign/mvds"
-
-/** Public view-only share token for MVDS Core (founder-published). */
-const FIGMA_SHARE_TOKEN = "w5EqXarr3p4eYxpC-1"
-
-/**
- * Top page of the file — Foundations & Starters. Figma URL form uses hyphens
- * (`0-1`); the lock records colon form (`0:1`).
- */
-const FIGMA_TOP_PAGE_NODE_ID = "0-1"
 
 /** A repo path at the exact commit this page was built from. */
 export function repoUrl(commit: string, path: string): string {
@@ -44,7 +35,13 @@ export function starterUrl(commit: string): string {
  * Opens Foundations & Starters — the top page — not Sync Reports.
  */
 export function figmaUrl(fileKey: string): string {
-  return `https://www.figma.com/design/${fileKey}/MVDS-Core?node-id=${FIGMA_TOP_PAGE_NODE_ID}&t=${FIGMA_SHARE_TOKEN}`
+  const { fileName, token, topPageNodeId, syncReportsNodeId } = share
+  if (topPageNodeId === syncReportsNodeId) {
+    throw new Error(
+      "figmaUrl: top page must not be Sync Reports — check figma-public-share.json"
+    )
+  }
+  return `https://www.figma.com/design/${fileKey}/${fileName}?node-id=${topPageNodeId}&t=${token}`
 }
 
 export { REPO_URL }

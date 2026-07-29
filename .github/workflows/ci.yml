@@ -78,3 +78,22 @@ jobs:
 
       - name: Verify the documented install path (published package, no auth)
         run: npm run verify:consumer
+
+  # The public view-only Figma share a LinkedIn visitor actually clicks. Independent
+  # of build: it GETs the live URL with a browser User-Agent (bare curl is
+  # CloudFront-403'd even when the share is public) and asserts HTTP 200 plus
+  # file-identifying content. Catches a revoked "anyone with the link" setting,
+  # and guards that the URL opens Foundations & Starters — never Sync Reports.
+  figma-share:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Set up Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+
+      - name: Verify the public Figma share is reachable
+        run: npm run verify:figma-share
