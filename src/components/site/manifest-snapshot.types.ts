@@ -90,8 +90,8 @@ export interface ManifestSnapshot {
   principles: PrincipleRecord[]
   /**
    * Checked-in previews of the Figma mirror, or null if none are committed.
-   * The page presence-gates on this: a raw link to the live Figma file 403s for
-   * anyone outside the team, so the shareable artifact is these versioned PNGs.
+   * The page presence-gates on this: the live file is also a public view-only
+   * share, but these versioned PNGs show parity inline with no click required.
    */
   figmaExports: {
     fileKey: string

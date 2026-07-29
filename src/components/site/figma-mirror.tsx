@@ -9,13 +9,10 @@ import foundationsPng from "../../../figma/exports/mvds-foundations.png"
 /**
  * FigmaMirror — the code→Figma parity, shown rather than claimed.
  *
- * The Figma file is a generated one-way mirror of the code, and it is private —
- * a raw link to it 403s for anyone outside the team, which is useless on a page
- * meant to be shared. So the shareable artifact is a set of PNG previews checked
- * INTO the repo (figma/exports/), versioned like figma.lock.json and rendered
- * inline here. A visitor sees the parity with no Figma account and no click; the
- * live-file link is kept as a secondary affordance, labelled honestly as needing
- * access.
+ * The Figma file is a generated one-way mirror of the code. Checked-in PNG
+ * previews (figma/exports/) render the parity inline with no click required;
+ * the live-file link is a public view-only share that opens Foundations &
+ * Starters (the top page), not the internal Sync Reports page.
  *
  * Images are keyed by page id so the JSX never assumes an order the snapshot
  * didn't promise.
@@ -47,7 +44,7 @@ function FigmaMirror({
           the reverse. These are previews checked into the repo — versioned like
           the lock, captured {figmaExports.capturedAt} and last synced from code
           on {lock.syncedAt}. They render here so the parity is visible without a
-          Figma account; the live file itself is private.
+          Figma account; the live file is also public view-only.
         </p>
       </Stack>
 
@@ -79,7 +76,7 @@ function FigmaMirror({
             target="_blank"
             rel="noopener noreferrer"
           >
-            Open the live file (team access) ↗
+            Open MVDS Core in Figma ↗
           </a>
         </Button>
       </Inline>
