@@ -123,5 +123,6 @@ src/
 docs/SYNC.md             ← the re-runnable code → Figma workflow
 docs/CONSUMING.md        ← install + wire MVDS into an app (agent-followable)
 docs/THEMING.md          ← brand a consumer app via the token cascade
+docs/VERIFICATION.md     ← How we enforce (plan → code → test → out in the world)
 code-connect/            ← dormant on Pro; activate after an Org/Enterprise upgrade
 ```
