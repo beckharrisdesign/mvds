@@ -4,8 +4,12 @@ MVDS doesn’t rely on “please remember the rules.” The same intent — toke
 spacing, stories, contrast — shows up at a few natural moments in the work.
 Each moment is a gate. Miss one and a later one usually catches you.
 
-This is the tour. The rules themselves live in [`AGENTS.md`](../AGENTS.md);
-this page is only *when* they get checked.
+**Primary surface:** this tour ships in Storybook under **Intro → How we
+enforce** (with Start here, Design principles, and Get started). This markdown
+file is the agent-readable twin — same story, greppable in the repo.
+
+The rules themselves live in [`AGENTS.md`](../AGENTS.md); this page is only
+*when* they get checked.
 
 ---
 
