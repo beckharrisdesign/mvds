@@ -43,12 +43,13 @@ function PrincipleCard({ principle }: { principle: PrincipleRecord }) {
   return (
     <Stack gap={8} className="border-border rounded-lg border p-4">
       <Inline gap={8} align="start" justify="between" wrap>
-        <span className="text-body font-medium">{principle.description}</span>
+        <span className="text-body font-medium">{principle.title}</span>
         <Badge variant={automated ? "success" : "neutral"}>
           {automated ? "enforced" : "judgment"}
         </Badge>
       </Inline>
 
+      <p className="text-small text-muted-foreground">{principle.description}</p>
       <p className="text-small text-muted-foreground">{principle.rationale}</p>
 
       <Inline gap={8} align="center" justify="between" wrap>

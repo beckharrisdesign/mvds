@@ -55,6 +55,7 @@ export const baseManifest = {
   principles: [
     {
       id: "no-hardcoded-color",
+      title: "Don’t drift from the color tokens",
       description: "No hardcoded color — use the token utilities.",
       rationale:
         "Color must flow through the token layer so it themes per context. AGENTS.md: never a generic Tailwind palette (text-slate-*), hex, or bg-white. The gray/primary/secondary ramps ARE tokens (src/index.css scales), so gray-* passes.",
@@ -78,6 +79,7 @@ export const baseManifest = {
     },
     {
       id: "no-margin-spacing",
+      title: "Space siblings with gap, not margins",
       description: "No margins for spacing — space siblings via the parent primitive's gap.",
       rationale:
         "Spacing is one number in one place (the parent's gap). AGENTS.md: the only sanctioned margin is mx-auto to center a Container.",
@@ -98,6 +100,7 @@ export const baseManifest = {
     },
     {
       id: "no-raw-flex-grid",
+      title: "Layout only via Stack / Inline / Grid",
       description: "No raw flex/grid layout utilities outside the layout primitives.",
       rationale:
         "Layout is owned by Stack/Inline/Grid. AGENTS.md: never raw flex/grid utilities for layout.",
@@ -118,6 +121,7 @@ export const baseManifest = {
     },
     {
       id: "story-coverage-ui",
+      title: "Every UI component has a story",
       description: "Every UI component has a co-located *.stories.tsx.",
       rationale:
         "Storybook is the verification gate. AGENTS.md: one story file per UI component.",
@@ -137,6 +141,7 @@ export const baseManifest = {
     },
     {
       id: "story-coverage-site",
+      title: "Every site section has a story",
       description: "Every site section component has a co-located *.stories.tsx.",
       rationale:
         "Storybook is the verification gate for site/ sections (the landing-page surface) exactly as for ui/ components.",
@@ -156,6 +161,7 @@ export const baseManifest = {
     },
     {
       id: "story-coverage-layout",
+      title: "Layout family covered in one story",
       description: "Every layout primitive is covered by the shared layout story.",
       rationale:
         "AGENTS.md: a cohesive primitive family may share one story (layout.stories.tsx) rather than one per file.",
@@ -176,6 +182,7 @@ export const baseManifest = {
     },
     {
       id: "story-coverage-blocks",
+      title: "Blocks family covered in one story",
       description: "Every content block primitive is covered by the shared blocks story.",
       rationale:
         "AGENTS.md: a cohesive primitive family may share one story (blocks.stories.tsx) rather than one per file.",
@@ -202,6 +209,7 @@ export const baseManifest = {
     // how the heuristic applies to a design system; the `ref` names the original.
     {
       id: "consistency-and-standards",
+      title: "One concept, one expression",
       description:
         "One concept, one expression — a thing that behaves the same should look the same everywhere.",
       rationale:
@@ -216,6 +224,7 @@ export const baseManifest = {
     },
     {
       id: "aesthetic-and-minimalist-design",
+      title: "Cut surface that doesn’t earn its place",
       description:
         "Every element competes for attention with every other one — so carry no surface you cannot justify.",
       rationale:
@@ -230,6 +239,7 @@ export const baseManifest = {
     },
     {
       id: "visibility-of-system-status",
+      title: "Show real status, don’t claim it in prose",
       description:
         "The system tells you what it knows about itself, in time to matter.",
       rationale:
@@ -244,6 +254,7 @@ export const baseManifest = {
     },
     {
       id: "error-prevention",
+      title: "Make the wrong thing hard to type",
       description:
         "Make the wrong thing impossible to express, rather than catching it later.",
       rationale:
@@ -258,6 +269,7 @@ export const baseManifest = {
     },
     {
       id: "recognition-rather-than-recall",
+      title: "Names that mean what they say",
       description:
         "Names should say what they mean, so nobody has to hold a mapping in their head.",
       rationale:

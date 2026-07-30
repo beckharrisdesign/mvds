@@ -59,6 +59,8 @@ export interface Gate {
  */
 export interface PrincipleRecord {
   id: string
+  /** Peer-facing title — what the rule is about. */
+  title: string
   description: string
   rationale: string
   fix: string
