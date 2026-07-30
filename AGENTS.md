@@ -148,8 +148,8 @@ every story, run in **both** modes (`test:light`, then `test:dark` via
 foreground/background pairing — independent of whether a component renders it. Fix
 violations before shipping.
 
-Full map of local hooks, CI, Chromatic, and publish — and how they share one
-spine — lives in [`docs/VERIFICATION.md`](docs/VERIFICATION.md).
+How those checks show up while planning, coding, testing, and after publish:
+[`docs/VERIFICATION.md`](docs/VERIFICATION.md) (*How we enforce*).
 
 **Golden rules are partly machine-enforced.** `npm run check:principles` is a
 manifest-driven gate ([`principles.config.mjs`](principles.config.mjs)) that turns
@@ -240,5 +240,5 @@ from the experiment-hub rules — keep the two in sync.)
 - [`src/components/layout/`](src/components/layout) — layout primitives + `scales.ts`.
 - [`src/components/ui/`](src/components/ui) — vendored shadcn (don't hand-edit).
 - [`docs/SYNC.md`](docs/SYNC.md) — code→Figma workflow & Pro-tier constraints.
-- [`docs/VERIFICATION.md`](docs/VERIFICATION.md) — local → CI → publish verification map.
+- [`docs/VERIFICATION.md`](docs/VERIFICATION.md) — How we enforce (plan → code → test → world).
 - [`README.md`](README.md) — overview for humans.

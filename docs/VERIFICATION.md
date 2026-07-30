@@ -1,168 +1,116 @@
-# Verification — how MVDS keeps code honest
+# How we enforce
 
-MVDS encodes intent in **data and stories**, then runs the **same checks** at
-several stages: while you edit, before you push, on every PR, and at publish.
-This page is the map of those stages. It is not a second rulebook — the rules
-live in [`AGENTS.md`](../AGENTS.md), [`principles.config.mjs`](../principles.config.mjs),
-and [`src/index.css`](../src/index.css).
+MVDS doesn’t rely on “please remember the rules.” The same intent — tokens,
+spacing, stories, contrast — shows up at a few natural moments in the work.
+Each moment is a gate. Miss one and a later one usually catches you.
 
-**Idea:** local gates and CI are not different policies. They are the same
-spine, applied earlier or later.
-
-```
-edit → agent hooks → local hand-run → git hooks → PR / CI → (Chromatic) → publish
-         │                │                              │                    │
-         └──── same scripts / same manifests ────────────┴────────────────────┘
-```
+This is the tour. The rules themselves live in [`AGENTS.md`](../AGENTS.md);
+this page is only *when* they get checked.
 
 ---
 
-## 1. Before the change leaves your machine
+## While planning
 
-These catch drift while the work is still local.
+Before anyone writes UI, the system already says what “good” looks like.
 
-| Layer | What runs | Same rules as |
-| --- | --- | --- |
-| **Types** | TypeScript (`tsc` via `npm run build`) — e.g. 8-grid `gap` props | Compile-time constraints in component APIs |
-| **Lint** | `npm run lint` (ESLint) | General JS/TS hygiene — *not* the golden-rule gate |
-| **Agent edit guards** | Claude PostToolUse hooks | Principles + token contrast at keystroke |
-| **Hand-run ship gate** | Commands in AGENTS.md “Before you call a change done” | Exactly what CI will re-run |
-| **Git hooks** | `.githooks/` (via `prepare` → `core.hooksPath`) | Branch workflow, not correctness |
+- **House rules** in [`AGENTS.md`](../AGENTS.md) — spacing, tokens, layout
+  primitives, Storybook as the verification surface.
+- **Principles as data** in [`principles.config.mjs`](../principles.config.mjs) —
+  each golden rule is a record (what it forbids, where it applies, how to fix
+  it). Some are machine-checkable; some are judgment calls (the NN/g
+  heuristics) that agents and humans still have to *decide*.
+- **Tokens in one place** — [`src/index.css`](../src/index.css) is the color,
+  type, and spacing source of truth. Planning a brand change means planning a
+  token change, not a hunt through components.
 
-### Agent edit guards
+If it isn’t encoded here, it isn’t a rule the repo can hold you to later.
 
-Wired in [`.claude/settings.json`](../.claude/settings.json):
+---
 
-| Hook | Trigger | Runs |
-| --- | --- | --- |
-| [`principle-edit-guard`](../scripts/hooks/principle-edit-guard.mjs) | After editing a source file | `node scripts/check-principles.mjs --file <path>` |
-| [`token-edit-guard`](../scripts/hooks/token-edit-guard.mjs) | After editing `src/index.css` | `node scripts/check-contrast.mjs` (+ Figma-stale nudge) |
+## While coding
 
-These are the same Node scripts CI uses — scoped to the edited file where that
-makes sense.
+Checks that fire while the work is still on your machine — ideally before you
+even think about a PR.
 
-### Hand-run ship gate (required before you claim done)
+**As you type (agents).** Edit a source file and the principle guard re-runs
+the golden-rule scan on that file. Edit the token layer and the contrast check
+runs immediately (and reminds you Figma is now stale). Same scripts CI will
+use — just earlier.
+
+**When you think you’re done.** Run the ship gate locally:
 
 ```bash
-npm run build              # tsc + vite
-npm run check:contrast     # token WCAG AA, light + dark
-npm run check:principles   # manifest-driven golden rules
-npm test                   # Storybook stories in Chromium + axe, light then dark
+npm run build
+npm run check:contrast
+npm run check:principles
+npm test
 ```
 
-Details and rationale: [`AGENTS.md`](../AGENTS.md) → *Before you call a change done*.
+That’s typecheck + build, token contrast (light and dark), the principle
+manifest, and every Storybook story in real Chromium with accessibility
+checks — again in light and dark.
 
-### Local git hooks (workflow, not quality)
+**Before the commit lands on the wrong branch.** A local git hook blocks
+commits straight to `main` and nudges branch names toward `feat/…`, `fix/…`,
+and friends. That’s workflow hygiene, not a quality check.
 
-| Hook | Role |
-| --- | --- |
-| [`.githooks/pre-commit`](../.githooks/pre-commit) | Hard-blocks commits on `main`; warns on off-convention branch names |
-| [`.githooks/post-merge`](../.githooks/post-merge) | After pull into `main`, cleans up genuinely merged branches/worktrees |
-
-They do **not** run build, principles, or Storybook tests. Correctness is
-opt-in locally (hand-run / agent hooks) and mandatory in CI.
-
----
-
-## 2. How the repo holds the line (same rules, more places)
-
-Once the branch is on GitHub, automation re-applies the spine and adds a few
-checks that only make sense remotely.
-
-### PR / push CI — [`.github/workflows/ci.yml`](../.github/workflows/ci.yml)
-
-Triggers on pull requests to `main` and pushes to `main`.
-
-**Job `build-and-test` (blocking):**
-
-| Step | Command / tool |
-| --- | --- |
-| App build | `npm run build` (`tsc` + Vite) |
-| Library build | `npm run build:lib` (tsup → `dist-lib`) |
-| Token contrast | `npm run check:contrast` |
-| Design principles | `npm run check:principles` |
-| Figma manifest drift | `npm run check:figma` (component axes vs code) |
-| Storybook tests | `npm test` — Vitest + Playwright **Chromium**, every story, **light and dark**, including axe a11y / color-contrast |
-
-**Job `consumer-path` (blocking, independent):**
-
-| Step | What it proves |
-| --- | --- |
-| `npm run verify:consumer` | A stranger’s install: published package (or local pack on release bumps) into `examples/starter`, no `.npmrc` / no token, build succeeds and CSS proves tokens + `@source dist-lib` |
-
-**Job `figma-share` (blocking, independent):**
-
-| Step | What it proves |
-| --- | --- |
-| `npm run verify:figma-share` | The public view-only Figma URL still returns 200 and opens the intended file (not a revoked share / wrong page) |
-
-### Chromatic — [`.github/workflows/chromatic.yml`](../.github/workflows/chromatic.yml)
-
-Visual regression on Storybook snapshots. Complements CI’s render + a11y gate
-with pixel diffs. **Non-blocking:** reported in Chromatic for review; does not
-gate merges.
-
-### Publish / release — [`.github/workflows/publish.yml`](../.github/workflows/publish.yml)
-
-On `v*.*.*` tags (or manual dispatch):
-
-- Tag must match `package.json` version (tag-triggered runs)
-- `npm publish` — `prepack` runs `build:lib` so the tarball always includes a
-  fresh `dist-lib`
-
-There is no separate post-deploy smoke beyond that; the **consumer-path** CI job
-is what continuously validates the *documented install* against what npm
-already serves (with a local-pack fallback on release bumps).
+ESLint is there for ordinary JS/TS hygiene. It is *not* how we enforce the
+design-system golden rules — those ride the principle script above.
 
 ---
 
-## 3. What “enforced” means (principles)
+## While testing
 
-In the principle manifest and on the landing dashboard, **enforced** /
-**automated** means a machine check in [`scripts/check-principles.mjs`](../scripts/check-principles.mjs)
-— **not** a Vitest unit test and **not** a Storybook integration test.
+Once the branch is on GitHub, the repo re-runs the spine and adds a few checks
+that only make sense remotely.
 
-| Check kind | How it works | Example ids |
-| --- | --- | --- |
-| `forbid-source` | Regex over source text | `no-hardcoded-color` |
-| `forbid-classname` | Regex over classnames (with allowlist) | `no-margin-spacing`, `no-raw-flex-grid` |
-| `require-sibling-file` | Companion file must exist | `story-coverage-ui`, `story-coverage-site`, `story-coverage-layout`, `story-coverage-blocks` |
-| `guiding` | **Judgment** — reported, never executed, never fails the build | NN/g heuristics in the manifest |
+**On every PR (must pass).** Build the app and the publishable library. Re-run
+token contrast and principles. Check that the Figma component manifest still
+matches the code. Run the full Storybook suite in Chromium — light and dark,
+render + interaction + axe.
 
-Suppress a justified exception on the offending line:
+**Also on every PR (still must pass, separate jobs).** Walk the path a
+newcomer actually takes: install the package into the starter (no special
+auth) and prove the CSS came out right. Ping the public Figma share URL so a
+revoked “anyone with the link” setting can’t silently rot.
 
-```ts
-// mvds-allow no-hardcoded-color — <reason>
-```
+**Visual diffs (advisory).** Chromatic snapshots Storybook for pixel-level
+regressions. Humans review those; they don’t block the merge on their own.
 
-Bare `// mvds-allow` suppresses every principle on that line.
-
-Storybook + Chromium (`npm test`) is a **different** layer: render, interaction,
-and axe contrast in real UI — including principles that only show up as pixels
-and DOM, not as forbidden source patterns.
+“Enforced” on a principle means the static scan (`check:principles`) — pattern
+and file checks over source. Storybook in Chromium is the other half: does it
+*look and behave* right, with real contrast in the DOM? Both matter; they
+catch different mistakes.
 
 ---
 
-## 4. Quick reference — scripts and where they run
+## Out in the world
 
-| Script | Local hand-run | Agent hook | CI | Publish |
-| --- | --- | --- | --- | --- |
-| `build` | ✓ (ship gate) | | ✓ | |
-| `build:lib` | as needed | | ✓ | via `prepack` |
-| `lint` | optional | | | |
-| `check:contrast` | ✓ | token-edit-guard | ✓ | |
-| `check:principles` | ✓ | principle-edit-guard | ✓ | |
-| `check:figma` | as needed | | ✓ | |
-| `test` (Storybook / Chromium) | ✓ | | ✓ | |
-| `verify:consumer` | as needed | | ✓ | |
-| `verify:figma-share` | as needed | | ✓ | |
-| Chromatic | | | ✓ (advisory) | |
+Shipping isn’t the end of the story — it’s when strangers meet the package.
+
+**Publish.** A version tag kicks off npm publish. The tag must match
+`package.json`, and packing the tarball rebuilds the library so what lands on
+the registry isn’t a stale build.
+
+**After it’s published.** The consumer-path check in CI keeps exercising the
+documented install against what’s on npm (with a local-pack fallback when a
+release PR bumps the pin before the version exists). That’s how we notice the
+README’s two-step install stopped working for a real app.
+
+Figma Core stays a **one-way mirror** — updated when someone asks, not on every
+commit. The share-link check only proves the public URL still opens; it doesn’t
+re-sync the file.
 
 ---
 
-## Related
+## One spine, four moments
 
-- [`AGENTS.md`](../AGENTS.md) — golden rules + ship gate + branch/PR workflow
-- [`principles.config.mjs`](../principles.config.mjs) — principle records (data)
-- [`docs/SYNC.md`](SYNC.md) — code → Figma (on request only; not a CI correctness gate)
-- [`docs/CONSUMING.md`](CONSUMING.md) — the install path `verify:consumer` guards
+| Moment | What you’re trusting |
+| --- | --- |
+| While planning | Rules and tokens written down as data |
+| While coding | Edit guards + the local ship gate |
+| While testing | CI + Storybook/Chromium (+ Chromatic for eyes) |
+| Out in the world | Publish integrity + the stranger’s install path |
+
+Nothing here invents a second policy. Later gates re-apply earlier ones, then
+add the checks that only work once the code has left your laptop.
