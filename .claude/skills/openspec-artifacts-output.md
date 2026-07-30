@@ -1,0 +1,1 @@
+../../skills/openspec-artifacts-output.md

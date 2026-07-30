@@ -1,0 +1,99 @@
+name: experiment-hub-lite
+version: 1
+description: >
+  Intent-first OpenSpec for MVDS spikes — copied from experiment-hub-lite, adapted
+  so Storybook + AGENTS.md replace experiments/*/prototype and hub design kits.
+
+artifacts:
+  - id: proposal
+    generates: proposal.md
+    description: Human anchor, outcomes, and scope in plain language (strategist voice).
+    template: proposal.md
+    instruction: |
+      Before writing, read `skills/experiment-creator.md` and apply its voice and prohibitions to this artifact only.
+      When that skill mentions Experiment Hub paths, prefer this repo's AGENTS.md and openspec/config.yaml context.
+
+      **Human anchor (required):** Quote founder prose verbatim (1–3 sentences). Do not proceed with an empty anchor or agent-only paraphrase without a quoted line.
+
+      **Outcomes (required):** Fill Who / Job / Done when / Not doing before Why.
+
+      **Lite constraints:** Max 2 new capabilities (kebab-case). Omit Evidence, Proceed attestation, and Visual board (those belong in design.md when needed).
+
+      **Stop rule:** After writing proposal.md, stop and wait for explicit user approval before creating specs, design, or tasks.
+
+  - id: specs
+    generates: specs/**/*.md
+    description: PM-style requirements with scenarios (prd-writer voice, max 5 requirements).
+    template: spec.md
+    requires:
+      - proposal
+    instruction: |
+      Before writing, read `skills/prd-writer.md` and apply outcomes + scenario patterns to this artifact only (not a full PRD file unless the user asked).
+
+      **Outcomes:** Repeat or point to proposal Outcomes at the top.
+
+      **Requirements:** Max 5 `### Requirement:` blocks. Each requirement: one plain-language sentence, optional **Fails until:** line, then normative SHALL (one line max), then at least one `#### Scenario:` with WHEN/THEN.
+
+      **Alignment:** Scenario titles must match tasks.md §1 checkboxes 1:1.
+
+      **Delta ops:** Use ADDED/MODIFIED/REMOVED only when promoting to `openspec/specs/`; for new capabilities, ADDED is enough.
+
+      **Stop rule:** After writing spec(s), stop and wait for explicit user approval before design or tasks.
+
+  - id: design
+    generates: design.md
+    description: User flow, Figma, and breakpoints (design-advisor voice).
+    template: design.md
+    requires:
+      - proposal
+    instruction: |
+      Before writing, read `skills/design-advisor.md` and `rules/figma.mdc`; apply checklist thinking to this artifact only (full design report only if user asks).
+      Prefer AGENTS.md + MVDS tokens over any hub Tailwind / Fraunces guidance in design-advisor.md.
+
+      **UI changes:** Visual design / Figma table is required — URL, frames, libraries, breakpoints.
+      Use BHD Content Types S=480px / L=1024px unless the change is Storybook-only chrome.
+      API-only / non-UI: one row "N/A — no UI" with brief rationale.
+
+      **Libraries:** MVDS Core (`C20nU0mROzk3Zr0I9BELJF`) and/or a scratch frame for iteration.
+      Do not schedule code→Figma library sync unless the founder asks (docs/SYNC.md).
+
+      **Stop rule:** After writing design.md, stop and wait for explicit user approval before tasks.
+
+  - id: tasks
+    generates: tasks.md
+    description: User-outcome checkboxes first, then Storybook/preview and implementation.
+    template: tasks.md
+    requires:
+      - specs
+      - design
+    instruction: |
+      Before writing §1, read `skills/prd-writer.md` (outcomes / scenario mapping). Before §2+, read `skills/prototype-builder.md` — treat Storybook as the preview shell (not experiments/*/prototype/).
+
+      **§1 User outcomes:** Copy every spec scenario as a numbered checkbox (1.1, 1.2, …). Wording should be user-visible ("User can …"), not file paths.
+
+      **§2 Preview:** Storybook story(ies) and/or landing reuse under `src/components/site/`. Dev command: `npm run storybook` (npm only).
+
+      **§3 Implementation:** `src/` + co-located `*.stories.tsx` per AGENTS.md.
+
+      **§4 QA:** Manual walkthrough aligned to Outcomes; automated `npm test` (stories + a11y light/dark) plus `npm run check:principles` / `check:contrast` / `build` as relevant.
+
+      **Stop rule:** After writing tasks.md, stop and wait for explicit user approval before `/opsx:apply`.
+
+apply:
+  requires:
+    - tasks
+  instruction: |
+    Read `skills/openspec-apply-change.md` and `skills/prototype-builder.md` (Storybook = preview).
+    Prefer AGENTS.md over hub-specific apply paths.
+
+    Before coding: read proposal Outcomes and tasks.md §1; confirm Human anchor still matches what you are building.
+
+    **Preview path:** Storybook + site components under `src/components/site/` (and layout/ui as needed). Do not create `experiments/<slug>/prototype/`.
+
+    **Package manager:** npm (see root package.json).
+
+    **UI:** MVDS tokens and layout primitives only (AGENTS.md).
+
+    **Completion:** User runs manual §1 checks before `/opsx:archive`. Do not archive until outcomes checkboxes are satisfied or explicitly waived.
+
+    **When apply finishes** (tasks done, paused with progress, or blocked after coding): follow `skills/openspec-apply-change.md` step 8 — commit (conventional message matching branch type), push, open or update a **draft** PR via `gh` so CI runs. Branch naming per AGENTS.md (`feat/…`, `fix/…`, etc. — or `cursor/<change-name>` if that matches an active OpenSpec change). Skip only if the session changed no files. Never merge or approve the PR. Figma Core sync only if the founder explicitly asks.

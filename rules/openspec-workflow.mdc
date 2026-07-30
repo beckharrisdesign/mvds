@@ -1,0 +1,43 @@
+---
+description: OpenSpec changes under openspec/. Apply when editing openspec/, using /opsx commands, or planning MVDS work with propose/design/apply.
+globs: openspec/**/*
+---
+
+# OpenSpec workflow (MVDS)
+
+Copied/adapted from experiment-hub. Schema SoT for this repo: [`openspec/schemas/experiment-hub-lite/`](../openspec/schemas/experiment-hub-lite/).
+
+## When to use
+
+- **OpenSpec lite** (default, only schema bootstrapped): Human anchor, Outcomes, specs (≤5 requirements), design (Figma table for UI), tasks §1 = user scenarios. `/opsx:propose` creates **one artifact per approval**.
+- **Cursor-only plans** are fine for tiny chores; use OpenSpec when you want durable proposal/design/tasks and Figma iteration before code.
+- Do **not** invent `bhd-experiment` or full `experiment-hub` schemas until they are copied into this repo.
+
+## Git discipline
+
+Match [github-workflow.mdc](github-workflow.mdc) and AGENTS.md Branch & PR workflow: one feature branch, draft PR, founder merges. Align change folder name with the branch when practical (`feat/storybook-start-here` ↔ `openspec/changes/storybook-start-here/`).
+
+**`/opsx:apply`:** Implement tasks; when apply finishes, commit + push + draft PR per schema `apply.instruction` and [`skills/openspec-apply-change.md`](../skills/openspec-apply-change.md). **`/opsx:propose`** does not commit.
+
+## Figma and `design.md`
+
+UI-impacting changes MUST document design context in `design.md` (see [figma.mdc](figma.mdc)). Map to MVDS tokens/components. Library sync to MVDS Core only when the founder asks.
+
+## Skills SoT
+
+| Slash command   | Skill file                                                        |
+| --------------- | ----------------------------------------------------------------- |
+| `/opsx:propose` | [`skills/openspec-propose.md`](../skills/openspec-propose.md)     |
+| `/opsx:apply`   | [`skills/openspec-apply-change.md`](../skills/openspec-apply-change.md) |
+| `/opsx:archive` | [`skills/openspec-archive-change.md`](../skills/openspec-archive-change.md) |
+| `/opsx:explore` | [`skills/openspec-explore.md`](../skills/openspec-explore.md)     |
+
+`.cursor/commands/opsx-*.md` are stubs — do not duplicate steps there.
+
+## Artifacts output
+
+Agents MUST end responses with `## Artifacts` when they create/update/move files under `openspec/changes/`. See [`skills/openspec-artifacts-output.md`](../skills/openspec-artifacts-output.md).
+
+## Archiving
+
+After merge: move `openspec/changes/<name>/` to `openspec/changes/archive/YYYY-MM-DD-<name>/` (or `/opsx:archive`). Promote durable behavior into `openspec/specs/` when it should outlive the change folder.

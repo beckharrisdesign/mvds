@@ -47,7 +47,18 @@ const preview: Preview = {
   parameters: {
     options: {
       storySort: {
-        order: ["Foundations", "Blocks", "UI"],
+        order: [
+          "Intro",
+          [
+            "Start here",
+            "Design principles",
+            "How we enforce",
+            "Get started",
+          ],
+          "Foundations",
+          "Blocks",
+          "UI",
+        ],
       },
     },
     controls: {

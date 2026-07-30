@@ -214,6 +214,7 @@ const worstLevel = (statuses) =>
 // what it adopted from published work — and follow the citation either way.
 const principleRecords = principles.map((p) => ({
   id: p.id,
+  title: p.title,
   description: p.description,
   rationale: p.rationale,
   fix: p.fix,

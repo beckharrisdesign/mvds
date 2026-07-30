@@ -16,6 +16,7 @@ import liveSnapshot from "@/generated/manifest-snapshot.json"
 const FIXTURE: PrincipleRecord[] = [
   {
     id: "no-hardcoded-color",
+    title: "Don’t drift from the color tokens",
     description: "No hardcoded color — use the token utilities.",
     rationale: "Color must flow through the token layer so it themes per context.",
     fix: "Use bg-background / text-foreground or a scale-ramp step.",
@@ -32,6 +33,7 @@ const FIXTURE: PrincipleRecord[] = [
   },
   {
     id: "consistency-and-standards",
+    title: "One concept, one expression",
     description:
       "One concept, one expression — a thing that behaves the same should look the same everywhere.",
     rationale:

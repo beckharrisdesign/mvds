@@ -65,6 +65,12 @@ export type PrincipleSource =
 export interface Principle {
   /** Stable slug, e.g. "no-hardcoded-color". */
   id: string
+  /**
+   * Peer-facing title — what the rule is about in plain language.
+   * Shown ahead of `id` in Storybook / docs; `description` stays the
+   * machine-oriented one-liner (failure messages, manifests).
+   */
+  title: string
   /** One-line, human/agent-facing — shown on failure. */
   description: string
   /** The "why", lifted from AGENTS.md golden rules. */

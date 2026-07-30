@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-07-29T14:23:23-05:00",
-  "commit": "ea37ad3",
-  "dirty": false,
+  "generatedAt": "2026-07-30T14:40:18-05:00",
+  "commit": "2cc42a1",
+  "dirty": true,
   "lock": {
     "fileKey": "C20nU0mROzk3Zr0I9BELJF",
-    "syncedAt": "2026-07-15",
-    "syncedFromCommit": "50019850fd9e8695cb50bdcfb63e7bd12cda41c7",
-    "commitsBehind": 35
+    "syncedAt": "2026-07-29",
+    "syncedFromCommit": "8f791b1634e16e8c4ea9a135061084126dfcfa7c",
+    "commitsBehind": 4
   },
   "gates": [
     {
@@ -27,7 +27,7 @@
       "detail": "The golden rules, machine-enforced from the principle manifest.",
       "command": "npm run check:principles",
       "verifiedAt": "build",
-      "result": "73 files clear 7 enforced MVDS principles (light + dark) (+5 guiding, by judgment).",
+      "result": "83 files clear 7 enforced MVDS principles (light + dark) (+5 guiding, by judgment).",
       "status": {
         "level": "success",
         "label": "passing"
@@ -73,6 +73,7 @@
   "principles": [
     {
       "id": "no-hardcoded-color",
+      "title": "Don’t drift from the color tokens",
       "description": "No hardcoded color — use the token utilities.",
       "rationale": "Color must flow through the token layer so it themes per context. AGENTS.md: never a generic Tailwind palette (text-slate-*), hex, or bg-white. The gray/primary/secondary ramps ARE tokens (src/index.css scales), so gray-* passes.",
       "fix": "Use bg-background / text-foreground / text-muted-foreground, the semantic triad (success / neutral / destructive), or a scale-ramp step (gray-* / primary-* / secondary-*).",
@@ -89,6 +90,7 @@
     },
     {
       "id": "no-margin-spacing",
+      "title": "Space siblings with gap, not margins",
       "description": "No margins for spacing — space siblings via the parent primitive's gap.",
       "rationale": "Spacing is one number in one place (the parent's gap). AGENTS.md: the only sanctioned margin is mx-auto to center a Container.",
       "fix": "Remove the margin; wrap siblings in <Stack gap> / <Inline gap> / <Grid gap>. To center a Container, mx-auto is allowed.",
@@ -105,6 +107,7 @@
     },
     {
       "id": "no-raw-flex-grid",
+      "title": "Layout only via Stack / Inline / Grid",
       "description": "No raw flex/grid layout utilities outside the layout primitives.",
       "rationale": "Layout is owned by Stack/Inline/Grid. AGENTS.md: never raw flex/grid utilities for layout.",
       "fix": "Use a layout primitive: <Stack>/<Inline> (flex) or <Grid> (grid) from src/components/layout.",
@@ -121,6 +124,7 @@
     },
     {
       "id": "story-coverage-ui",
+      "title": "Every UI component has a story",
       "description": "Every UI component has a co-located *.stories.tsx.",
       "rationale": "Storybook is the verification gate. AGENTS.md: one story file per UI component.",
       "fix": "Add a co-located *.stories.tsx enumerating every variant/state in light + dark.",
@@ -137,6 +141,7 @@
     },
     {
       "id": "story-coverage-site",
+      "title": "Every site section has a story",
       "description": "Every site section component has a co-located *.stories.tsx.",
       "rationale": "Storybook is the verification gate for site/ sections (the landing-page surface) exactly as for ui/ components.",
       "fix": "Add a co-located *.stories.tsx exercising the section in light + dark.",
@@ -153,6 +158,7 @@
     },
     {
       "id": "story-coverage-layout",
+      "title": "Layout family covered in one story",
       "description": "Every layout primitive is covered by the shared layout story.",
       "rationale": "AGENTS.md: a cohesive primitive family may share one story (layout.stories.tsx) rather than one per file.",
       "fix": "Cover the primitive in src/components/layout/layout.stories.tsx (the shared family story).",
@@ -169,6 +175,7 @@
     },
     {
       "id": "story-coverage-blocks",
+      "title": "Blocks family covered in one story",
       "description": "Every content block primitive is covered by the shared blocks story.",
       "rationale": "AGENTS.md: a cohesive primitive family may share one story (blocks.stories.tsx) rather than one per file.",
       "fix": "Cover the primitive in src/components/blocks/blocks.stories.tsx (the shared family story).",
@@ -185,6 +192,7 @@
     },
     {
       "id": "consistency-and-standards",
+      "title": "One concept, one expression",
       "description": "One concept, one expression — a thing that behaves the same should look the same everywhere.",
       "rationale": "This is the whole argument for a token layer and a fixed variant set. Every ad-hoc value is a second dialect a reader has to learn, and an agent has to guess between. The mechanical half is enforced (no-hardcoded-color, no-raw-flex-grid); the judgment half is deciding when a genuinely new case deserves a new variant instead of a one-off.",
       "fix": "Before adding a variant or a bespoke style, find the existing expression of the same idea and reuse it. If none fits, add it to the system rather than to the screen.",
@@ -201,6 +209,7 @@
     },
     {
       "id": "aesthetic-and-minimalist-design",
+      "title": "Cut surface that doesn’t earn its place",
       "description": "Every element competes for attention with every other one — so carry no surface you cannot justify.",
       "rationale": "Why the component set is deliberately tiny and why pre-1.0 MVDS deletes rather than deprecates. Unused variants are not free: they dilute the signal of the ones that matter and enlarge the space an agent chooses from.",
       "fix": "Cut it. If a variant, prop, or export is not earning its place, remove it outright — there are no external consumers to protect yet.",
@@ -217,6 +226,7 @@
     },
     {
       "id": "visibility-of-system-status",
+      "title": "Show real status, don’t claim it in prose",
       "description": "The system tells you what it knows about itself, in time to matter.",
       "rationale": "The reason this landing page reports gate results and sync state rather than claiming quality in prose. A drifted mirror or a failing check should be legible at a glance and distinguishable from the expected state — which is why the status triad separates 'trailing by design' from 'genuinely disagrees'.",
       "fix": "Surface real state from a generated source. Never hand-write a status that could go stale without anything failing.",
@@ -233,6 +243,7 @@
     },
     {
       "id": "error-prevention",
+      "title": "Make the wrong thing hard to type",
       "description": "Make the wrong thing impossible to express, rather than catching it later.",
       "rationale": "Why primitive props are typed to the 8-grid: gap={12} is a compile error, not a review comment. Prevention beats detection beats documentation, in that order — the principles gate and the edit-guard hook exist for the cases the type system cannot reach.",
       "fix": "Prefer a narrowed type or a constrained prop over a lint rule; prefer a lint rule over a line in the docs.",
@@ -249,6 +260,7 @@
     },
     {
       "id": "recognition-rather-than-recall",
+      "title": "Names that mean what they say",
       "description": "Names should say what they mean, so nobody has to hold a mapping in their head.",
       "rationale": "Why the type ramp is semantic (text-h1, not text-2xl font-bold) and why primitive props take pixels (gap={16}, not gap-4 meaning 16px). A name that must be translated before use is a name that will be used wrongly — by a person at 5pm, and by an agent every time.",
       "fix": "Name for the intent, not the implementation. If a value needs a comment to explain what it maps to, the name is wrong.",
@@ -576,8 +588,8 @@
       ],
       "status": {
         "level": "neutral",
-        "label": "35 commits behind",
-        "detail": "Synced 2026-07-15 from 50019850fd9e8695cb50bdcfb63e7bd12cda41c7 — code-first, the mirror trails until the next requested sync."
+        "label": "4 commits behind",
+        "detail": "Synced 2026-07-29 from 8f791b1634e16e8c4ea9a135061084126dfcfa7c — code-first, the mirror trails until the next requested sync."
       }
     },
     {

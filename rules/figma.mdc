@@ -1,0 +1,54 @@
+---
+description: Figma MCP and OpenSpec design.md rules for MVDS. Apply when using Figma tools or writing openspec design.md.
+globs:
+---
+
+# Figma (MVDS)
+
+## MCP
+
+Cursor: Figma plugin / MCP (`plugin-figma-figma`). Before `use_figma`, load the figma-use skill. MVDS-specific sync skills live under `.claude/skills/mvds-figma-*` — **run only when the founder explicitly asks** (AGENTS.md / docs/SYNC.md).
+
+## Source of truth
+
+**Code is law.** MVDS Core (`fileKey C20nU0mROzk3Zr0I9BELJF`) is a generated, one-way mirror (code → Figma). Scratch/prototype frames for OpenSpec iteration are allowed in `design.md`; do not treat Figma as upstream for tokens or component APIs.
+
+## Map to MVDS — not hub kits
+
+- Tokens: `src/index.css` / Tailwind `@theme` (`bg-background`, `text-h1`, 8-grid spacing, etc.)
+- Layout: `Stack` / `Inline` / `Grid` / `Container` — never raw flex/grid utilities for page layout
+- Components: `src/components/ui/`, `layout/`, `site/`, `blocks/`
+- Treat Figma MCP export as **reference**; rewrite to MVDS primitives and tokens
+
+## Proposal file page naming (scratch / explore files)
+
+When iterating UI in a Figma design file (not MVDS Core library sync), use **one page per step**. Never overwrite a prior page — create a new page for each proposal iteration.
+
+| Page name | Role |
+|---|---|
+| `0.0 As is` | **First page.** Map the current product/surface faithfully (what ships today). No proposed IA. |
+| `01.0 Propose: <openspec-change>` | First proposal for OpenSpec change `<openspec-change>` (kebab-case slug). |
+| `02.0 Propose: <openspec-change> update` | Next iteration (then `03.0` …). Append ` update` (and bump the numeric prefix). |
+
+Rules:
+
+- Always create `0.0 As is` before any `Propose:` page.
+- Page names carry the **OpenSpec change slug** after `Propose:` so design.md and Figma stay aligned.
+- Leave prior pages untouched when direction changes — new page, new number.
+
+## OpenSpec `design.md`
+
+For `openspec/changes/<id>/design.md`, every UI change MUST include a **Visual design / Figma** table:
+
+- Primary Figma file URL (MVDS Core and/or scratch)
+- **Pages in scope** (e.g. `0.0 As is`, `01.0 Propose: storybook-start-here`)
+- Frames/components in scope
+- Libraries (MVDS Core Tokens/Scales/components)
+- Breakpoints (S=480 / L=1024 unless Storybook-only)
+- Status (draft / iterating / ready for apply)
+
+API-only: one "N/A — no UI" row with rationale.
+
+## Code Connect
+
+MVDS does **not** use Code Connect (AGENTS.md). Do not add `.figma.ts` connect files unless the founder changes that policy.
