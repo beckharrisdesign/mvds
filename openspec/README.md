@@ -10,7 +10,7 @@ Bootstrapped from **experiment-hub**’s [`experiment-hub-lite`](https://github.
 |---|---|
 | Default schema | [`config.yaml`](config.yaml) → `experiment-hub-lite` |
 | Schema + templates | [`schemas/experiment-hub-lite/`](schemas/experiment-hub-lite/) |
-| Upstream baseline | [`schemas/experiment-hub-lite/.upstream/`](schemas/experiment-hub-lite/.upstream/README.md) — hub files at the stamped commit |
+| Upstream baseline | [`.upstream/`](../.upstream/README.md) — hub files (schema + skills) at the stamped commit |
 | Active changes | [`changes/`](changes/) |
 | Promoted capabilities | [`specs/`](specs/) |
 | Workflow rule | [`rules/openspec-workflow.mdc`](../rules/openspec-workflow.mdc) |
@@ -22,10 +22,17 @@ Bootstrapped from **experiment-hub**’s [`experiment-hub-lite`](https://github.
 - Figma = **MVDS Core** (`C20nU0mROzk3Zr0I9BELJF`); library sync only when explicitly asked ([`docs/SYNC.md`](../docs/SYNC.md))
 - Only **lite** is copied — no `bhd-experiment` / full `experiment-hub` schemas yet
 
-**Staying current:** the copy is stamped `x-source: experiment-hub@<sha>` in
-[`schema.yaml`](schemas/experiment-hub-lite/schema.yaml), with the hub files at that commit vendored under
-[`.upstream/`](schemas/experiment-hub-lite/.upstream/README.md). `npm run check:schema-drift` re-fetches hub main and
-reports what moved since — warn-level in CI. Reconcile row by row (port missed hardening, keep deliberate MVDS
-divergence), then `node scripts/check-schema-drift.mjs --update` to re-stamp.
+**Staying current:** 14 files are mirrored from the hub — this schema, its four templates, and the nine
+[`skills/`](../skills/) files (four of which are byte-identical upstream). They are stamped to one hub commit in
+[`.upstream/manifest.json`](../.upstream/README.md), with the hub versions vendored beside it.
+`npm run check:upstream-drift` re-fetches hub main and reports what moved since.
+
+Two things watch it: a **warn-level PR job** (`upstream-drift` in `ci.yml`) and a **weekly scheduled workflow**
+(`upstream-currency`) that opens a GitHub issue with the diff and closes it when the copy is current again — because a
+PR annotation only fires in a week you happen to open a PR. Reconcile row by row (port missed hardening, keep
+deliberate MVDS divergence), then `node scripts/check-upstream-drift.mjs --update` to re-stamp.
+
+`rules/*.mdc` is deliberately **not** watched: MVDS's rules are rewritten against `AGENTS.md`, so tracking them would
+report chosen divergence forever.
 
 **Workflow:** Human anchor → `/opsx:propose` (one artifact per approval) → iterate Figma in `design.md` → `/opsx:apply` → draft PR per AGENTS.md → `/opsx:archive` after merge.
