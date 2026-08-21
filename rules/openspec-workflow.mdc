@@ -19,9 +19,20 @@ Match [github-workflow.mdc](github-workflow.mdc) and AGENTS.md Branch & PR workf
 
 **`/opsx:apply`:** Implement tasks; when apply finishes, commit + push + draft PR per schema `apply.instruction` and [`skills/openspec-apply-change.md`](../skills/openspec-apply-change.md). **`/opsx:propose`** does not commit.
 
+## Scope pivots
+
+When the founder redirects a change's scope mid-flight (e.g. "restyle the panel" becomes "remove the panel"):
+
+- **Rename the change directory** to describe what the change now does (`git mv openspec/changes/<old> openspec/changes/<new>`) — the change id should stay truthful, not historical.
+- **Rewrite the proposal** to the new scope, quoting the redirecting sentence **verbatim** as the new (or leading) Human anchor — the pivot instruction is founder intent, and the anchor is where founder intent lives.
+- **Record the pivot in the proposal**, one or two lines: what it began as, what redirected it, and where superseded work lives (Figma pages, docs) so nothing explored is lost.
+- **Retitle/re-body the open PR** to match. Superseded design artifacts stay in their file as a parked record — not deleted. Prior Figma pages are never overwritten (see [figma.mdc](figma.mdc) page convention).
+
+Ported from experiment-hub (precedent: `method-page` → `remove-workflow-page`, 2026-07-21).
+
 ## Figma and `design.md`
 
-UI-impacting changes MUST document design context in `design.md` (see [figma.mdc](figma.mdc)). Map to MVDS tokens/components. Library sync to MVDS Core only when the founder asks.
+UI-impacting changes MUST produce a Figma **as-is + proposed** pair and record it in `design.md` — not skippable, and **removals count as UI changes** (see [figma.mdc](figma.mdc)). Map to MVDS tokens/components. Library sync to MVDS Core only when the founder asks.
 
 ## Skills SoT
 
@@ -40,4 +51,17 @@ Agents MUST end responses with `## Artifacts` when they create/update/move files
 
 ## Archiving
 
-After merge: move `openspec/changes/<name>/` to `openspec/changes/archive/YYYY-MM-DD-<name>/` (or `/opsx:archive`). Promote durable behavior into `openspec/specs/` when it should outlive the change folder.
+After merge: move `openspec/changes/<name>/` to `openspec/changes/archive/YYYY-MM-DD-<name>/` (or `/opsx:archive`). Promote durable behavior into `openspec/specs/` when it should outlive the change folder — a delta spec under `changes/<name>/specs/<capability>/` becomes the canonical `openspec/specs/<capability>/spec.md`.
+
+**Every archived change carries an `archive.md`** — this is the point of archiving, not paperwork after it:
+
+```
+**Archived:** YYYY-MM-DD · **Created:** … · **Tasks:** n/m
+**Outcome:** SHIPPED | SUPERSEDED | ABANDONED | PARKED
+<one line: what happened, with a path, PR, or spec as evidence>
+**Left open:** <what a future session would need — or omit>
+```
+
+`PARKED` gets a wake condition instead of evidence. The hub archive accumulated 18 changes with zero outcome records before adopting this; an outcome line is the cheapest defence against a queue that stops describing reality.
+
+**`openspec/changes/` is a working queue, not a backlog.** A change with no movement in ~6 weeks gets archived with an outcome rather than left to age.

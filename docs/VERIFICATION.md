@@ -62,6 +62,14 @@ CSS came out right) and ping the public Figma share so a revoked link can’t
 quietly rot. Chromatic takes visual snapshots for human review; those diffs
 inform the conversation but don’t block the merge on their own.
 
+One job reports rather than gates: our OpenSpec process schema is a copy of
+experiment-hub’s, and a currency check re-fetches the original to say what
+changed upstream since we copied it. It warns and never fails — it describes
+another repo over the network, which is no reason an MVDS pull request can’t
+merge — so a stale copy surfaces on the next PR instead of on the next
+archaeology session. See
+[`openspec/schemas/experiment-hub-lite/.upstream/`](../openspec/schemas/experiment-hub-lite/.upstream/README.md).
+
 When we say a principle is “enforced,” we mean the static scan over source —
 patterns and required story files. Storybook in the browser is the other half:
 does it look and behave right, with real contrast in the DOM? They catch
