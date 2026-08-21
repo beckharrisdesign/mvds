@@ -99,7 +99,7 @@ Implement tasks from an OpenSpec change.
 
    **Skip only** if the session changed no files (e.g. blocked before step 6) or git is unavailable—say so explicitly.
 
-   a. **Branch** — [github-workflow.mdc](../rules/github-workflow.mdc) + AGENTS.md: never on `main`. Prefer `feat|fix|docs|chore/<descriptor>` matching the change; `cursor/<change-name>` is also fine. Create and check out the branch before committing if needed.
+   a. **Branch** — [github-workflow.mdc](../rules/github-workflow.mdc) + AGENTS.md: never on `main`. Prefer `feat|fix|docs|chore/<descriptor>` matching the change; `<harness>/<change-name>` for whichever tool is driving (`claude/…` under Claude Code, `cursor/…` under Cursor — never a hardcoded harness) is also fine. Create and check out the branch before committing if needed.
 
    b. **Commit** — Stage only files touched this apply session (implementation + `tasks.md` checkboxes). Conventional commits per AGENTS.md:
    - **Subject:** `<type>(<scope>): <imperative>` — lowercase start, no period. Scope = area or change slug (e.g. `openspec`, `site`, `storybook`).

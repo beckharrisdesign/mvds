@@ -1,5 +1,13 @@
 name: experiment-hub-lite
 version: 1
+
+# Provenance of this copy. `x-source` names the exact experiment-hub commit this
+# schema (and its templates) was reconciled against; `.upstream/` holds the
+# verbatim hub files at that commit. `npm run check:schema-drift` re-fetches hub
+# main and reports what moved upstream since — so a stale copy surfaces on the
+# next PR, not on the next archaeology session. Re-stamp both when you reconcile.
+x-source: experiment-hub@bd57a1c
+
 description: >
   Intent-first OpenSpec for MVDS spikes — copied from experiment-hub-lite, adapted
   so Storybook + AGENTS.md replace experiments/*/prototype and hub design kits.
@@ -50,12 +58,19 @@ artifacts:
       Before writing, read `skills/design-advisor.md` and `rules/figma.mdc`; apply checklist thinking to this artifact only (full design report only if user asks).
       Prefer AGENTS.md + MVDS tokens over any hub Tailwind / Fraunces guidance in design-advisor.md.
 
-      **UI changes:** Visual design / Figma table is required — URL, frames, libraries, breakpoints.
-      Use BHD Content Types S=480px / L=1024px unless the change is Storybook-only chrome.
-      API-only / non-UI: one row "N/A — no UI" with brief rationale.
+      **Figma gate (UI changes — REQUIRED, not skippable):** Any change that adds or alters UI MUST produce a Figma **as-is + proposed** pair before design.md is approved, in this repo's page convention (`rules/figma.mdc`):
+        1. **`0.0 As is`** — the current surface reconstructed from code (or captured from a running Storybook story); flag any non-code-derivable value as reference.
+        2. **`0N.0 Propose: <change-slug>`** — the changed surface, built on MVDS tokens and layout primitives (AGENTS.md, `src/index.css`), not bespoke chrome. New numbered page per iteration; never overwrite a prior one.
+      Then fill the Visual design / Figma table with the real **file URL**, **as-is + proposed page/frame names**, **library + version**, breakpoints (BHD Content Types S=480px / L=1024px unless the change is Storybook-only chrome), and status. "Reuses existing components" is NOT grounds to skip — reused components still get placed in a proposed frame.
 
-      **Libraries:** MVDS Core (`C20nU0mROzk3Zr0I9BELJF`) and/or a scratch frame for iteration.
+      **Removals count as UI changes.** Deleting a variant, prop, export, story, or visible component still gets an as-is + proposed pair — the proposed frame shows the surface with the element absent. A deletion rendered this way is reviewable in seconds; "there's nothing to design" is not grounds to skip (hub precedent: remove-workflow-page, 2026-07-21). MVDS is pre-1.0 and removes outright rather than deprecating (AGENTS.md), so this is the common case here, not the rare one.
+
+      **N/A is allowed ONLY for genuinely API-only / no-UI changes** — one row "N/A — no UI" with a brief rationale. If the change renders anything a user sees, it is not API-only.
+
+      **Libraries:** MVDS Core (`C20nU0mROzk3Zr0I9BELJF`) and/or a scratch file for iteration.
       Do not schedule code→Figma library sync unless the founder asks (docs/SYNC.md).
+
+      **No Code Connect.** MVDS does not use it and does not plan to (AGENTS.md) — the hub template's Code Connect row is deliberately absent here.
 
       **Stop rule:** After writing design.md, stop and wait for explicit user approval before tasks.
 
@@ -96,4 +111,4 @@ apply:
 
     **Completion:** User runs manual §1 checks before `/opsx:archive`. Do not archive until outcomes checkboxes are satisfied or explicitly waived.
 
-    **When apply finishes** (tasks done, paused with progress, or blocked after coding): follow `skills/openspec-apply-change.md` step 8 — commit (conventional message matching branch type), push, open or update a **draft** PR via `gh` so CI runs. Branch naming per AGENTS.md (`feat/…`, `fix/…`, etc. — or `cursor/<change-name>` if that matches an active OpenSpec change). Skip only if the session changed no files. Never merge or approve the PR. Figma Core sync only if the founder explicitly asks.
+    **When apply finishes** (tasks done, paused with progress, or blocked after coding): follow `skills/openspec-apply-change.md` step 8 — commit (conventional message matching branch type), push, open or update a **draft** PR via `gh` so CI runs. Branch naming per AGENTS.md (`feat/…`, `fix/…`, etc.); `<harness>/<change-name>` — whichever tool is driving, e.g. `claude/…` under Claude Code, `cursor/…` under Cursor — is also fine when it matches an active OpenSpec change. Never hardcode one harness. Skip only if the session changed no files. Never merge or approve the PR. Figma Core sync only if the founder explicitly asks.
