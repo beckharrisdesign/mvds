@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-07-30T14:40:18-05:00",
-  "commit": "2cc42a1",
+  "generatedAt": "2026-08-21T12:36:15-05:00",
+  "commit": "0bbf07c",
   "dirty": true,
   "lock": {
     "fileKey": "C20nU0mROzk3Zr0I9BELJF",
     "syncedAt": "2026-07-29",
     "syncedFromCommit": "8f791b1634e16e8c4ea9a135061084126dfcfa7c",
-    "commitsBehind": 4
+    "commitsBehind": 11
   },
   "gates": [
     {
@@ -15,7 +15,7 @@
       "detail": "Every foreground/background pairing at WCAG AA 4.5:1, light + dark.",
       "command": "npm run check:contrast",
       "verifiedAt": "build",
-      "result": "28 token pairings meet WCAG AA 4.5:1 in light + dark.",
+      "result": "52 token pairings meet WCAG AA 4.5:1 in light + dark.",
       "status": {
         "level": "success",
         "label": "passing"
@@ -27,7 +27,7 @@
       "detail": "The golden rules, machine-enforced from the principle manifest.",
       "command": "npm run check:principles",
       "verifiedAt": "build",
-      "result": "83 files clear 7 enforced MVDS principles (light + dark) (+5 guiding, by judgment).",
+      "result": "81 files clear 9 enforced MVDS principles (light + dark) (+5 guiding, by judgment).",
       "status": {
         "level": "success",
         "label": "passing"
@@ -76,11 +76,45 @@
       "title": "Don’t drift from the color tokens",
       "description": "No hardcoded color — use the token utilities.",
       "rationale": "Color must flow through the token layer so it themes per context. AGENTS.md: never a generic Tailwind palette (text-slate-*), hex, or bg-white. The gray/primary/secondary ramps ARE tokens (src/index.css scales), so gray-* passes.",
-      "fix": "Use bg-background / text-foreground / text-muted-foreground, the semantic triad (success / neutral / destructive), or a scale-ramp step (gray-* / primary-* / secondary-*).",
+      "fix": "Use bg-background / text-foreground / text-muted-foreground, the semantic triad (success / neutral / destructive), gray-*, or a gradation step (primary-1…5 / secondary-1…5).",
       "severity": "error",
       "enforcement": "automated",
       "checkKind": "forbid-source",
       "docs": "AGENTS.md (Golden rules — Color via tokens)",
+      "source": {
+        "kind": "founder",
+        "name": "MVDS house rules",
+        "url": "https://github.com/beckharrisdesign/mvds/blob/main/AGENTS.md",
+        "ref": null
+      }
+    },
+    {
+      "id": "step-on-color-gradations",
+      "title": "Color modulation steps on the gradation scale",
+      "description": "Tints and shades of brand families come from gradation steps (primary-1…5 / secondary-1…5) — not ad-hoc alpha or color-mix.",
+      "rationale": "Stepping between authored values is what makes UI read as done, organized, trustworthy — the same discipline as the 8-grid, applied to color. Founder (2026-08-21): “You should be stepping between values on the ramp by default… A brand could then define their own versions of it, but MVDS should be opinionated about it being there.” Steps carry role contracts (1–2 tint surfaces, 3 decorative, 4–5 text-safe) that check:contrast enforces; an ad-hoc /10 alpha carries no contract at all.",
+      "fix": "Pick a gradation step by role: bg-primary-1/-2 for tint surfaces, -3 for decorative borders/gradients, text-primary-4/-5 for text. See the Foundations/Color specimen.",
+      "severity": "error",
+      "enforcement": "automated",
+      "checkKind": "forbid-source",
+      "docs": "AGENTS.md (Golden rules — Color via tokens; Spacing — the 8 grid for the stepping idea)",
+      "source": {
+        "kind": "founder",
+        "name": "MVDS house rules",
+        "url": "https://github.com/beckharrisdesign/mvds/blob/main/AGENTS.md",
+        "ref": null
+      }
+    },
+    {
+      "id": "step-on-type-ramp",
+      "title": "Typography size steps on the semantic ramp",
+      "description": "Type sizes come from the semantic ramp (text-display … text-caption) — never generic size utilities or arbitrary sizes.",
+      "rationale": "The prose golden rule (“never ad-hoc text-2xl font-bold”) becomes data. Each ramp step carries the whole spec (size + line-height + weight + tracking), so stepping keeps hierarchy consistent everywhere an agent or human sets type.",
+      "fix": "Use a semantic ramp step: text-display, text-h1…text-h4, text-body-lg, text-body, text-small, or text-caption.",
+      "severity": "error",
+      "enforcement": "automated",
+      "checkKind": "forbid-source",
+      "docs": "AGENTS.md (Golden rules — Type via the semantic ramp)",
       "source": {
         "kind": "founder",
         "name": "MVDS house rules",
@@ -302,11 +336,11 @@
       "counts": [
         {
           "label": "principles",
-          "value": 12
+          "value": 14
         },
         {
           "label": "automated",
-          "value": 7
+          "value": 9
         },
         {
           "label": "by judgment",
@@ -325,6 +359,14 @@
       "items": [
         {
           "name": "no-hardcoded-color",
+          "meta": "forbid-source · error"
+        },
+        {
+          "name": "step-on-color-gradations",
+          "meta": "forbid-source · error"
+        },
+        {
+          "name": "step-on-type-ramp",
           "meta": "forbid-source · error"
         },
         {
@@ -588,7 +630,7 @@
       ],
       "status": {
         "level": "neutral",
-        "label": "4 commits behind",
+        "label": "11 commits behind",
         "detail": "Synced 2026-07-29 from 8f791b1634e16e8c4ea9a135061084126dfcfa7c — code-first, the mirror trails until the next requested sync."
       }
     },
@@ -601,15 +643,15 @@
       "counts": [
         {
           "label": "color utilities",
-          "value": 56
+          "value": 44
         },
         {
           "label": "light tokens",
-          "value": 64
+          "value": 52
         },
         {
           "label": "dark tokens",
-          "value": 26
+          "value": 36
         },
         {
           "label": "radius steps",

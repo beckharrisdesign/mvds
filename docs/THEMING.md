@@ -37,10 +37,12 @@ Token catalog: every overridable name and its default lives in one file —
 
 ## Recipe: rebrand the primary color
 
-The 11-step `primary-*` ramp is **derived from `--primary` with CSS relative
-color** — each step pins a lightness rung and inherits the base's chroma and
-hue. Recolor one token, the entire ramp recolors itself. Same for
-`--secondary`.
+Rebranding the base recolors every component that uses the semantic role
+(Button, Badge, focus rings). The **gradation scale** (`primary-1…5` /
+`secondary-1…5`) is **authored, not derived** — a brand defines its own five
+steps per family, per mode, alongside the base (1 = faintest tint against the
+mode's background, 5 = strongest; roles: 1–2 tint surfaces, 3 decorative,
+4–5 text-safe).
 
 ```css
 :root {
@@ -53,10 +55,26 @@ hue. Recolor one token, the entire ramp recolors itself. Same for
 }
 ```
 
-That's the whole rebrand: Button, Badge, focus rings, and all `primary-50…950`
-utilities update. Check contrast for the pair you chose (the repo gate is
-WCAG AA — `npm run check:contrast` validates the defaults; your overrides are
-your responsibility).
+That rebrands every semantic-role usage. To bring the gradation steps onto the
+brand too, author them in the same blocks:
+
+```css
+:root {
+  --primary-1: oklch(0.96 0.02 255);   /* faintest tint  — foreground reads on it */
+  --primary-2: oklch(0.92 0.04 255);   /* tint surface   — foreground reads on it */
+  --primary-3: oklch(0.70 0.10 255);   /* decorative     — borders, gradients */
+  --primary-4: oklch(0.44 0.14 255);   /* text-safe on background/card */
+  --primary-5: oklch(0.28 0.12 255);   /* strongest, text-safe */
+}
+.dark {
+  /* author the dark five the same way — 1 stays the faintest tint against
+     THIS mode's background; usage never flips */
+}
+```
+
+Check contrast for every pair you chose (the repo gate is WCAG AA —
+`npm run check:contrast` validates the defaults' role pairings; your overrides
+are your responsibility).
 
 ## Recipe: swap the typeface
 

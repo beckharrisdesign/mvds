@@ -97,14 +97,14 @@ const darkProps = propsOf(css.match(/\.dark\s*\{([\s\S]*?)\n\}/)?.[1] ?? "")
 //
 //   radius       a dimension, identical in both modes
 //   chrome-*     spatial DNA (bar heights / rail widths) — dimensions, not color
-//   the ramps    gray-* is a fixed black↔white ladder; primary-* / secondary-*
-//                are DERIVED via relative oklch() from their base token, which
-//                re-resolves against whichever mode is active at use time.
-//                Re-declaring them in .dark would defeat that derivation.
+//   gray-*       the fixed black↔white ladder, declared once by design.
+//                (The gradation scale primary-1…5 / secondary-1…5 is AUTHORED
+//                per mode — openspec: stepped-scales — so it appears in both
+//                blocks and needs no carve-out here.)
 //
 // Everything else must appear in BOTH blocks: a color token present in one mode
 // only is genuine drift and stays destructive.
-const RAMP_STEP = /^(?:gray|primary|secondary)-(?:50|100|200|300|400|500|600|700|800|900|950)$/
+const RAMP_STEP = /^gray-(?:50|100|200|300|400|500|600|700|800|900|950)$/
 const isModeInvariant = (p) =>
   p === "radius" || p.startsWith("chrome-") || RAMP_STEP.test(p)
 
