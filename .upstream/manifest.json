@@ -1,0 +1,23 @@
+{
+  "source": "beckharrisdesign/experiment-hub",
+  "ref": "main",
+  "commit": "bd57a1c",
+  "_comment": "Files mirrored from the hub. Paths are identical on both sides; the baseline copy lives at .upstream/<path>. Adding a watched file is one line here plus its baseline copy (node scripts/check-upstream-drift.mjs --update fetches it).",
+  "paths": [
+    "openspec/schemas/experiment-hub-lite/schema.yaml",
+    "openspec/schemas/experiment-hub-lite/templates/proposal.md",
+    "openspec/schemas/experiment-hub-lite/templates/spec.md",
+    "openspec/schemas/experiment-hub-lite/templates/design.md",
+    "openspec/schemas/experiment-hub-lite/templates/tasks.md",
+    "skills/design-advisor.md",
+    "skills/prototype-builder.md",
+    "skills/prd-writer.md",
+    "skills/experiment-creator.md",
+    "skills/openspec-artifacts-output.md",
+    "skills/openspec-explore.md",
+    "skills/openspec-propose.md",
+    "skills/openspec-archive-change.md",
+    "skills/openspec-apply-change.md"
+  ],
+  "_notWatched": "rules/*.mdc is deliberately excluded. MVDS's rules are effectively rewritten against AGENTS.md (figma.mdc ~117 changed lines, openspec-workflow.mdc ~80, github-workflow.mdc ~61) — watching them would report divergence we chose on purpose, every run, forever."
+}

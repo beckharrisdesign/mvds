@@ -2,10 +2,11 @@ name: experiment-hub-lite
 version: 1
 
 # Provenance of this copy. `x-source` names the exact experiment-hub commit this
-# schema (and its templates) was reconciled against; `.upstream/` holds the
-# verbatim hub files at that commit. `npm run check:schema-drift` re-fetches hub
-# main and reports what moved upstream since — so a stale copy surfaces on the
-# next PR, not on the next archaeology session. Re-stamp both when you reconcile.
+# schema was reconciled against — the human-visible half of the stamp that
+# `.upstream/manifest.json` holds for the whole mirrored set (schema, templates,
+# and skills/). `npm run check:upstream-drift` re-fetches hub main and reports
+# what moved since; the scheduled `upstream-currency` workflow opens an issue so
+# a stale copy cannot go unnoticed. Re-stamp with --update, never by hand.
 x-source: experiment-hub@bd57a1c
 
 description: >

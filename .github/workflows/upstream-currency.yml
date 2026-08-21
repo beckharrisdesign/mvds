@@ -1,0 +1,106 @@
+name: Upstream currency
+
+# MVDS copies its OpenSpec layer — the experiment-hub-lite schema, its templates,
+# and nine skills/*.md — from experiment-hub. The copies are deliberate; missing
+# upstream improvements is not. This workflow watches for the second.
+#
+# WHY SCHEDULED, not just the PR-time check in ci.yml: a PR annotation only fires
+# in a week you happen to open a PR, and it is easy to scroll past. The hub
+# hardened its Figma gate three times over a month and nothing here noticed. A
+# weekly run that OPENS AN ISSUE cannot be missed the same way.
+#
+# It maintains exactly one issue, labelled `upstream-drift`:
+#   drift found    → open it, or update the existing one with the current diff
+#   back in sync   → comment and close it
+# So the issue list stays a truthful signal rather than an accumulating pile.
+#
+# The check itself never fails this workflow — it reports on another repo over
+# the network. Only genuine tooling errors should ever go red here.
+
+on:
+  schedule:
+    # Mondays 13:00 UTC — a report waiting at the start of the week, not mid-flow.
+    - cron: "0 13 * * 1"
+  workflow_dispatch:
+
+# Serialize: two runs racing would fight over the same issue.
+concurrency:
+  group: upstream-currency
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  currency:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Set up Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+
+      - name: Check upstream currency
+        id: check
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          node scripts/check-upstream-drift.mjs --json > summary.json
+          node scripts/check-upstream-drift.mjs --report-md report.md > /dev/null
+          node -e '
+            const s = require("./summary.json");
+            const out = [
+              `ok=${s.ok}`,
+              `skipped=${s.skipped}`,
+              `head=${s.head ?? ""}`,
+              `count=${(s.drifted ?? []).length}`,
+            ].join("\n");
+            require("fs").appendFileSync(process.env.GITHUB_OUTPUT, out + "\n");
+          '
+          cat summary.json
+
+      - name: Open or update the drift issue
+        if: steps.check.outputs.ok == 'false' && steps.check.outputs.skipped == 'false'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          HEAD_SHA: ${{ steps.check.outputs.head }}
+          COUNT: ${{ steps.check.outputs.count }}
+        run: |
+          set -euo pipefail
+          gh label create upstream-drift \
+            --color BFD4F2 \
+            --description "MVDS's copied OpenSpec layer is behind experiment-hub" \
+            2>/dev/null || true
+
+          existing=$(gh issue list --label upstream-drift --state open \
+            --json number --jq '.[0].number // empty')
+          title="Upstream drift: experiment-hub@${HEAD_SHA} (${COUNT} file(s))"
+
+          if [ -n "$existing" ]; then
+            gh issue edit "$existing" --title "$title" --body-file report.md
+            echo "Updated issue #$existing"
+          else
+            gh issue create --title "$title" --label upstream-drift --body-file report.md
+          fi
+
+      - name: Close the drift issue when back in sync
+        if: steps.check.outputs.ok == 'true' && steps.check.outputs.skipped == 'false'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          HEAD_SHA: ${{ steps.check.outputs.head }}
+        run: |
+          set -euo pipefail
+          for n in $(gh issue list --label upstream-drift --state open \
+            --json number --jq '.[].number'); do
+            gh issue close "$n" --comment \
+              "Back in sync — every watched file matches \`experiment-hub@${HEAD_SHA}\`. Closed by the \`upstream-currency\` workflow."
+          done
+
+      - name: Note a skipped run
+        if: steps.check.outputs.skipped == 'true'
+        run: echo "::warning::Upstream currency check could not reach the hub; no issue was opened or closed."
