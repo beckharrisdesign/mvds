@@ -2,7 +2,7 @@
 
 - **Who:** Consumer apps hosting more than one brand on one domain (the hub's route-level products); agents building those routes on-system.
 - **Job:** Give one sub-tree its own complete brand — every token role, light and dark — without repainting the host and without leaving MVDS.
-- **Done when:** See proposal — an attribute scope re-brands everything beneath it, in both modes, ramps included, from a consumer app with zero component edits.
+- **Done when:** See proposal — an attribute scope re-brands everything beneath it, in both modes, gradation steps included, from a consumer app with zero component edits.
 - **Not doing:** Phase-3 principle variance; multi-accent token model; runtime theme-switcher UI; Figma preset sync.
 
 ## ADDED Requirements
@@ -29,13 +29,13 @@ A branded sub-tree honors light and dark: with `.dark` active on the root, compo
 - **WHEN** `.dark` is toggled on the document root while a `data-brand` wrapper is on the page
 - **THEN** components inside the wrapper switch between the brand's light and dark token values
 
-### Requirement: Derived ramps re-derive inside the scope
+### Requirement: The gradation scale wears the scoped brand
 
-The `primary-*` / `secondary-*` ramp utilities used inside a branded sub-tree derive from the scope's base tokens, so tints and gradients follow the scoped brand automatically.
+*(Respecced 2026-08-21 after `stepped-scales` landed the authored 1–5 gradation contract — supersedes "derived ramps re-derive inside the scope".)* A brand scope carries its own authored gradation steps: inside a `data-brand` wrapper, the gradation utilities (`bg-primary-2`, `text-primary-5`, `from-secondary-1`, …) render the brand's authored five per family, in both modes, with the same role contract (1–2 tint surfaces · 3 decorative · 4–5 text-safe).
 
-**Fails until:** `bg-primary-100` (and peers) rendered inside a `data-brand` wrapper resolve from the scoped `--primary`, not the host's.
+**Fails until:** A gradation utility rendered inside a `data-brand` wrapper resolves to the scoped brand's authored step value, not the host's.
 
-#### Scenario: Ramp tints follow the scoped base
+#### Scenario: Gradation steps follow the scoped brand
 
-- **WHEN** a component inside a `data-brand="terracotta"` wrapper uses a ramp step such as `bg-primary-100`
-- **THEN** the rendered color is derived from terracotta's base, while the same class outside the wrapper stays host-derived
+- **WHEN** a component inside a `data-brand="terracotta"` wrapper uses a gradation step such as `bg-primary-2`
+- **THEN** it renders terracotta's authored step-2 value, while the same class outside the wrapper renders the host brand's step

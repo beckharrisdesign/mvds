@@ -9,7 +9,7 @@
 
 ### Requirement: A terracotta preset ships in the package
 
-A consumer imports one stylesheet from the published package (e.g. `@beckharrisdesign/mvds/themes/terracotta.css`) and `data-brand="terracotta"` works — light and dark values for every overridable brand role, no hand-written tokens. `docs/THEMING.md` documents the two-step recipe (import + wrap).
+A consumer imports one stylesheet from the published package (e.g. `@beckharrisdesign/mvds/themes/terracotta.css`) and `data-brand="terracotta"` works — light and dark values for every overridable brand role **plus the brand's authored gradation steps (`primary-1…5` / `secondary-1…5`, per the `stepped-scales` contract)**, no hand-written tokens. `docs/THEMING.md` documents the two-step recipe (import + wrap).
 
 **Fails until:** The package exports the preset file and the documented two steps produce a terracotta sub-tree in a consumer app.
 
