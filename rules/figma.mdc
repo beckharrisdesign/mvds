@@ -38,16 +38,24 @@ Rules:
 
 ## OpenSpec `design.md`
 
-For `openspec/changes/<id>/design.md`, every UI change MUST include a **Visual design / Figma** table:
+**The Figma gate is not skippable.** Every change that adds or alters UI MUST produce an **as-is + proposed pair** before `design.md` is approved — not a table promising one later:
+
+1. **`0.0 As is`** — the current surface reconstructed from code (or captured from a running Storybook story). Flag non-code-derivable values as reference.
+2. **`0N.0 Propose: <change-slug>`** — the changed surface on MVDS tokens and layout primitives. New numbered page per iteration.
+
+Then the **Visual design / Figma** table records:
 
 - Primary Figma file URL (MVDS Core and/or scratch)
-- **Pages in scope** (e.g. `0.0 As is`, `01.0 Propose: storybook-start-here`)
-- Frames/components in scope
-- Libraries (MVDS Core Tokens/Scales/components)
+- **As-is page / frame** and **proposed page / frame**, by name
+- Libraries **and version** (MVDS Core Tokens/Scales/components; key or `@beckharrisdesign/mvds@x.y.z`)
 - Breakpoints (S=480 / L=1024 unless Storybook-only)
 - Status (draft / iterating / ready for apply)
 
-API-only: one "N/A — no UI" row with rationale.
+**"Reuses existing components" is not grounds to skip.** Reused components still get placed in a proposed frame — that IS the design review.
+
+**Removals count as UI changes.** Deleting a variant, prop, export, story, or visible component gets the same pair; the proposed page shows the surface with the element absent (e.g. the button row with one fewer variant). "There's nothing to design" is not grounds to skip (hub precedent: `remove-workflow-page`, 2026-07-21). MVDS is pre-1.0 and removes rather than deprecates (AGENTS.md), so removals are a routine case here.
+
+**N/A is allowed ONLY for genuinely API-only / no-UI changes** — one "N/A — no UI" row with rationale. If the change renders anything a user sees, it is not API-only.
 
 ## Code Connect
 
