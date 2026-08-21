@@ -26,5 +26,5 @@
 
 - [x] 4.1 Manual walkthrough of the Outcomes in Storybook, both modes; recipe followed verbatim from THEMING.md in a scratch consumer check
 - [x] 4.2 `npm run build` && `npm run check:contrast` && `npm run check:principles` && `npm test` — all green, light + dark
-- [ ] 4.3 Chromatic: **zero diffs on every existing story** (the tripwire); only the new override story adds snapshots
+- [x] 4.3 Chromatic: **zero diffs on every existing story** (the tripwire); only the new override story adds snapshots
 - [ ] 4.4 Post-release follow-up (recorded, not gated here): Motion & Muse drops its eight `font-heading` classes and its `@theme` override for a plain `:root` one
