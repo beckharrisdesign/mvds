@@ -4,11 +4,11 @@
 > "but why are we deriving the ramp at all?" and redirected ramp handling into
 > a new prerequisite change — [`stepped-scales`](../stepped-scales/proposal.md)
 > (authored 1–5 gradation scale as a principle; derived 50–950 ramps removed).
-> Decisions 1/1a below and Figma pages 01.0/02.0 are the parked record of the
-> superseded derivation mechanisms. Spec requirement 3 ("ramps re-derive in
-> scope") will be respecced against gradation steps once `stepped-scales` is
-> approved; the rest of this change (scoped semantic roles, terracotta preset,
-> gate coverage) stands.
+> **Resolved same day:** `stepped-scales` was planned, approved, and applied
+> (PR #82); R3 here was respecced to "the gradation scale wears the scoped
+> brand", and this design is now **v3** — Figma page 03.0, decisions rewritten
+> below. Figma pages 01.0/02.0 and the superseded decision text remain the
+> parked record of the derivation mechanisms this change no longer needs.
 
 ## Context
 
@@ -56,34 +56,26 @@ Consumer flow is two steps, no component edits:
 | --------------------- | ----- |
 | Primary file URL      | https://www.figma.com/design/SbghvBWm8gm8lfyo6HwXlN (scratch: "MVDS explore: scoped-theming") |
 | As-is page / frame    | `0.0 As is` — "As is — one brand per app (L 1024)": default brand strip + neutral ramp, reconstructed from `src/index.css` (oklch→hex flagged as reference), with the gap annotated |
-| Proposed page / frames| `02.0 Propose: scoped-theming update` (current) — "Two brands, one page (light)" (host strip + dashed `data-brand="terracotta"` wrapper with re-branded strip and re-derived primary/secondary ramps); "Two brands, one page (dark)" (same under `.dark`); "Terracotta preset — token spec (draft)" (11 roles × light/dark chips). `01.0` is the superseded first pass (mechanism used a universal `*` rule) |
+| Proposed page / frames| `03.0 Propose: scoped-theming update` (current) — "Two brands, one page (light)" (host strip + dashed `data-brand="terracotta"` wrapper with re-branded strip and the brand's **authored gradation steps 1–5 with roles**); "Two brands, one page (dark)"; "Terracotta preset — token spec (draft)" (11 roles × light/dark chips + authored gradation steps). Superseded: `01.0` (universal-`*` derivation), `02.0` (scope-root derivation) |
 | Libraries / version   | Values mirror `@beckharrisdesign/mvds@0.3.0` tokens (`src/index.css`); scratch file, not MVDS Core |
 | Breakpoints           | L·1024 only — token-level change, no responsive delta |
 | Status                | iterating — first pass for founder review |
 
 ## Decisions
 
-1. **Ramp derivations are declared per brand-scope root — selector
-   `:root, .dark, [data-brand]` — not on `*`.** (Supersedes the `01.0`
-   mechanism after founder review, 2026-08-21.) Each scope re-derives
-   `primary-*`/`secondary-*` from its own base and the values inherit down
-   normally. Two properties the `*` rule would have destroyed are preserved:
-   the ramps remain **one parseable token block** (the contract
-   `check-contrast.mjs`, `generate-manifest-snapshot.mjs`, and the Figma
-   derived-variables lock rely on — they get a one-line selector-match update,
-   not a rework), and a preset can **hand-tune any individual ramp step** in
-   its own block via the ordinary cascade (formulas come first in source
-   order; a tuned step inherits like any token — needed for hues where fixed
-   lightness rungs go muddy, e.g. ochre). Tailwind's `@theme inline` mapping
-   (`--color-primary-50: var(--primary-50)`) resolves at the use element, so
-   utilities pick up inherited scoped values with no further change.
-1a. **Ramp contract lands before the preset rides on it (sequencing).** Tasks
-   order: first formalize the derivation block as a checked token surface —
-   snapshot, contrast gate, and Figma derived-variables lock all become
-   per-brand aware, so every theme's derived ramp is computed, recorded, and
-   checked (the color ramps get the same first-class treatment as the type
-   ramp). Only then does `themes/terracotta.css` ship on top of that
-   contract.
+1. **Nothing derives — a preset is plain declarations only.** (v3; the 01.0
+   universal-`*` and 02.0 scope-root derivation mechanisms are superseded —
+   `stepped-scales` removed derivation from the system entirely.) The preset
+   stylesheet declares the 11 semantic roles **and** the brand's authored
+   gradation steps (`--primary-1…-5` / `--secondary-1…-5`), light block +
+   dark block. Custom-property inheritance carries everything down the
+   sub-tree; Tailwind utilities resolve at the use element. No selector
+   machinery, no parser changes, no formula anywhere.
+1a. **Gate parsing for presets:** `check-contrast.mjs` gains brand-aware block
+   parsing — for each shipped preset it reads `[data-brand="<name>"]` (light)
+   and `.dark [data-brand="<name>"]` (dark) blocks and runs the **same
+   52-pairing list** used for the defaults (roles included). One loop over
+   brands, not a parallel script.
 2. **Preset selector architecture:**
    `[data-brand="terracotta"] { …light tokens… }` plus
    `.dark [data-brand="terracotta"], [data-brand="terracotta"].dark { …dark
@@ -109,11 +101,11 @@ Consumer flow is two steps, no component edits:
 
 ## Risks / Trade-offs
 
-- **The parser contract moves one notch:** scripts that match a literal
-  `:root {` block must recognize the widened selector list — small, but it
-  must land *with* decision 1, or the manifest snapshot silently drops the
-  ramps. Chromatic must still show **zero diffs on defaults** — the
-  regression tripwire for the selector move.
+- **Preset drift risk moves to authoring:** with nothing derived, a preset's
+  ten gradation values are hand-authored data — the shared contrast gate is
+  what keeps them honest (role pairings, both modes, every brand). Chromatic
+  must still show **zero diffs on defaults** (presets touch nothing unless a
+  wrapper opts in).
 - Default dark `--border` is alpha (`oklch(1 0 0 / 10%)`); the preset uses
   opaque values — consistent with the Phase-2 opaque-tint direction, slightly
   ahead of the rest of the system.

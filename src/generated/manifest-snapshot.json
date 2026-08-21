@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-08-21T16:35:56-05:00",
-  "commit": "0ac36bc",
+  "generatedAt": "2026-08-21T17:08:39-05:00",
+  "commit": "1e5f6bc",
   "dirty": true,
   "lock": {
     "fileKey": "C20nU0mROzk3Zr0I9BELJF",
     "syncedAt": "2026-07-29",
     "syncedFromCommit": "8f791b1634e16e8c4ea9a135061084126dfcfa7c",
-    "commitsBehind": 17
+    "commitsBehind": 18
   },
   "gates": [
     {
@@ -15,7 +15,7 @@
       "detail": "Every foreground/background pairing at WCAG AA 4.5:1, light + dark.",
       "command": "npm run check:contrast",
       "verifiedAt": "build",
-      "result": "52 token pairings meet WCAG AA 4.5:1 in light + dark.",
+      "result": "104 token pairings meet WCAG AA 4.5:1 in light + dark across 2 brands.",
       "status": {
         "level": "success",
         "label": "passing"
@@ -27,7 +27,7 @@
       "detail": "The golden rules, machine-enforced from the principle manifest.",
       "command": "npm run check:principles",
       "verifiedAt": "build",
-      "result": "83 files clear 9 enforced MVDS principles (light + dark) (+5 guiding, by judgment).",
+      "result": "85 files clear 9 enforced MVDS principles (light + dark) (+5 guiding, by judgment).",
       "status": {
         "level": "success",
         "label": "passing"
@@ -630,7 +630,7 @@
       ],
       "status": {
         "level": "neutral",
-        "label": "17 commits behind",
+        "label": "18 commits behind",
         "detail": "Synced 2026-07-29 from 8f791b1634e16e8c4ea9a135061084126dfcfa7c — code-first, the mirror trails until the next requested sync."
       }
     },

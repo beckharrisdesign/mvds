@@ -1,7 +1,13 @@
 import { defineConfig } from "tsup";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { copyFileSync, readFileSync, writeFileSync } from "node:fs";
+import {
+  copyFileSync,
+  mkdirSync,
+  readFileSync,
+  readdirSync,
+  writeFileSync,
+} from "node:fs";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -59,5 +65,16 @@ export default defineConfig({
       );
     writeFileSync(path.resolve(dirname, "dist-lib/tokens.css"), tokensCss);
     console.log("[tsup] emitted dist-lib/tokens.css (token layer only)");
+
+    // Ship brand presets — plain-declaration stylesheets under themes/
+    // (openspec: scoped-theming). Consumers import them via the
+    // "./themes/*" package export.
+    const themesSrc = path.resolve(dirname, "src/themes");
+    const themesOut = path.resolve(dirname, "dist-lib/themes");
+    mkdirSync(themesOut, { recursive: true });
+    for (const f of readdirSync(themesSrc).filter((f) => f.endsWith(".css"))) {
+      copyFileSync(path.join(themesSrc, f), path.join(themesOut, f));
+    }
+    console.log("[tsup] copied src/themes/*.css -> dist-lib/themes/");
   },
 });
