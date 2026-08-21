@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
+import { expect } from "storybook/test"
 
 /**
  * Foundation specimens — the primitive scales that everything else is built on.
@@ -45,35 +46,94 @@ export const Spacing: Story = {
 }
 
 /* ---------------- Typography ---------------- */
-const RAMP: { cls: string; name: string; spec: string }[] = [
-  { cls: "text-display", name: "Display", spec: "48 / 1.05 / 600" },
-  { cls: "text-h1", name: "Heading 1", spec: "36 / 1.1 / 600" },
-  { cls: "text-h2", name: "Heading 2", spec: "30 / 1.15 / 600" },
-  { cls: "text-h3", name: "Heading 3", spec: "24 / 1.2 / 600" },
-  { cls: "text-h4", name: "Heading 4", spec: "20 / 1.3 / 600" },
-  { cls: "text-body-lg", name: "Body large", spec: "18 / 1.6 / 400" },
-  { cls: "text-body", name: "Body", spec: "16 / 1.6 / 400" },
-  { cls: "text-small", name: "Small", spec: "14 / 1.5 / 400" },
-  { cls: "text-caption", name: "Caption", spec: "12 / 1.4 / 500" },
+const RAMP: { cls: string; name: string; spec: string; token: string; face: string }[] = [
+  { cls: "text-display", name: "Display", spec: "48 / 1.05 / 600", token: "--text-display-size", face: "heading" },
+  { cls: "text-h1", name: "Heading 1", spec: "36 / 1.1 / 600", token: "--text-h1-size", face: "heading" },
+  { cls: "text-h2", name: "Heading 2", spec: "30 / 1.15 / 600", token: "--text-h2-size", face: "heading" },
+  { cls: "text-h3", name: "Heading 3", spec: "24 / 1.2 / 600", token: "--text-h3-size", face: "heading" },
+  { cls: "text-h4", name: "Heading 4", spec: "20 / 1.3 / 600", token: "--text-h4-size", face: "heading" },
+  { cls: "text-body-lg", name: "Body large", spec: "18 / 1.6 / 400", token: "--text-body-lg-size", face: "sans" },
+  { cls: "text-body", name: "Body", spec: "16 / 1.6 / 400", token: "--text-body-size", face: "sans" },
+  { cls: "text-small", name: "Small", spec: "14 / 1.5 / 400", token: "--text-small-size", face: "sans" },
+  { cls: "text-caption", name: "Caption", spec: "12 / 1.4 / 500", token: "--text-caption-size", face: "sans" },
 ]
 
 export const Typography: Story = {
   render: () => (
     <div className="flex flex-col gap-4">
       <p className="text-muted-foreground text-small">
-        Semantic ramp — each utility carries size + line-height + weight + tracking.
+        Semantic ramp — each utility carries size + line-height + weight +
+        tracking. Sizes and the two faces are runtime tokens: override{" "}
+        <code>--text-&lt;step&gt;-size</code>, <code>--font-sans</code>, or{" "}
+        <code>--font-heading</code> in plain CSS (app-wide or inside a{" "}
+        <code>data-brand</code> scope). Display/h1–h4 render{" "}
+        <code>--font-heading</code>; it follows <code>--font-sans</code> until a
+        brand points it elsewhere. See the TypeVoice story for the live seams.
       </p>
-      {RAMP.map(({ cls, name, spec }) => (
+      {RAMP.map(({ cls, name, spec, token, face }) => (
         <div key={cls} className="flex flex-col gap-1">
           <div className="text-muted-foreground flex gap-2 text-caption">
             <code className="w-28">{cls}</code>
             <span>{spec}</span>
+            <code>{token}</code>
+            <span>{face} face</span>
           </div>
           <span className={cls}>{name} — The quick brown fox</span>
         </div>
       ))}
     </div>
   ),
+}
+
+/* ---------------- Type voice — the runtime seams, render-tested ------------
+ * A wrapper sets --font-heading and one step-size token inline; the play
+ * assertions prove the seams are live (and can never regress to inert):
+ * heading face and the adjusted size change, body face and untouched steps
+ * don't. (openspec: themeable-typography) */
+export const TypeVoice: Story = {
+  render: () => (
+    <div className="flex flex-col gap-4">
+      <p className="text-muted-foreground text-small">
+        Below, the wrapper sets <code>--font-heading: Georgia</code> and{" "}
+        <code>--text-h3-size: 2rem</code> inline — same utilities, new voice.
+      </p>
+      <div className="flex flex-col gap-2">
+        <span data-testid="host-heading" className="text-h3">
+          Host heading — sans, 24px
+        </span>
+        <span data-testid="host-body" className="text-body">
+          Host body copy stays on the sans face.
+        </span>
+      </div>
+      <div
+        data-testid="voice-wrap"
+        style={{
+          ["--font-heading" as string]: "Georgia, serif",
+          ["--text-h3-size" as string]: "2rem",
+        }}
+        className="border-border flex flex-col gap-2 rounded-lg border border-dashed p-4"
+      >
+        <span data-testid="voice-heading" className="text-h3">
+          Voiced heading — serif, 32px
+        </span>
+        <span data-testid="voice-body" className="text-body">
+          Body copy still reads in the sans face at its own step size.
+        </span>
+      </div>
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const style = (id: string) =>
+      getComputedStyle(canvasElement.querySelector(`[data-testid="${id}"]`)!)
+    // heading face follows the scoped token; body face does not
+    await expect(style("voice-heading").fontFamily).toContain("Georgia")
+    await expect(style("voice-body").fontFamily).not.toContain("Georgia")
+    await expect(style("host-heading").fontFamily).not.toContain("Georgia")
+    // the adjusted step resizes (2rem = 32px); untouched steps stay put
+    await expect(style("voice-heading").fontSize).toBe("32px")
+    await expect(style("host-heading").fontSize).toBe("24px")
+    await expect(style("voice-body").fontSize).toBe("16px")
+  },
 }
 
 /* ---------------- Radius ---------------- */
