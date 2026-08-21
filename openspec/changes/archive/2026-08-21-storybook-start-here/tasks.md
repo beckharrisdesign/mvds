@@ -19,5 +19,5 @@
 
 ## 4. QA
 
-- [ ] 4.1 Manual walkthrough (Outcomes) — founder
+- [x] 4.1 Manual walkthrough (Outcomes) — founder (approved 2026-08-21)
 - [x] 4.2 `npm run build` · `check:contrast` · `check:principles` · `npm test`
