@@ -47,6 +47,21 @@ const AA_PAIRS = [
   ["success", "background"],
   ["destructive", "background"],
   ["neutral", "background"],
+  // Gradation-scale role contracts (openspec: stepped-scales). Steps 1–2 are
+  // tint surfaces (foreground text must read on them); steps 4–5 are text-safe
+  // on background/card. Step 3 is decorative — deliberately no text pairing.
+  ["foreground", "primary-1"],
+  ["foreground", "primary-2"],
+  ["primary-4", "background"],
+  ["primary-4", "card"],
+  ["primary-5", "background"],
+  ["primary-5", "card"],
+  ["foreground", "secondary-1"],
+  ["foreground", "secondary-2"],
+  ["secondary-4", "background"],
+  ["secondary-4", "card"],
+  ["secondary-5", "background"],
+  ["secondary-5", "card"],
 ]
 
 const AA = 4.5

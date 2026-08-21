@@ -73,8 +73,55 @@ export const baseManifest = {
         pattern:
           /#[0-9a-fA-F]{3,8}\b|\b(?:text|bg|border|ring|fill|stroke)-(?:slate|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-\d{2,3}\b|\bbg-(?:white|black)\b|\b(?:rgb|hsl)a?\(/,
       },
-      fix: "Use bg-background / text-foreground / text-muted-foreground, the semantic triad (success / neutral / destructive), or a scale-ramp step (gray-* / primary-* / secondary-*).",
+      fix: "Use bg-background / text-foreground / text-muted-foreground, the semantic triad (success / neutral / destructive), gray-*, or a gradation step (primary-1…5 / secondary-1…5).",
       docs: "AGENTS.md (Golden rules — Color via tokens)",
+      source: FOUNDER,
+    },
+    {
+      id: "step-on-color-gradations",
+      title: "Color modulation steps on the gradation scale",
+      description:
+        "Tints and shades of brand families come from gradation steps (primary-1…5 / secondary-1…5) — not ad-hoc alpha or color-mix.",
+      rationale:
+        "Stepping between authored values is what makes UI read as done, organized, trustworthy — the same discipline as the 8-grid, applied to color. Founder (2026-08-21): “You should be stepping between values on the ramp by default… A brand could then define their own versions of it, but MVDS should be opinionated about it being there.” Steps carry role contracts (1–2 tint surfaces, 3 decorative, 4–5 text-safe) that check:contrast enforces; an ad-hoc /10 alpha carries no contract at all.",
+      severity: "error",
+      enabled: true,
+      // Vendored ui/ still modulates via alpha (/80 hovers, /10 status tints) —
+      // carved out UNTIL the Phase-2 de-alpha change migrates it (see the MVDS
+      // vision roadmap). The carve-out is data here, visible and dated, not an
+      // invisible exception. Specimen stories stay in scope: a specimen must
+      // model the stepped vocabulary too.
+      scope: { include: [SRC, EXAMPLES], exclude: [VENDORED_UI] },
+      check: {
+        kind: "forbid-source",
+        // brand-family utility with an alpha suffix (bg-primary/10, from-secondary/20 —
+        // `-foreground/` variants don't match: the slash must follow the family name);
+        // or color-mix() reaching into a brand base variable.
+        pattern:
+          /\b(?:bg|text|border|ring|fill|stroke|from|via|to)-(?:primary|secondary)\/\d+\b|color-mix\([^)]*var\(--(?:primary|secondary)\)[^)]*\)/,
+      },
+      fix: "Pick a gradation step by role: bg-primary-1/-2 for tint surfaces, -3 for decorative borders/gradients, text-primary-4/-5 for text. See the Foundations/Color specimen.",
+      docs: "AGENTS.md (Golden rules — Color via tokens; Spacing — the 8 grid for the stepping idea)",
+      source: FOUNDER,
+    },
+    {
+      id: "step-on-type-ramp",
+      title: "Typography size steps on the semantic ramp",
+      description:
+        "Type sizes come from the semantic ramp (text-display … text-caption) — never generic size utilities or arbitrary sizes.",
+      rationale:
+        "The prose golden rule (“never ad-hoc text-2xl font-bold”) becomes data. Each ramp step carries the whole spec (size + line-height + weight + tracking), so stepping keeps hierarchy consistent everywhere an agent or human sets type.",
+      severity: "error",
+      enabled: true,
+      scope: { include: [SRC, EXAMPLES], exclude: [VENDORED_UI] },
+      check: {
+        kind: "forbid-source",
+        // Tailwind's generic size steps and arbitrary lengths. The semantic ramp
+        // (text-display/h1..h4/body-lg/body/small/caption) does not match.
+        pattern: /\btext-(?:xs|sm|base|lg|xl|[2-9]xl)\b|\btext-\[[0-9.]+(?:px|rem|em)\]/,
+      },
+      fix: "Use a semantic ramp step: text-display, text-h1…text-h4, text-body-lg, text-body, text-small, or text-caption.",
+      docs: "AGENTS.md (Golden rules — Type via the semantic ramp)",
       source: FOUNDER,
     },
     {

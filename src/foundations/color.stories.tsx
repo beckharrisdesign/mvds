@@ -74,57 +74,52 @@ const SECTIONS: { title: string; swatches: Swatch[] }[] = [
   },
 ]
 
-// Scale ramps — 11 steps each. gray is the fixed black↔white ladder;
-// primary/secondary are derived from their base token via CSS relative color
-// (change --primary and its whole ramp cascades). Every class is a complete
-// literal for the same purge reason as SECTIONS above.
-const RAMPS: { name: string; steps: { step: string; bg: string }[] }[] = [
-  {
-    name: "gray",
-    steps: [
-      { step: "50", bg: "bg-gray-50" },
-      { step: "100", bg: "bg-gray-100" },
-      { step: "200", bg: "bg-gray-200" },
-      { step: "300", bg: "bg-gray-300" },
-      { step: "400", bg: "bg-gray-400" },
-      { step: "500", bg: "bg-gray-500" },
-      { step: "600", bg: "bg-gray-600" },
-      { step: "700", bg: "bg-gray-700" },
-      { step: "800", bg: "bg-gray-800" },
-      { step: "900", bg: "bg-gray-900" },
-      { step: "950", bg: "bg-gray-950" },
-    ],
-  },
+// gray — the fixed 11-step black↔white ladder (semantic tokens sit on these
+// rungs). Every class is a complete literal for the purge reason above.
+const GRAY_STEPS: { step: string; bg: string }[] = [
+  { step: "50", bg: "bg-gray-50" },
+  { step: "100", bg: "bg-gray-100" },
+  { step: "200", bg: "bg-gray-200" },
+  { step: "300", bg: "bg-gray-300" },
+  { step: "400", bg: "bg-gray-400" },
+  { step: "500", bg: "bg-gray-500" },
+  { step: "600", bg: "bg-gray-600" },
+  { step: "700", bg: "bg-gray-700" },
+  { step: "800", bg: "bg-gray-800" },
+  { step: "900", bg: "bg-gray-900" },
+  { step: "950", bg: "bg-gray-950" },
+]
+
+// The gradation scale — five AUTHORED steps per brand family, per mode.
+// 1 is the faintest tint against the mode's background, 5 the strongest.
+// Roles are contract, enforced by check:contrast: 1–2 tint surfaces
+// (foreground reads on them), 3 decorative (no text contract), 4–5 text-safe
+// on background/card. Stepping between these is the step-on-color-gradations
+// principle. A brand authors its own five (docs/THEMING.md).
+type GradStep = { step: string; bg: string; role: string; fgOn?: boolean }
+const GRADATIONS: { name: string; text4: string; text5: string; steps: GradStep[] }[] = [
   {
     name: "primary",
+    text4: "text-primary-4",
+    text5: "text-primary-5",
     steps: [
-      { step: "50", bg: "bg-primary-50" },
-      { step: "100", bg: "bg-primary-100" },
-      { step: "200", bg: "bg-primary-200" },
-      { step: "300", bg: "bg-primary-300" },
-      { step: "400", bg: "bg-primary-400" },
-      { step: "500", bg: "bg-primary-500" },
-      { step: "600", bg: "bg-primary-600" },
-      { step: "700", bg: "bg-primary-700" },
-      { step: "800", bg: "bg-primary-800" },
-      { step: "900", bg: "bg-primary-900" },
-      { step: "950", bg: "bg-primary-950" },
+      { step: "1", bg: "bg-primary-1", role: "tint surface", fgOn: true },
+      { step: "2", bg: "bg-primary-2", role: "tint surface", fgOn: true },
+      { step: "3", bg: "bg-primary-3", role: "decorative" },
+      { step: "4", bg: "bg-primary-4", role: "text-safe" },
+      { step: "5", bg: "bg-primary-5", role: "text-safe" },
     ],
   },
   {
     name: "secondary",
+    text4: "text-secondary-4",
+    text5: "text-secondary-5",
     steps: [
-      { step: "50", bg: "bg-secondary-50" },
-      { step: "100", bg: "bg-secondary-100" },
-      { step: "200", bg: "bg-secondary-200" },
-      { step: "300", bg: "bg-secondary-300" },
-      { step: "400", bg: "bg-secondary-400" },
-      { step: "500", bg: "bg-secondary-500" },
-      { step: "600", bg: "bg-secondary-600" },
-      { step: "700", bg: "bg-secondary-700" },
-      { step: "800", bg: "bg-secondary-800" },
-      { step: "900", bg: "bg-secondary-900" },
-      { step: "950", bg: "bg-secondary-950" },
+      { step: "1", bg: "bg-secondary-1", role: "tint surface", fgOn: true },
+      { step: "2", bg: "bg-secondary-2", role: "tint surface", fgOn: true },
+      { step: "3", bg: "bg-secondary-3", role: "decorative" },
+      { step: "4", bg: "bg-secondary-4", role: "text-safe" },
+      { step: "5", bg: "bg-secondary-5", role: "text-safe" },
     ],
   },
 ]
@@ -168,34 +163,71 @@ export const Palette: Story = {
         </Stack>
       ))}
       <Stack gap={16}>
-        <h3 className="text-h4">Scales — derived ramps</h3>
-        {RAMPS.map((ramp) => (
-          <Stack key={ramp.name} gap={4}>
-            <code className="text-muted-foreground text-caption">{ramp.name}</code>
-            <Inline gap={4}>
-              {ramp.steps.map((s) => (
+        <h3 className="text-h4">Scales — gray ladder</h3>
+        <Stack gap={4}>
+          <code className="text-muted-foreground text-caption">gray</code>
+          <Inline gap={4}>
+            {GRAY_STEPS.map((s) => (
+              <Stack key={s.step} gap={4}>
+                <div
+                  data-token={`gray-${s.step}`}
+                  className={cn(s.bg, "border-border h-8 w-8 rounded-md border")}
+                />
+                <code className="text-muted-foreground text-caption">{s.step}</code>
+              </Stack>
+            ))}
+          </Inline>
+        </Stack>
+      </Stack>
+      <Stack gap={16}>
+        <h3 className="text-h4">Gradation scale — five authored steps, roles as contract</h3>
+        <p className="text-muted-foreground text-small">
+          1 is the faintest tint against this mode&apos;s background, 5 the
+          strongest. 1–2 carry <code>foreground</code> text, 3 is decorative
+          (no text contract), 4–5 are text-safe on background/card — every
+          pairing shown is enforced by <code>check:contrast</code>. Step between
+          these by default (<code>step-on-color-gradations</code>); a brand
+          authors its own five per family.
+        </p>
+        {GRADATIONS.map((fam) => (
+          <Stack key={fam.name} gap={4}>
+            <code className="text-muted-foreground text-caption">{fam.name}</code>
+            <Inline gap={8}>
+              {fam.steps.map((s) => (
                 <Stack key={s.step} gap={4}>
                   <div
-                    data-token={`${ramp.name}-${s.step}`}
-                    className={cn(s.bg, "border-border h-8 w-8 rounded-md border")}
-                  />
-                  <code className="text-muted-foreground text-caption">{s.step}</code>
+                    data-token={`${fam.name}-${s.step}`}
+                    className={cn(
+                      s.bg,
+                      "border-border flex h-12 w-24 items-center justify-center rounded-md border"
+                    )}
+                  >
+                    {s.fgOn && (
+                      <span className="text-foreground text-caption font-medium">Aa</span>
+                    )}
+                  </div>
+                  <code className="text-muted-foreground text-caption">
+                    {s.step} · {s.role}
+                  </code>
                 </Stack>
               ))}
             </Inline>
+            <p className="text-small">
+              As text on background:{" "}
+              <span className={cn(fam.text4, "font-medium")}>Aa step 4</span>{" "}
+              <span className={cn(fam.text5, "font-medium")}>Aa step 5</span>
+            </p>
           </Stack>
         ))}
       </Stack>
     </Stack>
   ),
-  // Guard: tokens that no other story renders (the triad's success/neutral and
-  // one step per scale ramp) must resolve to a real, non-transparent fill —
-  // i.e. the tokens are wired, not just named. Catches a deleted/renamed token
-  // that would otherwise be invisible everywhere else. The -500 steps also
-  // pin the relative-color derivation: if oklch(from …) ever stopped parsing,
-  // the fill would compute transparent and fail here.
+  // Guard: tokens that no other story renders (the triad's success/neutral,
+  // a gray rung, and one authored gradation step per family) must resolve to a
+  // real, non-transparent fill — i.e. the tokens are wired, not just named.
+  // Catches a deleted/renamed token that would otherwise be invisible.
   play: async ({ canvasElement }) => {
-    for (const token of ["success", "neutral", "gray-500", "primary-500", "secondary-500"]) {
+    for (const token of ["success", "neutral", "gray-500", "primary-3", "secondary-3"]) {
       const el = canvasElement.querySelector(`[data-token="${token}"]`)!
       await expect(getComputedStyle(el).backgroundColor).not.toBe(
         "rgba(0, 0, 0, 0)" // mvds-allow no-hardcoded-color — transparent sentinel read back from the browser, not an authored color
