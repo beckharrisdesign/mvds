@@ -1,0 +1,80 @@
+/* =============================================================================
+ * TERRACOTTA — a shippable MVDS brand preset (openspec: scoped-theming).
+ *
+ * A preset is PLAIN DECLARATIONS ONLY: the semantic brand roles plus the
+ * brand's AUTHORED gradation steps (primary-1…5 / secondary-1…5, per the
+ * stepped-scales contract — 1–2 tint surfaces · 3 decorative · 4–5 text-safe).
+ * Nothing derives. Custom-property inheritance carries the brand down the
+ * sub-tree; tokens a preset does not set inherit from the host brand
+ * (status triad, chrome dimensions, radius, type — deliberately not skinned).
+ *
+ * Two steps to use it (docs/THEMING.md):
+ *   @import "@beckharrisdesign/mvds/themes/terracotta.css";
+ *   <section data-brand="terracotta">…MVDS components…</section>
+ *
+ * Every pairing below is held to the same WCAG AA gate as the defaults —
+ * `npm run check:contrast` iterates brands × modes over one shared list.
+ * Palette provenance: the Etsy Listing Kit's hand-rolled terracotta
+ * (elk.module.css), promoted into the system; dark values authored new.
+ * ===========================================================================*/
+
+[data-brand="terracotta"] {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.264 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.264 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.264 0 0);
+  --muted: oklch(0.976 0 0);
+  --muted-foreground: oklch(0.45 0 0);
+  --border: oklch(0.886 0.024 47.1);
+  --input: oklch(0.886 0.024 47.1);
+  --ring: oklch(0.542 0.142 36.0);
+  --primary: oklch(0.542 0.142 36.0);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.730 0.140 76.3);
+  --secondary-foreground: oklch(0.291 0.056 70.6);
+  --accent: oklch(0.938 0.019 46.8);
+  --accent-foreground: oklch(0.291 0.056 70.6);
+  --primary-1: oklch(0.944 0.018 43.2);
+  --primary-2: oklch(0.892 0.035 47.4);
+  --primary-3: oklch(0.767 0.069 45.4);
+  --primary-4: oklch(0.461 0.121 35.6);
+  --primary-5: oklch(0.285 0.061 38.6);
+  --secondary-1: oklch(0.958 0.028 84.6);
+  --secondary-2: oklch(0.905 0.066 91.2);
+  --secondary-3: oklch(0.785 0.113 86.4);
+  --secondary-4: oklch(0.478 0.093 77.1);
+  --secondary-5: oklch(0.300 0.057 79.0);
+}
+
+.dark [data-brand="terracotta"],
+[data-brand="terracotta"].dark {
+  --background: oklch(0.212 0.023 37.8);
+  --foreground: oklch(0.949 0.012 51.3);
+  --card: oklch(0.244 0.026 42.7);
+  --card-foreground: oklch(0.949 0.012 51.3);
+  --popover: oklch(0.244 0.026 42.7);
+  --popover-foreground: oklch(0.949 0.012 51.3);
+  --muted: oklch(0.271 0.029 43.3);
+  --muted-foreground: oklch(0.776 0.025 51.1);
+  --border: oklch(0.363 0.026 48.0);
+  --input: oklch(0.363 0.026 48.0);
+  --ring: oklch(0.686 0.137 40.4);
+  --primary: oklch(0.686 0.137 40.4);
+  --primary-foreground: oklch(0.217 0.045 42.1);
+  --secondary: oklch(0.796 0.125 80.3);
+  --secondary-foreground: oklch(0.247 0.047 73.8);
+  --accent: oklch(0.305 0.032 43.8);
+  --accent-foreground: oklch(0.949 0.012 51.3);
+  --primary-1: oklch(0.266 0.032 38.3);
+  --primary-2: oklch(0.311 0.043 41.8);
+  --primary-3: oklch(0.449 0.080 42.1);
+  --primary-4: oklch(0.728 0.108 43.1);
+  --primary-5: oklch(0.866 0.053 46.3);
+  --secondary-1: oklch(0.289 0.038 87.8);
+  --secondary-2: oklch(0.343 0.046 86.7);
+  --secondary-3: oklch(0.507 0.087 88.0);
+  --secondary-4: oklch(0.789 0.122 83.4);
+  --secondary-5: oklch(0.900 0.071 87.7);
+}
