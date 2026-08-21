@@ -8,6 +8,7 @@
  *
  * Paths are relative to THIS file (examples/starter/src/styles.css). */
 @import "@beckharrisdesign/mvds/styles.css";
+@import "@beckharrisdesign/mvds/themes/terracotta.css"; /* second brand — see the scoped section in App.tsx */
 @source "../node_modules/@beckharrisdesign/mvds/dist-lib/**/*.js";
 @source "./**/*.{ts,tsx}";
 

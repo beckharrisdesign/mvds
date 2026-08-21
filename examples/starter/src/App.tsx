@@ -144,6 +144,36 @@ function App() {
             </Stack>
           </Stack>
         </Section>
+
+        {/* A second brand on one page — the scoped-theming recipe, verbatim
+          * from docs/THEMING.md: import the preset stylesheet (styles.css),
+          * wrap a sub-tree in data-brand. Everything inside wears terracotta —
+          * semantic roles AND the authored gradation steps — in both modes;
+          * everything outside keeps the default brand. */}
+        <Section py={64} innerSize="lg" data-brand="terracotta" bg="muted">
+          <Stack gap={24} align="start">
+            <Badge>terracotta</Badge>
+            <Stack gap={8}>
+              <h2 className="text-h2">A second brand, two steps</h2>
+              <p className="text-body text-foreground max-w-prose">
+                This section is wrapped in{" "}
+                <code>data-brand=&quot;terracotta&quot;</code>. The badge, the
+                buttons, and the gradation tints below come from the preset;
+                the rest of the page keeps the default brand.
+              </p>
+            </Stack>
+            <Inline gap={8}>
+              <Button>Terracotta primary</Button>
+              <Button variant="secondary">Ochre secondary</Button>
+            </Inline>
+            <Inline gap={8}>
+              <span className="bg-primary-1 text-foreground rounded-md px-2 py-1 text-caption">primary-1</span>
+              <span className="bg-primary-2 text-foreground rounded-md px-2 py-1 text-caption">primary-2</span>
+              <span className="text-primary-4 text-caption font-medium">text-primary-4</span>
+              <span className="text-primary-5 text-caption font-medium">text-primary-5</span>
+            </Inline>
+          </Stack>
+        </Section>
       </main>
     </Stack>
   )

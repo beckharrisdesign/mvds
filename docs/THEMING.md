@@ -23,9 +23,9 @@ Prerequisite: the app is wired per [CONSUMING.md](./CONSUMING.md).
 ```
 
 - `:root` / `.dark` — single-brand site (light + dark values).
-- `[data-brand="acme"]` / `[data-brand="acme"].dark` — multi-brand: scope each
-  brand's overrides to an attribute on `<html>`/`<body>` and switch brands by
-  switching the attribute.
+- `[data-brand="acme"]` — multi-brand: scope a brand to a sub-tree via an
+  attribute wrapper. See "Recipe: a second brand on one page" below; shipped
+  presets under `themes/` use exactly this mechanism.
 - Token names are deliberately **unnamespaced shadcn convention**
   (`--primary`, `--background`, …) for ecosystem compatibility; the trade-off
   (accepted for v0.x) is potential collision with another library using the
@@ -75,6 +75,34 @@ brand too, author them in the same blocks:
 Check contrast for every pair you chose (the repo gate is WCAG AA —
 `npm run check:contrast` validates the defaults' role pairings; your overrides
 are your responsibility).
+
+## Recipe: a second brand on one page
+
+A route-level product can carry its own complete brand inside a differently
+branded host — no repaint, no component edits. Two steps:
+
+```css
+@import "@beckharrisdesign/mvds/styles.css";
+@import "@beckharrisdesign/mvds/themes/terracotta.css";
+```
+
+```tsx
+<Section data-brand="terracotta">…MVDS components…</Section>
+```
+
+Everything inside the wrapper wears the preset — semantic roles and the
+brand's authored gradation steps (`primary-1…5` / `secondary-1…5`) — in both
+modes (`.dark` composes with the wrapper). Everything outside keeps the host
+brand. Tokens a preset does not set (status triad, radius, chrome dimensions,
+type) inherit from the host.
+
+**Writing your own preset:** copy `themes/terracotta.css` as the template — a
+`[data-brand="<name>"]` light block and a `.dark [data-brand="<name>"]` dark
+block, plain declarations only. Author all five gradation steps per family in
+both blocks (roles: 1–2 tint surfaces · 3 decorative · 4–5 text-safe). In the
+MVDS repo, presets under `src/themes/` are held to the same WCAG AA gate as
+the defaults (`npm run check:contrast` iterates brands × modes); in a consumer
+app the same role pairings are your responsibility.
 
 ## Recipe: swap the typeface
 

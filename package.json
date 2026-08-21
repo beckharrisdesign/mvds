@@ -23,6 +23,7 @@
     },
     "./styles.css": "./dist-lib/styles.css",
     "./tokens.css": "./dist-lib/tokens.css",
+    "./themes/*": "./dist-lib/themes/*",
     "./package.json": "./package.json"
   },
   "main": "./dist-lib/index.js",
