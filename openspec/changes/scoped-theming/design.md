@@ -1,5 +1,15 @@
 # scoped-theming — design
 
+> **Pivot note (2026-08-21):** during review of this design the founder asked
+> "but why are we deriving the ramp at all?" and redirected ramp handling into
+> a new prerequisite change — [`stepped-scales`](../stepped-scales/proposal.md)
+> (authored 1–5 gradation scale as a principle; derived 50–950 ramps removed).
+> Decisions 1/1a below and Figma pages 01.0/02.0 are the parked record of the
+> superseded derivation mechanisms. Spec requirement 3 ("ramps re-derive in
+> scope") will be respecced against gradation steps once `stepped-scales` is
+> approved; the rest of this change (scoped semantic roles, terracotta preset,
+> gate coverage) stands.
+
 ## Context
 
 Specs approved 2026-08-21. The mechanism question this artifact settles: the
