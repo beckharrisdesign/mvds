@@ -65,6 +65,10 @@ npm run dev              # demo app — Card + Button, with a light/dark toggle
 npm run storybook        # the living component gallery at http://localhost:6006
 ```
 
+`npm install` also provides the repo's dev CLIs — notably `npx openspec` for the
+propose → design → apply loop in [`openspec/`](openspec/README.md). Working in a
+**git worktree**? Run `npm install` inside it; it needs its own `node_modules`.
+
 ## Using MVDS in an app
 
 Published to the **public npm registry** — no `.npmrc`, no login, no token.

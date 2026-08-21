@@ -135,6 +135,13 @@ Full workflow + constraints: [`docs/SYNC.md`](docs/SYNC.md).
 
 ## Before you call a change done
 
+**In a git worktree, run `npm install` there first.** A fresh worktree has no
+`node_modules` of its own; commands appear to work because resolution walks up to
+the parent checkout, but `npm test` fails (Playwright/Storybook resolve the setup
+file by absolute path) and locally-installed CLIs like `openspec` are missing.
+One `npm install` in the worktree fixes both — and is what puts every tool the
+workflow needs on hand, including `npx openspec`.
+
 ```bash
 npm run build              # tsc + vite — must pass
 npm run check:contrast     # token-level WCAG AA on every pairing, light + dark — must pass
