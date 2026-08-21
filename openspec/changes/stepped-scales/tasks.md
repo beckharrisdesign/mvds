@@ -26,4 +26,4 @@
 
 - [x] 4.1 Manual walkthrough of the Outcomes: pick steps by role in a scratch composition, both modes; confirm 50–950 classes are gone
 - [x] 4.2 `npm run build` && `npm run check:contrast` && `npm run check:principles` && `npm test` — all green, light + dark
-- [ ] 4.3 Chromatic: only intended diffs (specimen board changes); component stories show zero diffs
+- [x] 4.3 Chromatic: only intended diffs (specimen board changes); component stories show zero diffs
