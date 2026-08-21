@@ -19,7 +19,6 @@ artifacts:
     template: proposal.md
     instruction: |
       Before writing, read `skills/experiment-creator.md` and apply its voice and prohibitions to this artifact only.
-      When that skill mentions Experiment Hub paths, prefer this repo's AGENTS.md and openspec/config.yaml context.
 
       **Human anchor (required):** Quote founder prose verbatim (1–3 sentences). Do not proceed with an empty anchor or agent-only paraphrase without a quoted line.
 
@@ -56,7 +55,6 @@ artifacts:
       - proposal
     instruction: |
       Before writing, read `skills/design-advisor.md` and `rules/figma.mdc`; apply checklist thinking to this artifact only (full design report only if user asks).
-      Prefer AGENTS.md + MVDS tokens over any hub Tailwind / Fraunces guidance in design-advisor.md.
 
       **Figma gate (UI changes — REQUIRED, not skippable):** Any change that adds or alters UI MUST produce a Figma **as-is + proposed** pair before design.md is approved, in this repo's page convention (`rules/figma.mdc`):
         1. **`0.0 As is`** — the current surface reconstructed from code (or captured from a running Storybook story); flag any non-code-derivable value as reference.
@@ -82,7 +80,7 @@ artifacts:
       - specs
       - design
     instruction: |
-      Before writing §1, read `skills/prd-writer.md` (outcomes / scenario mapping). Before §2+, read `skills/prototype-builder.md` — treat Storybook as the preview shell (not experiments/*/prototype/).
+      Before writing §1, read `skills/prd-writer.md` (outcomes / scenario mapping). Before §2+, read `skills/prototype-builder.md`.
 
       **§1 User outcomes:** Copy every spec scenario as a numbered checkbox (1.1, 1.2, …). Wording should be user-visible ("User can …"), not file paths.
 
@@ -98,8 +96,7 @@ apply:
   requires:
     - tasks
   instruction: |
-    Read `skills/openspec-apply-change.md` and `skills/prototype-builder.md` (Storybook = preview).
-    Prefer AGENTS.md over hub-specific apply paths.
+    Read `skills/openspec-apply-change.md` and `skills/prototype-builder.md`.
 
     Before coding: read proposal Outcomes and tasks.md §1; confirm Human anchor still matches what you are building.
 

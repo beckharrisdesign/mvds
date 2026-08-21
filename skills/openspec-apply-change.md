@@ -11,7 +11,7 @@ metadata:
 
 Implement tasks from an OpenSpec change.
 
-**MVDS:** Only `experiment-hub-lite` is bootstrapped. Preview = Storybook + `src/` (AGENTS.md). Ignore hub `experiments/*/prototype/` paths in copied voice skills. If `schemaName` is anything other than `experiment-hub-lite`, stop and tell the user that schema is not in this repo yet.
+**MVDS:** Only `experiment-hub-lite` is bootstrapped. Preview = Storybook + `src/` (AGENTS.md), which is what `skills/prototype-builder.md` now describes directly. If `schemaName` is anything other than `experiment-hub-lite`, stop and tell the user that schema is not in this repo yet.
 
 **Input**: Optionally specify a change name. If omitted, check if it can be inferred from conversation context. If vague or ambiguous you MUST prompt for available changes.
 
