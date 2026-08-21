@@ -76,6 +76,7 @@ Check contrast for every pair you chose (the repo gate is WCAG AA —
 `npm run check:contrast` validates the defaults' role pairings; your overrides
 are your responsibility).
 
+
 ## Recipe: a second brand on one page
 
 A route-level product can carry its own complete brand inside a differently
@@ -104,27 +105,34 @@ MVDS repo, presets under `src/themes/` are held to the same WCAG AA gate as
 the defaults (`npm run check:contrast` iterates brands × modes); in a consumer
 app the same role pairings are your responsibility.
 
-## Recipe: swap the typeface
+## Recipe: type voice
 
-`--font-sans` defaults to `'Inter Variable', ui-sans-serif, system-ui,
-sans-serif`; `--font-heading` follows `--font-sans` unless overridden. Two
-steps — load the font in the app, point the token at it:
-
-```tsx
-// Next.js: app/layout.tsx
-import { Fraunces } from "next/font/google";
-const fraunces = Fraunces({ subsets: ["latin"], variable: "--font-brand" });
-// <html className={fraunces.variable}>
-```
+Typography themes like color: faces and step sizes are **runtime tokens**,
+overridable in plain CSS — no `@theme` block, no Tailwind seam. `--font-sans`
+carries the document; `--font-heading` carries `text-display`/`text-h1`…`h4`
+and follows `--font-sans` until you point it elsewhere.
 
 ```css
-@theme inline {
-  --font-sans: var(--font-brand), ui-sans-serif, system-ui, sans-serif;
+/* serif headings, sans body — load the font, set one token */
+:root {
+  --font-heading: "Fraunces Variable", ui-serif, Georgia, serif;
+}
+
+/* adjust a step size — unitless line-height rides along automatically */
+:root {
+  --text-display-size: 3.5rem;
+}
+
+/* a scoped sub-brand carries its own heading face */
+[data-brand="terracotta"] {
+  --font-heading: "Fraunces Variable", ui-serif, Georgia, serif;
 }
 ```
 
-(Re-declaring inside `@theme inline` keeps Tailwind's `font-sans` utility in
-sync. With `tokens.css` + your own font pipeline, the same override applies.)
+(Load the font file itself in your app — via `@fontsource-*`, `next/font`, or
+your own pipeline; MVDS ships no fonts. With `tokens.css` the same overrides
+apply. There are no `font-sans`/`font-heading` utilities — faces are tokens,
+applied by the base layer; `font-mono` remains a utility for code.)
 
 ## Recipe: shape, depth, motion
 
@@ -145,9 +153,10 @@ These are the system's structure, not its skin (see
 
 - **`--spacing`** — the 4px atomic unit under the 8-point grid. Changing it
   silently breaks every on-grid component dimension.
-- **The type ramp's shape** — adjusting a size is fine; collapsing or
-  re-purposing steps (`text-h2` styled as body, etc.) breaks the semantic
-  contract.
+- **The type ramp's shape** — steps, weights, and tracking are shape, not
+  skin. Faces (`--font-sans`, `--font-heading`) and step sizes
+  (`--text-<step>-size`) are yours to adjust; collapsing or re-purposing steps
+  (`text-h2` styled as body, etc.) breaks the semantic contract.
 - **`--breakpoint-*`** — layout primitives' responsive props assume these.
 - **Gray ramp rungs** — semantic tokens sit on these lightness positions;
   re-tinting neutrals is better done via `--background`/`--muted`/`--border`.

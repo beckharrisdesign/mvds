@@ -98,6 +98,9 @@ const darkProps = propsOf(css.match(/\.dark\s*\{([\s\S]*?)\n\}/)?.[1] ?? "")
 //   radius       a dimension, identical in both modes
 //   chrome-*     spatial DNA (bar heights / rail widths) — dimensions, not color
 //   gray-*       the fixed black↔white ladder, declared once by design.
+//   type tokens  faces (--font-*) and step sizes (--text-*-size) are
+//                mode-invariant by design — type does not flip with the mode
+//                (openspec: themeable-typography).
 //                (The gradation scale primary-1…5 / secondary-1…5 is AUTHORED
 //                per mode — openspec: stepped-scales — so it appears in both
 //                blocks and needs no carve-out here.)
@@ -106,7 +109,11 @@ const darkProps = propsOf(css.match(/\.dark\s*\{([\s\S]*?)\n\}/)?.[1] ?? "")
 // only is genuine drift and stays destructive.
 const RAMP_STEP = /^gray-(?:50|100|200|300|400|500|600|700|800|900|950)$/
 const isModeInvariant = (p) =>
-  p === "radius" || p.startsWith("chrome-") || RAMP_STEP.test(p)
+  p === "radius" ||
+  p.startsWith("chrome-") ||
+  p.startsWith("font-") ||
+  (p.startsWith("text-") && p.endsWith("-size")) ||
+  RAMP_STEP.test(p)
 
 const lightOnly = [...lightProps].filter(
   (p) => !darkProps.has(p) && !isModeInvariant(p)
