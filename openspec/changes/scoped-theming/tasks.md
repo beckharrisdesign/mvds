@@ -29,4 +29,4 @@
 
 - [x] 4.1 Manual walkthrough of the Outcomes in Storybook: wrapper vs host in both modes; two-step recipe followed verbatim from THEMING.md in the starter
 - [x] 4.2 `npm run build` && `npm run check:contrast` (now brands × modes) && `npm run check:principles` && `npm test` — all green, light + dark
-- [ ] 4.3 Chromatic: only the new Theming demo story adds snapshots; every existing story zero-diff
+- [x] 4.3 Chromatic: only the new Theming demo story adds snapshots; every existing story zero-diff
