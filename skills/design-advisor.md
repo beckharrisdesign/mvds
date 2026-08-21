@@ -8,7 +8,8 @@ description: >-
 
 # Design Advisor Agent
 
-> **📋 Core Workflow**: See [`agents/README.md`](../agents/README.md) for workflow steps, approval checkpoints, and integration with other agents. This file contains detailed implementation instructions.
+> **Workflow:** see [`rules/openspec-workflow.mdc`](../rules/openspec-workflow.mdc)
+> for the propose → design → apply → archive loop and its approval checkpoints.
 
 ## Role
 
@@ -240,9 +241,9 @@ Create structured feedback:
 **Step 3: Generate Review Report**
 Save review report to:
 
-- `experiments/{slug}/docs/design-review.md` (for PRD reviews)
-- `experiments/{slug}/prototype/DESIGN_REVIEW.md` (for prototype/code reviews)
-- `experiments/{slug}/docs/live-evaluation.md` (for live site evaluations, or append to design-review.md)
+- `openspec/changes/<change>/design.md` — the normal home; design context belongs in the change's own artifact
+- `openspec/changes/<change>/design-review.md` — only when a review is long enough to crowd out design.md
+- Ad-hoc reviews with no active change: report in the conversation; do not create stray files
 
 **⚠️ COMPLETION**: After completing review, inform user of findings and recommendations. Provide actionable next steps.
 
@@ -293,32 +294,38 @@ The following guidelines are used for all reviews:
 
 ### Visual Design System
 
-#### Color Palette (Dark Theme Default)
+**MVDS is the design system — do not restate one here.** The token layer in
+[`src/index.css`](../src/index.css) is the single source of truth, and
+[`AGENTS.md`](../AGENTS.md) is the authority on how to use it. Review against
+those, never against a palette written into this file.
 
-- Background Primary: `#0d1117`
-- Background Secondary: `#161b22`
-- Background Tertiary: `#21262d`
-- Text Primary: `#c9d1d9`
-- Text Secondary: `#8b949e`
-- Text Muted: `#6e7681`
-- Border: `#30363d`
-- Accent Primary: `#58a6ff`
-- Accent Secondary: `#79c0ff`
-- Success: `#3fb950`
-- Warning: `#d29922`
-- Error: `#f85149`
+#### Color
+
+Judge whether the design uses **tokens**: `bg-background`, `text-foreground`,
+`text-muted-foreground`, `bg-primary`, `border-border`, the `gray-*` /
+`primary-*` / `secondary-*` ramps, and the `success` / `neutral` / `destructive`
+status triad.
+
+❌ Flag any hardcoded hex, `rgb()`, generic Tailwind palette (`text-slate-500`),
+or `bg-white` — `check:principles` fails on these, and a review that lets one
+through has failed. Both modes must clear WCAG AA 4.5:1.
 
 #### Typography
 
-- Primary: System monospace stack
-- UI Text: System sans-serif
-- Font sizes: Tailwind scale (xs, sm, base, lg, xl, 2xl)
-- Font weights: 400 (regular), 500 (medium), 600 (semibold), 700 (bold)
+The semantic ramp only: `text-display`, `text-h1`…`text-h4`, `text-body-lg`,
+`text-body`, `text-small`, `text-caption`.
+
+❌ Flag ad-hoc sizing (`text-2xl font-bold`) — the ramp encodes the decision.
 
 #### Spacing
 
-- Tailwind scale: 0.25rem increments (4px base)
-- xs: 0.25rem, sm: 0.5rem, md: 1rem, lg: 1.5rem, xl: 2rem, 2xl: 3rem
+Multiples and fractions of **8**: `4 · 8 · 16 · 24 · 32 · 40 · 48 · 64 · 80 · 96`,
+passed to layout primitives as pixels (`<Stack gap={16}>`).
+
+❌ Flag off-grid values (`gap-3` = 12px, `gap-5` = 20px), margins used to space
+siblings, and raw `flex`/`grid` utilities for layout. Space between siblings
+comes from the parent's `gap` — always. Icon glyph sizes and border-radius are
+dimensions, not spacing, and are exempt.
 
 ### Component Standards
 
@@ -456,9 +463,9 @@ The following guidelines are used for all reviews:
 
 ### Recommendations
 1. Add "Visual Design System" section specifying:
-   - Dark theme color palette
-   - Typography choices (monospace for code, sans-serif for UI)
-   - Spacing scale (Tailwind)
+   - Token usage (no hardcoded color), light AND dark
+   - Typography from the semantic ramp
+   - Spacing on the 8-grid, via layout primitives
 2. Enhance user stories with interaction details
 3. Add accessibility requirements to Technical Requirements
 

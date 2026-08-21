@@ -1,14 +1,20 @@
 ---
 name: prd-writer
 description: >-
-  Produces PRD.md under experiments/{slug}/docs from experiment metadata and market
+  Produces a PRD alongside an OpenSpec change from its proposal and any market
   research, following the hub PRD template. Invokes design-advisor before final approval.
   Use when requirements need to be captured for a prototype.
 ---
 
 # PRD Writer Agent
 
-> **📋 Core Workflow**: See [`agents/README.md`](../agents/README.md) for workflow steps, approval checkpoints, and integration with other agents. This file contains detailed implementation instructions.
+> **In MVDS the PRD track is optional.** Most changes need only `proposal.md`
+> Outcomes. Reach for a PRD when a change carries commercial narrative worth
+> keeping; otherwise skip it. This skill is also read for §1 outcome/scenario
+> mapping in `tasks.md`, which is its more common use here.
+
+> **Workflow:** see [`rules/openspec-workflow.mdc`](../rules/openspec-workflow.mdc)
+> for the propose → design → apply → archive loop and its approval checkpoints.
 
 ## Role
 
@@ -42,8 +48,8 @@ When a `business-case.md` exists for the experiment, align the PRD narrative to 
 
 ## Output
 
-- **PRD File**: Markdown file saved to `experiments/{slug}/docs/PRD.md`
-- **Updated Documentation Entry**: Documentation JSON updated with PRD content reference
+- **PRD File**: Markdown saved to `openspec/changes/<change>/PRD.md`
+- **Linked from the proposal**: referenced under Optional links, never duplicated into it
 - **Structured PRD** containing:
   - Overview
   - Problem Statement
@@ -66,7 +72,7 @@ When a `business-case.md` exists for the experiment, align the PRD narrative to 
 - Identify the problem being solved
 - Determine the scope and boundaries
 - Note any technical constraints or requirements
-- **Check for market research**: If `experiments/{slug}/docs/market-research.md` exists, read and incorporate:
+- **Check for market research**: If `openspec/changes/<change>/market-research.md` exists, read and incorporate:
   - TAM/SAM/SOM estimates
   - Target market segments
   - Competitive positioning insights
@@ -336,13 +342,11 @@ As a solo entrepreneur, I want to see a list of all my experiments, so that I ca
 
 ### Step 6: Save and Link
 
-- Save PRD to `experiments/{slug}/docs/PRD.md`
-- Update Documentation entry with:
-  - Title: "[Experiment Name] PRD"
-  - Content: Reference to PRD file or full content
-  - Last Modified: Current timestamp
+- Save PRD to `openspec/changes/<change>/PRD.md`
+- Link it from `proposal.md` under **Optional links** — link, do not duplicate TAM or
+  business case into the proposal (the lite schema omits those on purpose)
 
-**⚠️ COMPLETION**: After saving the PRD, inform the user that the PRD is ready. **DO NOT automatically proceed** to building a prototype. Wait for the user to explicitly request `@prototype-builder`.
+**⚠️ COMPLETION**: After saving the PRD, inform the user that the PRD is ready. **DO NOT automatically proceed** to building the preview. Wait for the user to explicitly request `@prototype-builder`.
 
 ## Example Output
 

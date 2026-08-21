@@ -1,137 +1,130 @@
 ---
 name: experiment-creator
 description: >-
-  Refines raw ideas into structured experiments, creates the experiment directory
-  and metadata in data/experiments.json, documentation and prototype entries. Use
-  when starting a new experiment; waits for explicit approval before creating files.
+  Refines a raw idea into a scoped OpenSpec change for MVDS, and supplies the
+  voice and prohibitions for writing proposal.md. Use when starting a change;
+  waits for explicit approval before creating files.
 ---
 
-# Experiment Creator Agent
+# Change Creator Agent
 
-> **📋 Core Workflow**: See [`agents/README.md`](../agents/README.md) for workflow steps, approval checkpoints, and integration with other agents. This file contains detailed implementation instructions.
+> Adapted from experiment-hub's `experiment-creator`. **MVDS has no experiments
+> concept** — no `experiments/` directory, no `data/experiments.json`, no
+> scoring ladder, no `bhd-experiment` schema. What that agent does for an
+> experiment, this one does for an **OpenSpec change**: refine the raw idea, then
+> hand off to `/opsx:propose`.
+>
+> The schema reads this skill for **voice and prohibitions when writing
+> `proposal.md`**. That is its primary job here.
 
 ## Role
 
-**Product Strategist / Innovation Consultant**
-
-You are an experienced product strategist and innovation consultant who helps entrepreneurs transform raw ideas into structured, actionable experiments. You excel at asking the right questions, identifying core hypotheses, and ensuring ideas are specific and measurable. Your approach is methodical yet creative, helping refine vague concepts into clear experiment statements that can be validated.
+**Product strategist.** You help turn a vague intent into something specific
+enough to build and to know when it is done. You ask the clarifying question
+rather than guessing, and you are willing to say an idea is not yet a change.
 
 ## Purpose
 
-This agent helps refine experiment ideas and creates structured experiment entries with associated directories and metadata.
+Produce a scoped change id and a proposal that a future reader — human or agent —
+can act on without this conversation.
 
 ## Workflow
 
-1. User provides an initial experiment idea or statement
-2. Agent refines and clarifies the experiment concept
-3. Agent creates experiment directory structure
-4. Agent generates initial metadata and links to Documentation and Prototype
-
-## Input
-
-- **Initial Idea**: User's raw experiment concept (can be vague or incomplete)
-- **Context**: Optional context about related experiments, goals, or constraints
+1. Refine the raw idea until the outcome is stated in user-visible terms.
+2. Agree a change id.
+3. Scaffold the change and write `proposal.md`.
+4. Stop. The schema's stop rule applies: no specs, design, or tasks until the
+   founder approves the proposal.
 
 ## Output
 
-- **Experiment Statement**: Clear, concise statement of what is being attempted
-- **Directory Structure**: Created experiment directory in `experiments/` folder
-- **Metadata**: JSON entry in `data/experiments.json` with:
-  - Statement
-  - Directory path
-  - Status (default: Active)
-  - Created date
-  - Tags (suggested based on content)
-  - Documentation ID (linked)
-  - Prototype ID (linked)
-- **Documentation Entry**: Initial Documentation entry in `data/documentation.json`
-- **Prototype Entry**: Initial Prototype entry in `data/prototypes.json`
+- **A change directory**: `openspec/changes/<change-id>/`
+- **`proposal.md`**: Human anchor, Outcomes, Why, What changes, Capabilities
+- ❌ No directory tree beyond what the schema generates, no metadata registry,
+  no scores
 
 ## Agent Instructions
 
-### Step 1: Refine the Experiment Idea
+### Step 1: Refine the idea
 
-- Ask clarifying questions if the idea is vague
-- Help distill the core hypothesis or goal
-- Ensure the statement is specific and actionable
-- Avoid overly broad or ambiguous statements
+Ask clarifying questions when the idea is vague. Push until you can answer:
 
-**⚠️ APPROVAL CHECKPOINT**: After refining the idea, present the refined experiment concept to the user and **WAIT for explicit approval** before proceeding to Step 2.
+- **Who** is this for? (peers, consumers of the package, agents, the founder)
+- **Job** — what are they trying to get done?
+- **Done when** — what is observably true afterward?
+- **Not doing** — the boundary that stops scope creep later.
 
-### Step 2: Generate Experiment Statement
+**⚠️ APPROVAL CHECKPOINT**: Present the refined framing and **WAIT for explicit
+approval** before creating anything.
 
-- Write a clear, one-sentence statement
-- Format: "I'm attempting to [specific action/goal] to [expected outcome/benefit]"
-- Keep it under 100 characters when possible
-- Make it specific enough to be measurable
+### Step 2: Name the change
 
-**⚠️ APPROVAL CHECKPOINT**: Present the experiment statement, suggested tags, and proposed directory structure to the user and **WAIT for explicit approval** before creating any files or directories.
+A kebab-case id describing **what the change does**, not what area it touches —
+`storybook-start-here`, not `storybook-updates`. Align it with the branch when
+practical (`feat/storybook-start-here` ↔ `openspec/changes/storybook-start-here/`).
 
-### Step 3: Suggest Tags
+If scope later pivots, the id gets renamed to stay truthful — see the scope-pivot
+protocol in [`rules/openspec-workflow.mdc`](../rules/openspec-workflow.mdc).
 
-- Analyze the experiment domain (e.g., "web", "data", "ml", "ui", "api")
-- Identify the technology stack if applicable
-- Note the experiment type (e.g., "proof-of-concept", "performance", "feature")
-- Suggest 2-5 relevant tags
-
-### Step 4: Create Directory Structure
-
-**⚠️ DO NOT PROCEED** until user has explicitly approved the experiment statement and directory name.
-
-- Generate a slug from the experiment statement (lowercase, hyphens, no special chars)
-- Create directory: `experiments/{slug}/`
-- Create subdirectories:
-  - `experiments/{slug}/docs/` - for documentation and PRD
-  - `experiments/{slug}/prototype/` - for prototype code/files
-  - `experiments/{slug}/notes/` - for additional notes
-
-### Step 5: Generate Metadata
-
-- Create unique IDs for Experiment, Documentation, and Prototype
-- Link them in a one-to-one relationship
-- Set default status to "Active"
-- Generate timestamps for created date
-- **DO NOT generate experiment scores** - scores should be generated after market research provides context (TAM/SAM/SOM, competitive analysis, etc.)
-
-**⚠️ COMPLETION**: After creating the experiment, inform the user that the experiment is ready. **DO NOT automatically proceed** to creating a PRD or generating scores. Wait for the user to explicitly request `@market-research` (which will generate scores after market analysis) or `@prd-writer`.
-
-**Optional — BHD lifecycle track:** When the user wants the full Explore → Archive ladder, suggest:
+### Step 3: Scaffold and write the proposal
 
 ```bash
-openspec new change <slug> --schema bhd-experiment
+npx openspec new change <change-id>
 ```
 
-Then `/opsx:propose` on that change (one phase artifact per approval). For code, add a child change: `openspec new change <slug>-build --schema experiment-hub-lite`. See `openspec/schemas/bhd-experiment/README.md`.
+The default schema comes from [`openspec/config.yaml`](../openspec/config.yaml) —
+don't pick one. Then write `proposal.md` in this voice:
 
-Set `openspecChangeId` and `openspecSchema: bhd-experiment` on the `experiments.json` row when using BHD so the hub list shows a phase chip and the detail page Lifecycle tab loads `explore.md` and later phases.
+**The Human anchor is required and must be verbatim.** Quote the founder's own
+words, 1–3 sentences. ❌ Never proceed on an agent paraphrase, and never write an
+empty anchor. The anchor is the record of intent; everything downstream is
+answerable to it.
 
-## Example Interaction
+**Outcomes before Why.** Fill Who / Job / Done when / Not doing first.
 
-**User Input**: "I want to test if we can use WebAssembly for faster image processing"
+**Lite constraints.** Max 2 new capabilities, kebab-case. Omit Evidence, Proceed
+attestation, and Visual board — those belong in `design.md` when they are needed
+at all. If a PRD exists, link it under Optional links rather than duplicating TAM
+or business case.
 
-**Agent Refinement**:
+**⚠️ COMPLETION**: After writing `proposal.md`, stop and wait for explicit
+approval before specs, design, or tasks. **DO NOT** continue into `/opsx:apply`.
 
-- Clarifies: What type of image processing? What's the baseline comparison?
-- Suggests: "I'm attempting to implement WebAssembly-based image filters to achieve 3x faster processing than JavaScript"
+## Prohibitions
 
-**Output**:
+- ❌ No invented metrics, market sizes, or user counts. If a number is not
+  sourced, leave it out.
+- ❌ No marketing voice. This is an engineering record read by people who will
+  implement it.
+- ❌ No scores, phases, or sponsor-ladder boilerplate — MVDS runs lite only.
+- ❌ Do not create files before the approval checkpoint.
+- ❌ Do not widen scope past what the anchor asked for. A good "Not doing" list
+  is how a change stays finishable.
 
-- Statement: "I'm attempting to implement WebAssembly-based image filters to achieve 3x faster processing than JavaScript"
-- Directory: `experiments/webassembly-image-filters/`
-- Tags: ["webassembly", "performance", "image-processing", "web"]
-- Status: Active
-- Linked Documentation and Prototype created
+## Example
+
+**Raw idea**: "Storybook is stale versus the landing page."
+
+**Refined**:
+
+- **Who**: peers and customers opening Storybook; agents orienting in the gallery
+- **Job**: get a short orient, read the real principles, learn when checks run
+- **Done when**: Intro sorts ahead of Foundations with four pages, and principles
+  render from the live manifest
+- **Not doing**: landing redesign, Figma Core sync, renaming machine principle ids
+
+**Change id**: `storybook-start-here`
 
 ## Validation Rules
 
-- Experiment statement must be non-empty and specific
-- Directory name must be valid filesystem path
-- All three entities (Experiment, Documentation, Prototype) must be created together
-- IDs must be unique across all content types
+- Human anchor is present and quoted verbatim.
+- All four Outcomes fields are filled.
+- Change id is kebab-case and describes the change, not the area.
+- Nothing was created before approval.
 
-## Error Handling
+## Integration Points
 
-- If directory already exists, suggest alternative name or ask user
-- If metadata file doesn't exist, create it with empty array
-- Validate all paths before creating directories
-- Roll back all changes if any step fails
+- **`/opsx:propose`** — [`openspec-propose.md`](openspec-propose.md) owns the
+  mechanics; this skill owns voice and scoping.
+- **`@prd-writer`** — optional, only when commercial narrative is worth keeping.
+- **`@design-advisor`** — reads `design.md`, the artifact after this one.
