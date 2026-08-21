@@ -62,13 +62,17 @@ CSS came out right) and ping the public Figma share so a revoked link can’t
 quietly rot. Chromatic takes visual snapshots for human review; those diffs
 inform the conversation but don’t block the merge on their own.
 
-One job reports rather than gates: our OpenSpec process schema is a copy of
-experiment-hub’s, and a currency check re-fetches the original to say what
-changed upstream since we copied it. It warns and never fails — it describes
-another repo over the network, which is no reason an MVDS pull request can’t
-merge — so a stale copy surfaces on the next PR instead of on the next
-archaeology session. See
-[`openspec/schemas/experiment-hub-lite/.upstream/`](../openspec/schemas/experiment-hub-lite/.upstream/README.md).
+One job reports rather than gates: our OpenSpec process layer — the schema, its
+templates, and nine agent skills — is copied from experiment-hub, and a currency
+check re-fetches the originals to say what changed upstream since we copied
+them. It warns and never fails, because it describes another repo over the
+network, which is no reason an MVDS pull request can’t merge.
+
+That warning is the weaker half. A PR annotation only appears in a week someone
+opens a pull request, which is how a month of upstream improvements went
+unnoticed once already — so a scheduled run does the same check weekly and
+opens an issue with the diff, closing it once the copy is current again. See
+[`.upstream/`](../.upstream/README.md).
 
 When we say a principle is “enforced,” we mean the static scan over source —
 patterns and required story files. Storybook in the browser is the other half:

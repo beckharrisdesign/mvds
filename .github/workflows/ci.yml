@@ -102,17 +102,21 @@ jobs:
       - name: Verify the public Figma share is reachable
         run: npm run verify:figma-share
 
-  # The OpenSpec schema under openspec/schemas/experiment-hub-lite/ is a COPY of
-  # experiment-hub's, adapted for a design-system repo. Nothing used to notice
-  # when upstream moved, so it drifted one-directionally for a month. This job
-  # re-fetches the hub schema and reports what changed since the `x-source`
-  # stamp.
+  # MVDS's OpenSpec layer — the experiment-hub-lite schema, its templates, and
+  # nine skills/*.md — is COPIED from experiment-hub and adapted for a
+  # design-system repo. Nothing used to notice when upstream moved, so it drifted
+  # one-directionally for a month. This job re-fetches the hub files and reports
+  # what changed since the stamp in .upstream/manifest.json.
+  #
+  # This is the PR-time half. The half that actually catches drift is the
+  # scheduled `upstream-currency` workflow, which opens an issue — a PR
+  # annotation only fires in a week you happen to open a PR.
   #
   # WARNING-LEVEL ON PURPOSE: it reports on another repo over the network, so it
   # must never be why an MVDS PR cannot merge. The script emits a ::warning::
   # annotation and exits 0. Once it has been quiet for a few PRs, promote it by
   # appending `-- --strict` to the run below.
-  schema-drift:
+  upstream-drift:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -123,8 +127,8 @@ jobs:
         with:
           node-version: 22
 
-      - name: OpenSpec schema currency (vs experiment-hub)
+      - name: Upstream currency (schema + skills vs experiment-hub)
         env:
           # Lifts the anonymous API rate limit; read-only, public repo.
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npm run check:schema-drift -- --diff
+        run: npm run check:upstream-drift -- --diff
