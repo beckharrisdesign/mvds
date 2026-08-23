@@ -3,7 +3,11 @@
   "fileKey": "C20nU0mROzk3Zr0I9BELJF",
   "syncedAt": "2026-07-29",
   "syncedFromCommit": "8f791b1634e16e8c4ea9a135061084126dfcfa7c",
-  "pages": { "foundations": "0:1", "components": "95:4", "syncReports": "136:2" },
+  "pages": {
+    "foundations": "0:1",
+    "components": "95:4",
+    "syncReports": "136:2"
+  },
   "starters": {
     "$comment": "Figma-only mockup starters — full-size shell templates composed of live Chrome/Section INSTANCES, replacing the deleted rectangle-sketch 'Pages' component set (2026-07-15, founder-approved). Consolidated onto the 'Foundations & Starters' page (0:1) same day — the separate Starters page was merged away per founder choice. Not part of the component mirror: no code counterpart, nothing publishes. Recorded so syncs know these frames hold instances of the mirrored sets.",
     "Web · Section stripes": "480:3",
@@ -255,17 +259,117 @@
   },
   "typography": {
     "$comment": "Recorded text-style fonts at last sync (resolved values, even when variable-bound) — checked by check:figma T6/T7. fontFamily is bound to the font-sans STRING variable; fontStyle is set directly per ramp step.",
-    "fontFamilyVariable": { "name": "Typography/font-sans", "id": "VariableID:153:2", "value": "Inter" },
+    "fontFamilyVariable": {
+      "name": "Typography/font-sans",
+      "id": "VariableID:153:2",
+      "value": "Inter"
+    },
     "textStyles": {
-      "Type/Display": { "id": "S:3f28cb750fd2e5cdb3b1be548a8c021703f579b1,", "fontFamily": "Inter", "fontStyle": "Semi Bold", "bound": true },
-      "Type/Heading 1": { "id": "S:36cb15c693c99230cabf25b670b35d2fa603a907,", "fontFamily": "Inter", "fontStyle": "Semi Bold", "bound": true },
-      "Type/Heading 2": { "id": "S:bb3aab118105ef48b289553a4d1fc54eca2b3696,", "fontFamily": "Inter", "fontStyle": "Semi Bold", "bound": true },
-      "Type/Heading 3": { "id": "S:53e9d52b0c2ddfd943d505c57ef525525447b858,", "fontFamily": "Inter", "fontStyle": "Semi Bold", "bound": true },
-      "Type/Heading 4": { "id": "S:ecb0376966d151227caf3a419478049e70f9ae92,", "fontFamily": "Inter", "fontStyle": "Semi Bold", "bound": true },
-      "Type/Body Large": { "id": "S:f942407d9d8732af761c7a060df3a93f103f118f,", "fontFamily": "Inter", "fontStyle": "Regular", "bound": true },
-      "Type/Body": { "id": "S:e077770ac99e6e4888d6fea681e1c31c9dba153b,", "fontFamily": "Inter", "fontStyle": "Regular", "bound": true },
-      "Type/Small": { "id": "S:7382ccc2fe3a99df486b6728b166b1441d3cbb26,", "fontFamily": "Inter", "fontStyle": "Regular", "bound": true },
-      "Type/Caption": { "id": "S:5a4469ce20fc8690e7c6546cfb9b0173332ad53c,", "fontFamily": "Inter", "fontStyle": "Medium", "bound": true }
+      "Type/Display": {
+        "id": "S:3f28cb750fd2e5cdb3b1be548a8c021703f579b1,",
+        "fontFamily": "Inter",
+        "fontStyle": "Semi Bold",
+        "bound": true,
+        "fontSize": 48,
+        "sizeVariable": {
+          "name": "Typography/text-display-size",
+          "id": "VariableID:635:50"
+        }
+      },
+      "Type/Heading 1": {
+        "id": "S:36cb15c693c99230cabf25b670b35d2fa603a907,",
+        "fontFamily": "Inter",
+        "fontStyle": "Semi Bold",
+        "bound": true,
+        "fontSize": 36,
+        "sizeVariable": {
+          "name": "Typography/text-h1-size",
+          "id": "VariableID:635:51"
+        }
+      },
+      "Type/Heading 2": {
+        "id": "S:bb3aab118105ef48b289553a4d1fc54eca2b3696,",
+        "fontFamily": "Inter",
+        "fontStyle": "Semi Bold",
+        "bound": true,
+        "fontSize": 30,
+        "sizeVariable": {
+          "name": "Typography/text-h2-size",
+          "id": "VariableID:635:52"
+        }
+      },
+      "Type/Heading 3": {
+        "id": "S:53e9d52b0c2ddfd943d505c57ef525525447b858,",
+        "fontFamily": "Inter",
+        "fontStyle": "Semi Bold",
+        "bound": true,
+        "fontSize": 24,
+        "sizeVariable": {
+          "name": "Typography/text-h3-size",
+          "id": "VariableID:635:53"
+        }
+      },
+      "Type/Heading 4": {
+        "id": "S:ecb0376966d151227caf3a419478049e70f9ae92,",
+        "fontFamily": "Inter",
+        "fontStyle": "Semi Bold",
+        "bound": true,
+        "fontSize": 20,
+        "sizeVariable": {
+          "name": "Typography/text-h4-size",
+          "id": "VariableID:635:54"
+        }
+      },
+      "Type/Body Large": {
+        "id": "S:f942407d9d8732af761c7a060df3a93f103f118f,",
+        "fontFamily": "Inter",
+        "fontStyle": "Regular",
+        "bound": true,
+        "fontSize": 18,
+        "sizeVariable": {
+          "name": "Typography/text-body-lg-size",
+          "id": "VariableID:635:55"
+        }
+      },
+      "Type/Body": {
+        "id": "S:e077770ac99e6e4888d6fea681e1c31c9dba153b,",
+        "fontFamily": "Inter",
+        "fontStyle": "Regular",
+        "bound": true,
+        "fontSize": 16,
+        "sizeVariable": {
+          "name": "Typography/text-body-size",
+          "id": "VariableID:635:56"
+        }
+      },
+      "Type/Small": {
+        "id": "S:7382ccc2fe3a99df486b6728b166b1441d3cbb26,",
+        "fontFamily": "Inter",
+        "fontStyle": "Regular",
+        "bound": true,
+        "fontSize": 14,
+        "sizeVariable": {
+          "name": "Typography/text-small-size",
+          "id": "VariableID:635:57"
+        }
+      },
+      "Type/Caption": {
+        "id": "S:5a4469ce20fc8690e7c6546cfb9b0173332ad53c,",
+        "fontFamily": "Inter",
+        "fontStyle": "Medium",
+        "bound": true,
+        "fontSize": 12,
+        "sizeVariable": {
+          "name": "Typography/text-caption-size",
+          "id": "VariableID:635:58"
+        }
+      }
+    },
+    "fontHeadingVariable": {
+      "name": "Typography/font-heading",
+      "id": "VariableID:635:49",
+      "value": "Inter",
+      "$comment": "Bound to fontFamily of Type/Display + Heading 1-4 (token sync 2026-08-23); body/small/caption stay on font-sans."
     }
   },
   "radiusRamp": {
@@ -304,5 +408,18 @@
     "2026-07-15-2": "485:39",
     "2026-07-15-3": "490:41",
     "2026-07-29": "575:41"
+  },
+  "gradationVariables": {
+    "$comment": "Authored gradation steps (stepped-scales #82) synced 2026-08-23 from main 9d5f5c3; replaced the removed Color/primary|secondary-50...950 derived ramps. Light+dark values authored in src/index.css.",
+    "Color/primary-1": "VariableID:635:39",
+    "Color/primary-2": "VariableID:635:40",
+    "Color/primary-3": "VariableID:635:41",
+    "Color/primary-4": "VariableID:635:42",
+    "Color/primary-5": "VariableID:635:43",
+    "Color/secondary-1": "VariableID:635:44",
+    "Color/secondary-2": "VariableID:635:45",
+    "Color/secondary-3": "VariableID:635:46",
+    "Color/secondary-4": "VariableID:635:47",
+    "Color/secondary-5": "VariableID:635:48"
   }
 }
