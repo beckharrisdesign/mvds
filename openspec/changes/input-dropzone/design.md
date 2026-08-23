@@ -39,8 +39,8 @@ the selected list, the app owns everything after the files land.
 | --------------------- | ----- |
 | Primary file URL      | https://www.figma.com/design/u6SsvuFE4Q4oKwQ0d0M2KU (scratch: "MVDS explore: input-dropzone") |
 | As-is page / frame    | `0.0 As is` — "Form capture as shipped": the control inventory with Input/Dropzone marked absent, the Field story's hand-rolled `<input>`, and the two consumer workarounds (mailto CTA, bespoke ELK dropzone — flagged as reference, external repos) |
-| Proposed page / frames| `01.0 Propose: input-dropzone` — "Input — states & sizes" (light + dark): placeholder/filled/focus/invalid/disabled, three sizes each beside its Button twin, Field composition; "Dropzone — states" (light + dark): idle/dragging/selected/disabled; "The two dogfood walls, unblocked": email-capture and upload-screen compositions |
-| Libraries / version   | Values mirror `src/index.css` (oklch→hex, reference); scratch file, not MVDS Core |
+| Proposed page / frames| `02.0 Propose: input-dropzone update` — same approved boards rebuilt to the HF binding standard: every fill/stroke/gap/padding/height bound to the published MVDS Core library (Tokens + Scales, post 2026-08-23 token sync), type via imported `Type/*` styles, dark boards = variable-mode flips of the light ones. (`01.0` holds the originally-approved hand-mirrored pair, untouched per convention.) |
+| Libraries / version   | `02.0`: bound to MVDS Core (`C20nU0mROzk3Zr0I9BELJF`) Tokens/Scales variables + `Type/*` styles via import-by-key. `01.0`: hand-mirrored `src/index.css` values (oklch→hex, reference) |
 | Breakpoints           | Storybook canvas — both components are width-fluid controls (`w-full` inside their container); no S/L IA delta |
 | Status                | approved 2026-08-23 — founder reviewed the HF (High Fidelity) pair after the layout revision: "It looks good - approve" |
 
@@ -86,6 +86,7 @@ the selected list, the app owns everything after the files land.
 - **A `size` prop on Input diverges from pristine shadcn** (single height).
   Deliberate: MVDS tunes vendored internals already, and the Button-mirroring
   vocabulary is the point. Pre-1.0, no compat concern.
-- **Five-state Figma boards are hand-mirrored hex**, not synced variables —
-  acceptable for a scratch exploration; MVDS Core sync remains
-  explicitly-on-request only.
+- ~~**Five-state Figma boards are hand-mirrored hex**~~ — superseded: the
+  `02.0` iteration binds the published MVDS Core library per the HF standard
+  (`rules/figma.mdc`), after the founder-requested 2026-08-23 token sync.
+  `01.0` remains as the approved hand-mirrored original.
