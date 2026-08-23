@@ -42,7 +42,7 @@ the selected list, the app owns everything after the files land.
 | Proposed page / frames| `01.0 Propose: input-dropzone` — "Input — states & sizes" (light + dark): placeholder/filled/focus/invalid/disabled, three sizes each beside its Button twin, Field composition; "Dropzone — states" (light + dark): idle/dragging/selected/disabled; "The two dogfood walls, unblocked": email-capture and upload-screen compositions |
 | Libraries / version   | Values mirror `src/index.css` (oklch→hex, reference); scratch file, not MVDS Core |
 | Breakpoints           | Storybook canvas — both components are width-fluid controls (`w-full` inside their container); no S/L IA delta |
-| Status                | ready for apply — founder ordered the ship 2026-08-23 |
+| Status                | approved 2026-08-23 — founder reviewed the HF (High Fidelity) pair after the layout revision: "It looks good - approve" |
 
 ## Decisions
 
