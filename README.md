@@ -41,21 +41,29 @@ The scales and layout primitives that sit *beneath* components:
   size + line-height + weight + tracking (defined in [`src/index.css`](src/index.css)).
 - **Breakpoints** — `sm`/`md`/`lg`/`xl`/`2xl`, used by the Container and `@container` queries.
 - **Layout primitives** ([`src/components/layout/`](src/components/layout)) — `Container`,
-  `Stack`, `Inline`, `Grid` (responsive cols), `Spacer`. Thin typed Tailwind wrappers
-  whose props snap to the spacing/breakpoint scales. *shadcn ships none of these — this
-  is the deliberate, opinionated layout layer.*
+  `Stack`, `Inline`, `Grid`/`GridItem` (responsive cols), `Spacer`, `Section`,
+  `Layer`, `Chrome`. Thin typed Tailwind wrappers whose props snap to the
+  spacing/breakpoint scales. *shadcn ships none of these — this is the
+  deliberate, opinionated layout layer.*
 
 See them under **Foundations/** in Storybook.
 
 ## Components
 
-The component set is intentionally tiny:
+Deliberately small, but complete enough that a first screen needs zero custom
+controls:
 
-- **Button** — variant-driven atom (`variant` × `size` → Figma component properties).
-- **Card** — composite molecule; the `WithButton` story nests a Button to prove
-  composition survives the trip into Figma.
+- **Controls** (`src/components/ui/`, shadcn-sourced + MVDS-tuned) — `Button`,
+  `Badge`, `Card`, `Label`, `Input`, `Textarea`, `Select`, `Checkbox`,
+  `RadioGroup`, `Switch`.
+- **Form patterns** (`src/components/forms/`, MVDS-authored) — `Field` (the
+  label/help/error scaffold every control plugs into) and `Dropzone`
+  (drag / drop / paste / picker file selection).
+- **Blocks** (`src/components/blocks/`) — `Hero`, `Callout`, `Blockquote`,
+  `MediaFrame`.
 
-Add more anytime: `npx shadcn@latest add input badge dialog …`
+Add more anytime: `npx shadcn@latest add dialog tabs …` — then re-apply the
+8-grid tuning pass (`src/components/ui/CLAUDE.md`).
 
 ## Getting started
 
@@ -94,7 +102,7 @@ complete working app. CI builds it against the published package on every PR
 
 Then import components:
 ```tsx
-import { Button, Card, Stack, Inline, Grid, Container } from "@beckharrisdesign/mvds"
+import { Button, Card, Input, Field, Dropzone, Stack, Inline, Grid, Container } from "@beckharrisdesign/mvds"
 ```
 
 Full ingestion runbook (auth, dark mode, theming, troubleshooting):
@@ -118,9 +126,10 @@ Full workflow, Pro-tier constraints, and the future-proofing notes live in
 ```
 src/
   index.css              ← TOKEN LAYER (source of truth: @theme + :root + .dark)
-  components/ui/
-    button.tsx  button.stories.tsx
-    card.tsx    card.stories.tsx
+  components/ui/         ← shadcn-sourced controls, MVDS-tuned (+ co-located stories)
+  components/forms/      ← Field + Dropzone (MVDS-authored form patterns)
+  components/layout/     ← the layout primitives + scales.ts
+  components/blocks/     ← Hero, Callout, Blockquote, MediaFrame
   lib/utils.ts           ← cn() helper
   App.tsx                ← demo composition
 .storybook/              ← Storybook config (preview imports the token layer)

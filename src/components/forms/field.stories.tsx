@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import { expect } from "storybook/test"
 import { Field } from "./field"
+import { Input } from "@/components/ui/input"
 import { Stack } from "@/components/layout"
 
 /**
@@ -24,11 +25,7 @@ const meta = {
   args: {
     label: "Email address",
     children: (
-      <input
-        type="email"
-        placeholder="you@example.com"
-        className="h-8 w-64 rounded-md border border-input bg-background px-2 text-small text-foreground placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none aria-invalid:border-destructive"
-      />
+      <Input type="email" placeholder="you@example.com" className="w-64" />
     ),
   },
 } satisfies Meta<typeof Field>
