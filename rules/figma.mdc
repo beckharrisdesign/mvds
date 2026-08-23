@@ -20,6 +20,31 @@ Cursor: Figma plugin / MCP (`plugin-figma-figma`). Before `use_figma`, load the 
 - Components: `src/components/ui/`, `layout/`, `site/`, `blocks/`
 - Treat Figma MCP export as **reference**; rewrite to MVDS primitives and tokens
 
+## HF (High Fidelity) explorations bind the published MVDS Core library
+
+Design-gate scratch files (the as-is + proposed pairs below) are **HF — "High
+Fidelity" — artifacts** (founder naming, 2026-08-23), and an HF file **ingests
+the system's scales instead of hand-mirroring them**:
+
+1. Read variable names + keys from MVDS Core (`C20nU0mROzk3Zr0I9BELJF`):
+   collections **Tokens** (Light/Dark), **Scales**, **Customize Here** —
+   `getLocalVariableCollectionsAsync()` in the Core file, `variable.key` per
+   variable.
+2. In the scratch file, `figma.variables.importVariableByKeyAsync(key)` and
+   bind fills / text / gaps to the imported variables. Dark boards flip via
+   the collection's variable **mode** — never a second hand-painted set.
+3. **Gotcha:** `teamLibrary.getAvailableLibraryVariableCollectionsAsync()`
+   lists only libraries *enabled in that file's UI* and returns `[]` in fresh
+   drafts. That does **not** mean MVDS Core is unpublished — import-by-key
+   works regardless. Do not fall back to hand-mirrored hex on an empty
+   listing.
+
+Hand-mirrored values are the exception, not the default: allowed only for a
+token Core doesn't carry yet (e.g. proposed-but-unshipped tokens), flagged as
+reference in the frame and in design.md. If Core trails `src/index.css`, say
+so in design.md's Libraries/version row — the fix is the founder-requested
+token sync, not silent hex.
+
 ## Proposal file page naming (scratch / explore files)
 
 When iterating UI in a Figma design file (not MVDS Core library sync), use **one page per step**. Never overwrite a prior page — create a new page for each proposal iteration.
