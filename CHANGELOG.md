@@ -12,6 +12,95 @@ All notable changes to MVDS are recorded here. The format follows
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-08-23
+
+The theming release, plus the first-screen controls. Color modulation became
+five authored, checked gradation steps per brand family; brands became scoped
+presets you wrap around any subtree; typography faces and sizes became runtime
+tokens overridable in plain CSS; and the two controls almost every experiment
+ships first — a single-line `Input` and a file `Dropzone` — joined the package,
+closing the gaps both August dogfoods hit on their first screen.
+
+### Migration from 0.3.0
+
+Breaking (pre-1.0 clean breaks):
+
+1. **The `primary-50…950` / `secondary-50…950` utilities are gone.** Color
+   modulation now steps on the authored gradation scale — `primary-1…5` /
+   `secondary-1…5` per brand family, per mode (1 = faintest tint against the
+   mode's background, 5 = strongest; roles are contract: 1–2 tint surfaces,
+   3 decorative, 4–5 text-safe). Migrate by role, e.g. `from-primary-100` →
+   `from-primary-1`, `text-primary-700` → `text-primary-4` or `-5`.
+2. **Ad-hoc brand alpha (`bg-primary/10`, `color-mix` on brand families) is
+   out of contract** — step on the gradations instead. Machine-enforced in
+   this repo as `step-on-color-gradations`; generic type sizes
+   (`text-2xl`) are likewise enforced as `step-on-type-ramp`.
+3. **Font overrides move to plain CSS.** Faces and step sizes are runtime
+   tokens: set `--font-sans` / `--font-heading` / `--text-*-size` in `:root`
+   (or a `[data-brand]` scope) — no `@theme` block, and there are no
+   `font-sans`/`font-heading` utilities (`font-mono` remains one).
+
+New exports (additive):
+
+```ts
+import { Input, inputVariants, Dropzone } from "@beckharrisdesign/mvds"
+```
+
+```css
+@import "@beckharrisdesign/mvds/themes/terracotta.css"; /* scoped brand preset */
+```
+
+### Added
+
+- **Stepped color gradations** — `primary-1…5` / `secondary-1…5`, authored per
+  mode with role contracts, validated by the token-level AA gate; stepping
+  between authored values replaces derived ramps and ad-hoc alpha as the way
+  UI modulates brand color.
+  ([#82](https://github.com/beckharrisdesign/mvds/pull/82))
+- **Scoped brands** — wrap any subtree in `data-brand="<name>"` and it wears
+  that brand's preset (semantic roles + its authored gradation steps) in both
+  modes; the terracotta preset ships as `themes/terracotta.css` and doubles as
+  the template for writing your own. The contrast gate iterates brands ×
+  modes. ([#83](https://github.com/beckharrisdesign/mvds/pull/83))
+- **Themeable typography** — runtime face tokens (`--font-sans`,
+  `--font-heading`) and per-step size tokens (`--text-display-size` …
+  `--text-caption-size`): serif headings or a bigger display step is one
+  plain-CSS declaration, app-wide or inside a brand scope.
+  ([#84](https://github.com/beckharrisdesign/mvds/pull/84))
+- **`Input`** — the single-line text control, 8-grid tuned with a `size` prop
+  that mirrors Button's (sm/default/lg → 24/32/40), so an input beside a
+  button aligns by construction; composes with `Field` for label/help/error
+  wiring. ([#85](https://github.com/beckharrisdesign/mvds/pull/85))
+- **`Dropzone`** — accessible file selection: drag / drop / paste / picker
+  over a hidden file input, a real button in the a11y tree, polite `aria-live`
+  announcements, and a removable selected-file list. It ends at "files
+  selected" — transport and previews stay app concerns.
+  ([#85](https://github.com/beckharrisdesign/mvds/pull/85))
+- **Storybook Intro IA** — Start Here / Get Started / How We Enforce /
+  Principles boards, plus the *How we enforce* verification docs.
+  ([#74](https://github.com/beckharrisdesign/mvds/pull/74),
+  [#75](https://github.com/beckharrisdesign/mvds/pull/75))
+
+### Changed
+
+- README component inventory now reflects the real surface (ten controls, the
+  `Field`/`Dropzone` form patterns, the blocks) instead of the stale
+  two-component list.
+  ([#85](https://github.com/beckharrisdesign/mvds/pull/85))
+- Figma: MVDS Core's variable collections synced to this release's token layer
+  (gradations, `Typography/font-heading`, per-step size variables bound to the
+  `Type/*` styles), and HF design explorations now bind the published library
+  instead of hand-mirroring values.
+  ([#86](https://github.com/beckharrisdesign/mvds/pull/86),
+  [#87](https://github.com/beckharrisdesign/mvds/pull/87))
+
+### Removed
+
+- The derived `primary/secondary 50…950` ramps and their relative-color
+  formulas (see Migration). Five authored steps with checked role contracts
+  replace eleven derived ones nothing consumed.
+  ([#82](https://github.com/beckharrisdesign/mvds/pull/82))
+
 ## [0.3.0] - 2026-07-29
 
 Spatial layout became a first-class vocabulary (`Chrome`, `Section`, `Layer`),
@@ -307,7 +396,8 @@ verification gates.
   `background`.
   ([#9](https://github.com/beckharrisdesign/mvds/pull/9))
 
-[Unreleased]: https://github.com/beckharrisdesign/mvds/compare/v0.3.0...main
+[Unreleased]: https://github.com/beckharrisdesign/mvds/compare/v0.4.0...main
+[0.4.0]: https://github.com/beckharrisdesign/mvds/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/beckharrisdesign/mvds/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/beckharrisdesign/mvds/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/beckharrisdesign/mvds/tree/v0.1.0
