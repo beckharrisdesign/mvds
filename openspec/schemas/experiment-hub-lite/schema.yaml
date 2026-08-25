@@ -7,8 +7,7 @@ version: 1
 # and skills/). `npm run check:upstream-drift` re-fetches hub main and reports
 # what moved since; the scheduled `upstream-currency` workflow opens an issue so
 # a stale copy cannot go unnoticed. Re-stamp with --update, never by hand.
-x-source: experiment-hub@bd57a1c
-
+x-source: experiment-hub@022d6ba
 description: >
   Intent-first OpenSpec for MVDS spikes — copied from experiment-hub-lite, adapted
   so Storybook + AGENTS.md replace experiments/*/prototype and hub design kits.

@@ -118,7 +118,7 @@ Implement tasks from an OpenSpec change.
 
    c. **Push** — `git push -u origin HEAD` (or push to the existing feature branch).
 
-   d. **PR** — If no open PR for this branch: `gh pr create --draft` with summary, why, and test plan (brief but substantive, same bar as the commit). If a PR exists: push only; CI re-runs.
+   d. **PR** — If no open PR for this branch: `gh pr create --draft` with the two required sections — a `## Summary` list of **all** the code changes, and a `## Founder intent` section in Katy's framing, quoting the change's Human anchor verbatim (per [github-workflow.mdc](../rules/github-workflow.mdc)). Add a `## Test plan` section only when the PR implements an actual automated test. If a PR exists: push only; CI re-runs.
 
    e. **Report** — In the completion or pause summary, include commit subject, PR URL, and that checks are running.
 

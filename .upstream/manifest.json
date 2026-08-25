@@ -1,7 +1,7 @@
 {
   "source": "beckharrisdesign/experiment-hub",
   "ref": "main",
-  "commit": "bd57a1c",
+  "commit": "022d6ba",
   "_comment": "Files mirrored from the hub. Paths are identical on both sides; the baseline copy lives at .upstream/<path>. Adding a watched file is one line here plus its baseline copy (node scripts/check-upstream-drift.mjs --update fetches it).",
   "paths": [
     "openspec/schemas/experiment-hub-lite/schema.yaml",
