@@ -79,13 +79,16 @@ export const BothProvenances: Story = {
     ).toBeInTheDocument()
 
     // An external principle without a working citation is not a citation —
-    // the link must be present and point at the published source.
-    const cite = canvas.getByRole("link", {
-      name: /Heuristic 4: Consistency and standards/,
-    })
+    // the link must be present and point at the published source. The lean
+    // card shows the short label (NN/g H4); the full ref rides the title attr.
+    const cite = canvas.getByRole("link", { name: /NN\/g H4/ })
     await expect(cite).toHaveAttribute(
       "href",
       "https://www.nngroup.com/articles/ten-usability-heuristics/"
+    )
+    await expect(cite).toHaveAttribute(
+      "title",
+      "Heuristic 4: Consistency and standards"
     )
   },
 }

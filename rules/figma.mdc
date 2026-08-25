@@ -82,6 +82,18 @@ Then the **Visual design / Figma** table records:
 
 **N/A is allowed ONLY for genuinely API-only / no-UI changes** — one "N/A — no UI" row with rationale. If the change renders anything a user sees, it is not API-only.
 
+## Stage model (mvds-default schema)
+
+Under the default `mvds-default` schema this design gate sits inside a stage
+model (openspec: adding-eval-gate): **0.5 Eval**, **0.6 Eval Summary**, and
+**1.5 Eval Delta** are **markdown artifacts in the change directory**
+(`discovery.md` / `design.md`) — they are NOT Figma pages. The page convention
+above is unchanged: `0.0 As is` is produced at the discovery stage (and doubles
+as its visual record; the running Storybook story is the eval target where one
+exists), and `0N.0 Propose:` pages are generated at the design stage **with the
+approved Eval Summary in context**. Don't confuse the two number lines — pages
+are `0.0 / 01.0 / 02.0 …`; stages are `0.5 / 0.6 / 1.0 / 1.5`.
+
 ## Code Connect
 
 MVDS does **not** use Code Connect (AGENTS.md). Do not add `.figma.ts` connect files unless the founder changes that policy.

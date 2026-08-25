@@ -5,11 +5,11 @@ globs: openspec/**/*
 
 # OpenSpec workflow (MVDS)
 
-Copied/adapted from experiment-hub. Schema SoT for this repo: [`openspec/schemas/experiment-hub-lite/`](../openspec/schemas/experiment-hub-lite/).
+Copied/adapted from experiment-hub. Schema SoT for this repo: [`openspec/schemas/mvds-default/`](../openspec/schemas/mvds-default/) (default; [`experiment-hub-lite`](../openspec/schemas/experiment-hub-lite/) is the archived hub mirror, selectable per-change).
 
 ## When to use
 
-- **OpenSpec lite** (default, only schema bootstrapped): Human anchor, Outcomes, specs (≤5 requirements), design (Figma table for UI), tasks §1 = user scenarios. `/opsx:propose` creates **one artifact per approval**.
+- **mvds-default** (default): Human anchor, Outcomes, specs (≤5 requirements), **discovery** (0.0 As-is → 0.5 Eval → 0.6 Eval Summary — founder stop before any proposal), design (1.0 conditioned on the summary; Figma table for UI; 1.5 Eval Delta, informational), tasks §1 = user scenarios. `/opsx:propose` creates **one artifact per approval**.
 - **Cursor-only plans** are fine for tiny chores; use OpenSpec when you want durable proposal/design/tasks and Figma iteration before code.
 - Do **not** invent `bhd-experiment` or full `experiment-hub` schemas until they are copied into this repo.
 

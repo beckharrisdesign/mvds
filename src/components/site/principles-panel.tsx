@@ -1,6 +1,7 @@
 import { Badge } from "@/components/ui/badge"
 import { Grid, Inline, Stack } from "@/components/layout"
 import type { PrincipleRecord } from "./manifest-snapshot.types"
+import { sourceLabel } from "./principle-display"
 
 /**
  * PrinciplesPanel — the design principles, as a first-class section.
@@ -17,18 +18,24 @@ import type { PrincipleRecord } from "./manifest-snapshot.types"
  *                 plainly is the point: the rules that matter most to a design
  *                 system are usually the ones no regex can catch, and hiding
  *                 them would imply only the mechanisable ones are real.
+ *
+ * The card is deliberately lean (openspec: adding-eval-gate, founder review of
+ * the 02.0 pair): the manifest's `rationale` and `evalLens` are data for their
+ * consumers (docs/agents and the discovery eval), not card copy — and the
+ * source is a plain link, not chrome dressed as a Badge.
  */
 
-function SourceLink({ source }: { source: PrincipleRecord["source"] }) {
-  const label = source.ref ?? source.name
-  if (!source.url) {
+function SourceLink({ principle }: { principle: PrincipleRecord }) {
+  const label = sourceLabel(principle)
+  if (!principle.source.url) {
     return <span className="text-caption text-muted-foreground">{label}</span>
   }
   return (
     <a
-      href={source.url}
+      href={principle.source.url}
       target="_blank"
       rel="noopener noreferrer"
+      title={principle.source.ref ?? principle.source.name}
       className="text-caption text-muted-foreground hover:text-foreground underline underline-offset-2"
     >
       {label} ↗
@@ -37,7 +44,6 @@ function SourceLink({ source }: { source: PrincipleRecord["source"] }) {
 }
 
 function PrincipleCard({ principle }: { principle: PrincipleRecord }) {
-  const external = principle.source.kind === "external"
   const automated = principle.enforcement === "automated"
 
   return (
@@ -50,18 +56,12 @@ function PrincipleCard({ principle }: { principle: PrincipleRecord }) {
       </Inline>
 
       <p className="text-small text-muted-foreground">{principle.description}</p>
-      <p className="text-small text-muted-foreground">{principle.rationale}</p>
 
       <Inline gap={8} align="center" justify="between" wrap>
         <code className="text-caption text-muted-foreground font-mono">
           {principle.id}
         </code>
-        <Inline gap={4} align="center">
-          <Badge variant={external ? "outline" : "muted"}>
-            {external ? principle.source.name : "MVDS"}
-          </Badge>
-          {external && <SourceLink source={principle.source} />}
-        </Inline>
+        <SourceLink principle={principle} />
       </Inline>
     </Stack>
   )
@@ -117,10 +117,8 @@ function PrinciplesPanel({
         <Stack gap={4}>
           <h3 className="text-h4">Adopted from published work</h3>
           <p className="text-small text-muted-foreground max-w-prose">
-            Not invented here, and cited so you can check them. These are
-            judgment calls by nature — the wording below is MVDS's own account of
-            how each applies to a design system, and every card links the
-            original.
+            Not invented here, and cited so you can check them — every card
+            links the original.
           </p>
         </Stack>
         <Grid cols={{ base: 1, md: 2 }} gap={16}>

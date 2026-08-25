@@ -249,41 +249,18 @@ export const baseManifest = {
     },
 
     // --- Guiding principles ------------------------------------------------------
-    // Adopted from published usability work rather than invented here. They are
-    // NOT machine-checkable, and pretending otherwise would be the failure mode
-    // this manifest exists to avoid — so each states the judgment it asks for and
-    // links its source. `description` and `rationale` are MVDS's own words about
-    // how the heuristic applies to a design system; the `ref` names the original.
-    {
-      id: "consistency-and-standards",
-      title: "One concept, one expression",
-      description:
-        "One concept, one expression — a thing that behaves the same should look the same everywhere.",
-      rationale:
-        "This is the whole argument for a token layer and a fixed variant set. Every ad-hoc value is a second dialect a reader has to learn, and an agent has to guess between. The mechanical half is enforced (no-hardcoded-color, no-raw-flex-grid); the judgment half is deciding when a genuinely new case deserves a new variant instead of a one-off.",
-      severity: "error",
-      enabled: true,
-      scope: NO_FILES,
-      check: { kind: "guiding" },
-      fix: "Before adding a variant or a bespoke style, find the existing expression of the same idea and reuse it. If none fits, add it to the system rather than to the screen.",
-      docs: "AGENTS.md (Golden rules)",
-      source: nng("Heuristic 4: Consistency and standards"),
-    },
-    {
-      id: "aesthetic-and-minimalist-design",
-      title: "Cut surface that doesn’t earn its place",
-      description:
-        "Every element competes for attention with every other one — so carry no surface you cannot justify.",
-      rationale:
-        "Why the component set is deliberately tiny and why pre-1.0 MVDS deletes rather than deprecates. Unused variants are not free: they dilute the signal of the ones that matter and enlarge the space an agent chooses from.",
-      severity: "error",
-      enabled: true,
-      scope: NO_FILES,
-      check: { kind: "guiding" },
-      fix: "Cut it. If a variant, prop, or export is not earning its place, remove it outright — there are no external consumers to protect yet.",
-      docs: "AGENTS.md (Pre-1.0: breaking changes are fine)",
-      source: nng("Heuristic 8: Aesthetic and minimalist design"),
-    },
+    // Adopted from published usability work rather than invented here — all ten of
+    // Nielsen's heuristics, in heuristic order. They are NOT machine-checkable, and
+    // pretending otherwise would be the failure mode this manifest exists to avoid —
+    // so each states the judgment it asks for and links its source.
+    //
+    // Each record is read by TWO consumers (openspec: adding-eval-gate):
+    //   `description`/`rationale` — the system-design reading: MVDS's own words
+    //       about how the heuristic applies to a design system. Rendered.
+    //   `evalLens` — the surface-evaluation reading: how the mvds-default
+    //       discovery eval (0.5/1.5) judges a rendered surface against the
+    //       heuristic in its original published sense. Rubric membership IS the
+    //       presence of this field. Deliberately not rendered in any UI.
     {
       id: "visibility-of-system-status",
       title: "Show real status, don’t claim it in prose",
@@ -295,9 +272,62 @@ export const baseManifest = {
       enabled: true,
       scope: NO_FILES,
       check: { kind: "guiding" },
+      evalLens:
+        "Does the surface show its current state — loading, syncing, failing, stale — in time for the user to act, without claiming status in prose?",
       fix: "Surface real state from a generated source. Never hand-write a status that could go stale without anything failing.",
       docs: "AGENTS.md (Storybook — first-class verification surface)",
       source: nng("Heuristic 1: Visibility of system status"),
+    },
+    {
+      id: "match-system-and-real-world",
+      title: "Speak the user’s world",
+      description:
+        "The surface speaks the reader's language — words, flows, and objects match how the work actually happens.",
+      rationale:
+        "Why primitive props take pixels and tokens speak roles — the system's names mirror the designer's intent, not the implementation's units.",
+      severity: "error",
+      enabled: true,
+      scope: NO_FILES,
+      check: { kind: "guiding" },
+      evalLens:
+        "Do the words, objects, and flows on the surface match the user's domain language and expectations, rather than internal or implementation terms?",
+      fix: "Name things for the reader's job, not the implementation. If a prop, label, or token needs translating before use, rename it.",
+      docs: "AGENTS.md (Golden rules — Type via the semantic ramp)",
+      source: nng("Heuristic 2: Match between system and the real world"),
+    },
+    {
+      id: "user-control-and-freedom",
+      title: "Every path has an exit",
+      description:
+        "No dead ends: actions can be undone, escaped, or backed out of without penalty.",
+      rationale:
+        "Why suppressions are explicit and visible (mvds-allow), and why pre-1.0 removals are clean breaks — no state you cannot see your way out of.",
+      severity: "error",
+      enabled: true,
+      scope: NO_FILES,
+      check: { kind: "guiding" },
+      evalLens:
+        "Can the user undo, cancel, or back out of any action on this surface without penalty or dead ends?",
+      fix: "Provide the way out: make suppressions visible (mvds-allow), removals clean, and every state escapable.",
+      docs: "AGENTS.md (Pre-1.0: breaking changes are fine)",
+      source: nng("Heuristic 3: User control and freedom"),
+    },
+    {
+      id: "consistency-and-standards",
+      title: "One concept, one expression",
+      description:
+        "One concept, one expression — a thing that behaves the same should look the same everywhere.",
+      rationale:
+        "This is the whole argument for a token layer and a fixed variant set. Every ad-hoc value is a second dialect a reader has to learn, and an agent has to guess between. The mechanical half is enforced (no-hardcoded-color, no-raw-flex-grid); the judgment half is deciding when a genuinely new case deserves a new variant instead of a one-off.",
+      severity: "error",
+      enabled: true,
+      scope: NO_FILES,
+      check: { kind: "guiding" },
+      evalLens:
+        "Do identical concepts look and behave identically across the surface — same words, same placement, same interaction patterns?",
+      fix: "Before adding a variant or a bespoke style, find the existing expression of the same idea and reuse it. If none fits, add it to the system rather than to the screen.",
+      docs: "AGENTS.md (Golden rules)",
+      source: nng("Heuristic 4: Consistency and standards"),
     },
     {
       id: "error-prevention",
@@ -310,6 +340,8 @@ export const baseManifest = {
       enabled: true,
       scope: NO_FILES,
       check: { kind: "guiding" },
+      evalLens:
+        "Does the surface make error states hard to reach — constraints, confirmations, disabled invalid actions — rather than reporting errors after the fact?",
       fix: "Prefer a narrowed type or a constrained prop over a lint rule; prefer a lint rule over a line in the docs.",
       docs: "AGENTS.md (Spacing — the 8 grid)",
       source: nng("Heuristic 5: Error prevention"),
@@ -325,9 +357,79 @@ export const baseManifest = {
       enabled: true,
       scope: NO_FILES,
       check: { kind: "guiding" },
+      evalLens:
+        "Are options, actions, and context visible when needed, so the user recognizes rather than recalls?",
       fix: "Name for the intent, not the implementation. If a value needs a comment to explain what it maps to, the name is wrong.",
       docs: "AGENTS.md (Golden rules — Type via the semantic ramp)",
       source: nng("Heuristic 6: Recognition rather than recall"),
+    },
+    {
+      id: "flexibility-and-efficiency-of-use",
+      title: "Fast for experts, obvious for first-timers",
+      description:
+        "Accelerators exist for the practiced hand without hiding the plain path.",
+      rationale:
+        "Why the primitives are few and composable: the expert path and the beginner path are the same path, just faster.",
+      severity: "error",
+      enabled: true,
+      scope: NO_FILES,
+      check: { kind: "guiding" },
+      evalLens:
+        "Are there accelerators — shortcuts, defaults, bulk paths — for frequent actions, discoverable without burying the novice path?",
+      fix: "Add the accelerator beside the plain path, never instead of it — one vocabulary, two speeds.",
+      docs: "AGENTS.md (Layout primitives)",
+      source: nng("Heuristic 7: Flexibility and efficiency of use"),
+    },
+    {
+      id: "aesthetic-and-minimalist-design",
+      title: "Cut surface that doesn’t earn its place",
+      description:
+        "Every element competes for attention with every other one — so carry no surface you cannot justify.",
+      rationale:
+        "Why the component set is deliberately tiny and why pre-1.0 MVDS deletes rather than deprecates. Unused variants are not free: they dilute the signal of the ones that matter and enlarge the space an agent chooses from.",
+      severity: "error",
+      enabled: true,
+      scope: NO_FILES,
+      check: { kind: "guiding" },
+      evalLens:
+        "Does every element on the surface earn its place — no decoration or copy competing with the information the user came for?",
+      fix: "Cut it. If a variant, prop, or export is not earning its place, remove it outright — there are no external consumers to protect yet.",
+      docs: "AGENTS.md (Pre-1.0: breaking changes are fine)",
+      source: nng("Heuristic 8: Aesthetic and minimalist design"),
+    },
+    {
+      id: "error-recovery",
+      title: "Errors say what to do next",
+      description:
+        "An error names the problem in plain language and carries its own fix.",
+      rationale:
+        "Why every manifest record carries a fix: line — the gate that fails you also tells you the way out.",
+      severity: "error",
+      enabled: true,
+      scope: NO_FILES,
+      check: { kind: "guiding" },
+      evalLens:
+        "When something goes wrong, does the surface state the problem in plain language and offer a constructive next step?",
+      fix: "When you author a failure message, include the fix — a gate that only says no is half a gate.",
+      docs: "AGENTS.md (Before you call a change done)",
+      source: nng("Heuristic 9: Help users recognize, diagnose, and recover from errors"),
+    },
+    {
+      id: "help-and-documentation",
+      title: "Help lives where the work happens",
+      description:
+        "Guidance is co-located with the task — searchable, concrete, and short.",
+      rationale:
+        "Why stories are co-located and autodocs generated — documentation that lives beside the code it documents cannot drift far.",
+      severity: "error",
+      enabled: true,
+      scope: NO_FILES,
+      check: { kind: "guiding" },
+      evalLens:
+        "Is help available in context — concrete, task-focused, and short — where the user is doing the work?",
+      fix: "Put the guidance where the work happens: co-located stories, autodocs, and comments that state constraints.",
+      docs: "AGENTS.md (Storybook — first-class verification surface)",
+      source: nng("Heuristic 10: Help and documentation"),
     },
   ],
 }
