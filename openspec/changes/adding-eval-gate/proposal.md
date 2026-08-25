@@ -1,4 +1,4 @@
-# heuristic-eval-gate
+# adding-eval-gate
 
 ## Human anchor
 
@@ -20,14 +20,16 @@
   whether a proposal actually improved it, instead of judging absolute quality
   by eye.
 - **Done when:** A change run under the evolved schema produces a `discovery.md`
-  (0.0 As-is → 0.5 Heuristic Eval → 0.6 Eval Summary) that stops for founder
-  approval before any proposal is generated; `design.md` (1.0 Proposal → 1.5
-  Eval Delta) reports a findings ledger — each 0.5 finding dispositioned as
-  addressed / deliberately preserved / regressed / new; the heuristic rubric
-  lives in `principles.config.mjs` as data, with the surface-evaluation lens on
-  the five Nielsen records already present and the five missing heuristics
-  added; and the original `experiment-hub-lite` schema remains byte-identical,
-  drift-watched, and selectable — the safe archived version.
+  (0.0 As-is → 0.5 Eval → 0.6 Eval Summary) that stops for founder approval
+  before any proposal is generated; `design.md` (1.0 Proposal → 1.5 Eval Delta)
+  reports a findings ledger — each 0.5 finding dispositioned as addressed /
+  deliberately preserved / regressed / new; the eval rubric lives in
+  `principles.config.mjs` as data — heuristic evaluation (Nielsen's ten) as the
+  first rubric style, not the definition of the gate — with the
+  surface-evaluation lens on the five Nielsen records already present and the
+  five missing heuristics added; and the original `experiment-hub-lite` schema
+  remains byte-identical, drift-watched, and selectable — the safe archived
+  version.
 - **Not doing:** Post-ship instrumentation (live experience signal feeding back —
   a separate future change); auto-blocking on eval scores or deltas (the delta
   is informational; promotion to a hard gate is a later, calibrated decision);
@@ -51,14 +53,14 @@ phase skated over inside design.
 1. **Fork the schema; the untouched original is the archive.**
    `openspec/schemas/experiment-hub-lite/` is one of the 14 hub-mirrored files
    and stays byte-identical — it remains drift-watched and usable as-is. The
-   evolved schema is a new directory, `openspec/schemas/mvds-lite/` (name open
-   to founder veto), and `openspec/config.yaml` flips the default to it.
+   evolved schema is a new directory, `openspec/schemas/mvds-default/` (founder
+   naming, 2026-08-25), and `openspec/config.yaml` flips the default to it.
    Mutating the mirror in place would make the weekly `upstream-currency` issue
    fire forever; forking keeps the drift signal meaningful *and* answers the
    "archive a safe working version" requirement structurally.
 2. **New `discovery` artifact** (`discovery.md`, requires proposal, own template,
-   own stop rule): 0.0 As-is (unchanged mechanics), 0.5 Heuristic Eval
-   (per-heuristic findings: violation / heuristic / predicted consequence /
+   own stop rule): 0.0 As-is (unchanged mechanics), 0.5 Eval
+   (structured findings: violation / rubric item / predicted consequence /
    severity; scores are summary only, never load-bearing), 0.6 Eval Summary
    (top issues to fix, tradeoffs worth preserving, don't-breaks). The loop
    becomes proposal → specs → **discovery** → design → tasks, five founder
@@ -71,11 +73,14 @@ phase skated over inside design.
    proxy, acknowledged imperfect). It evaluates the running Storybook story
    where one exists, with the Figma page as the visual record (founder decision,
    2026-08-25). The 0.5 baseline is cached; iterations re-run only the delta.
-5. **Heuristics become manifest data:** the five existing Nielsen `guiding`
-   records gain a surface-evaluation lens alongside their system-design
-   reading (same record, two consumers); the five absent heuristics (2, 3, 7,
-   9, 10) are added. This is the extension point for per-context rubrics and
-   consumer-supplied principles later (`principles.resolve.mjs`).
+5. **The rubric becomes manifest data, with heuristic evaluation as the first
+   style:** the five existing Nielsen `guiding` records gain a
+   surface-evaluation lens alongside their system-design reading (same record,
+   two consumers); the five absent heuristics (2, 3, 7, 9, 10) are added. The
+   gate is defined by *rubric-driven evaluation*, not by Nielsen specifically —
+   other eval styles (system-conformance checks, founder-authored principles,
+   consumer-supplied rubrics via `principles.resolve.mjs`) plug into the same
+   record shape later.
 6. **`rules/figma.mdc` updated:** 0.5 / 0.6 / 1.5 are markdown artifacts in the
    change directory, not Figma pages; the Figma page convention itself
    (`0.0 As is`, `0N.0 Propose:`) is unchanged.
@@ -84,12 +89,13 @@ phase skated over inside design.
 
 ### New Capabilities
 
-- `discovery-eval`: the loop has a discovery stage whose heuristic evaluation is
-  produced before, conditions, and is deltaed against every design proposal,
-  with a founder stop at the Eval Summary.
-- `heuristic-rubric`: the evaluation rubric is data in the principles manifest —
-  Nielsen's ten as the base set, surface-evaluation lens per record, open to
-  founder and consumer additions.
+- `discovery-eval`: the loop has a discovery stage whose evaluation is produced
+  before, conditions, and is deltaed against every design proposal, with a
+  founder stop at the Eval Summary.
+- `eval-rubric`: the evaluation rubric is data in the principles manifest —
+  rubric styles are pluggable; heuristic evaluation (Nielsen's ten) is the
+  first, with a surface-evaluation lens per record, open to founder and
+  consumer additions.
 
 ### Modified Capabilities
 
@@ -98,8 +104,8 @@ phase skated over inside design.
 
 ## Impact
 
-- `openspec/schemas/mvds-lite/` — new schema + templates (fork of lite)
-- `openspec/config.yaml` — default schema flips to `mvds-lite`
+- `openspec/schemas/mvds-default/` — new schema + templates (fork of lite)
+- `openspec/config.yaml` — default schema flips to `mvds-default`
 - `openspec/README.md` — schema table and workflow line
 - `principles.config.mjs` — eval lens + five new heuristic records
 - `rules/figma.mdc` — stage-model artifact locations
