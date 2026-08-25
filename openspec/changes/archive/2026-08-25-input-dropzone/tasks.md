@@ -25,5 +25,5 @@
 
 ## 4. QA
 
-- [ ] 4.1 Manual walkthrough of the Outcomes: email-capture row (Input + Button in an Inline) and an upload zone in Storybook, both modes
+- [x] 4.1 Manual walkthrough of the Outcomes: email-capture row (Input + Button in an Inline) and an upload zone in Storybook, both modes
 - [x] 4.2 `npm run build` && `npm run check:contrast` && `npm run check:principles` && `npm test` — all green, light + dark
