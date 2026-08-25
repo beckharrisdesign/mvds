@@ -1,7 +1,9 @@
 # Capability: scale-stepping-principles
 
 > Canonical spec. Promoted from `openspec/changes/stepped-scales/` when that
-> change was archived (2026-08-25, shipped in PR #82). Requirements describe the
+> change was archived (2026-08-25, shipped in PR #82), then modified by
+> `ui-de-alpha` (2026-08-25, shipped in PR #95) — which retired the vendored
+> `ui/` carve-out and exempted interaction states. Requirements describe the
 > behaviour MVDS is held to now — edit them via a new OpenSpec change, not in
 > place.
 
@@ -20,14 +22,24 @@ Stepping between values on a scale, rather than inventing off-scale ones, is enc
 
 ### Requirement: Color-gradation stepping is a machine-enforced principle
 
-A manifest record (`step-on-color-gradations`) makes stepping the rule for brand-family color modulation: tints/shades of `primary`/`secondary` come from gradation steps, not ad-hoc alpha (`bg-primary/10`), arbitrary `color-mix()`, or hand-picked values. Severity `error`, with the vendored `ui/` internals carved out via scope until the Phase-2 de-alpha change migrates them (carve-out recorded in the manifest entry itself), and specimen stories carved out as today.
+A manifest record (`step-on-color-gradations`) makes stepping the rule for brand-family **surface** color: tints/shades of `primary`/`secondary` come from gradation steps, not ad-hoc alpha (`bg-primary/10`) or arbitrary `color-mix()`. Severity `error`, scoped over all source **including the vendored `ui/` internals** — the Phase-2 carve-out is retired — with specimen stories carved out as today. **Interaction states are exempt**: a hover/focus/active fill derives from the variant's own rest token, because gradation steps are absolute positions and no contract binds a semantic token to a rung on its own ladder.
 
-**Fails until:** `check:principles` (and the edit-guard hook) flags a brand-family alpha tint outside the carve-outs and names the gradation alternative.
+**Fails until:** `check:principles` (and the edit-guard hook) flags brand alpha anywhere in `src/components/ui/`, flags a brand `color-mix()` outside a state variant, and stays silent on one inside a state variant.
 
 #### Scenario: Ad-hoc brand tints are flagged with the stepped alternative
 
 - **WHEN** `npm run check:principles` runs over non-carved-out code containing `bg-primary/10`
 - **THEN** it errors citing `step-on-color-gradations` and points to the gradation step tokens as the fix
+
+#### Scenario: Vendored ui/ is in scope for the stepping rule
+
+- **WHEN** `npm run check:principles` runs over a `src/components/ui/` file containing `hover:bg-primary/80`
+- **THEN** it errors citing `step-on-color-gradations` — no `VENDORED_UI` exclusion applies
+
+#### Scenario: Interaction states may derive from the rest token
+
+- **WHEN** `npm run check:principles` runs over a state-variant fill such as `hover:bg-[color-mix(in_oklch,var(--primary),var(--background)_20%)]`
+- **THEN** it does not error, while the same `color-mix()` outside a state variant still errors citing `step-on-color-gradations`
 
 ### Requirement: Type-ramp stepping is a machine-enforced principle
 
