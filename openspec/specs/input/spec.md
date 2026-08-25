@@ -5,6 +5,10 @@
 > behaviour MVDS is held to now — edit them via a new OpenSpec change, not in
 > place.
 
+## Purpose
+
+MVDS exports a single-line text `Input` — shadcn-sourced, tuned to the 8-grid, and sized to pair with `Button` — that composes with `Field` for label, description, and error. It is the on-system replacement for the hand-rolled `<input>` a prototype would otherwise reach for; validation and submission machinery stay with the app.
+
 ## Outcomes
 
 - **Who:** Anyone prototyping on MVDS — the founder, agents, and package consumers building the first screen of an experiment.

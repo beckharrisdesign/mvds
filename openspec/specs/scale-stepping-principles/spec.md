@@ -7,6 +7,10 @@
 > behaviour MVDS is held to now — edit them via a new OpenSpec change, not in
 > place.
 
+## Purpose
+
+Stepping between values on a scale, rather than inventing off-scale ones, is encoded as machine-enforced records in the principles manifest — one for color gradation, one for the type ramp — carrying the same data shape, scoping, and `check:principles` enforcement as the spacing rules. The rule is data, so it can vary by context later.
+
 ## Outcomes
 
 - **Who:** Agents generating UI (the stepping rule is the guidance they act on); reviewers reading the manifest as the system's encoded strategy.

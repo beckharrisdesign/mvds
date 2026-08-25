@@ -37,7 +37,9 @@ artifacts:
     instruction: |
       Before writing, read `skills/prd-writer.md` and apply outcomes + scenario patterns to this artifact only (not a full PRD file unless the user asked).
 
-      **Outcomes:** Repeat or point to proposal Outcomes at the top.
+      **Purpose (required):** One or two durable sentences on what the capability IS — 50+ characters. `openspec validate` fails a promoted spec without it, and that failure is what aborts `openspec archive`. It seeds a new capability spec's Purpose at archive time; an existing spec keeps its own.
+
+      **Outcomes:** Repeat or point to proposal Outcomes below Purpose.
 
       **Requirements:** Max 5 `### Requirement:` blocks. Each requirement: one plain-language sentence, optional **Fails until:** line, then normative SHALL (one line max), then at least one `#### Scenario:` with WHEN/THEN.
 
