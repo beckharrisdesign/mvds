@@ -98,6 +98,8 @@ apply:
   instruction: |
     Read `skills/openspec-apply-change.md` and `skills/prototype-builder.md`.
 
+    **Execution model:** Apply is mechanical execution against an already-approved `tasks.md` — the judgment was spent in propose / specs / design. Run it on the cheapest model that can do the work correctly; reserve the strongest model for the phases that reason about house rules and the Figma gate. How that is enforced is the harness's business, not this schema's: under Claude Code it rides the `model:` field on `.claude/skills/opsx-apply/`.
+
     Before coding: read proposal Outcomes and tasks.md §1; confirm Human anchor still matches what you are building.
 
     **Preview path:** Storybook + site components under `src/components/site/` (and layout/ui as needed). Do not create `experiments/<slug>/prototype/`.
