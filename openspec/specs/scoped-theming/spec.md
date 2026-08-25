@@ -5,6 +5,10 @@
 > behaviour MVDS is held to now — edit them via a new OpenSpec change, not in
 > place.
 
+## Purpose
+
+A single brand attribute re-brands everything beneath it — every token role, light and dark, gradation steps included — without repainting the host page and without editing a component. It is how a consumer app hosts more than one brand on one domain while staying on-system.
+
 ## Outcomes
 
 - **Who:** Consumer apps hosting more than one brand on one domain (the hub's route-level products); agents building those routes on-system.

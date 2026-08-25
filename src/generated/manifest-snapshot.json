@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-08-25T10:37:50-05:00",
-  "commit": "3ec9c96",
-  "dirty": false,
+  "generatedAt": "2026-08-25T18:27:08-05:00",
+  "commit": "02bfe27",
+  "dirty": true,
   "lock": {
     "fileKey": "C20nU0mROzk3Zr0I9BELJF",
     "syncedAt": "2026-07-29",
     "syncedFromCommit": "8f791b1634e16e8c4ea9a135061084126dfcfa7c",
-    "commitsBehind": 20
+    "commitsBehind": 23
   },
   "gates": [
     {
@@ -27,7 +27,7 @@
       "detail": "The golden rules, machine-enforced from the principle manifest.",
       "command": "npm run check:principles",
       "verifiedAt": "build",
-      "result": "89 files clear 9 enforced MVDS principles (light + dark) (+5 guiding, by judgment).",
+      "result": "87 files clear 9 enforced MVDS principles (light + dark) (+5 guiding, by judgment).",
       "status": {
         "level": "success",
         "label": "passing"
@@ -91,9 +91,9 @@
     {
       "id": "step-on-color-gradations",
       "title": "Color modulation steps on the gradation scale",
-      "description": "Tints and shades of brand families come from gradation steps (primary-1…5 / secondary-1…5) — not ad-hoc alpha or color-mix.",
-      "rationale": "Stepping between authored values is what makes UI read as done, organized, trustworthy — the same discipline as the 8-grid, applied to color. Founder (2026-08-21): “You should be stepping between values on the ramp by default… A brand could then define their own versions of it, but MVDS should be opinionated about it being there.” Steps carry role contracts (1–2 tint surfaces, 3 decorative, 4–5 text-safe) that check:contrast enforces; an ad-hoc /10 alpha carries no contract at all.",
-      "fix": "Pick a gradation step by role: bg-primary-1/-2 for tint surfaces, -3 for decorative borders/gradients, text-primary-4/-5 for text. See the Foundations/Color specimen.",
+      "description": "Tints and shades of brand families come from gradation steps (primary-1…5 / secondary-1…5) — not ad-hoc alpha. Interaction states may derive from the variant's own rest token.",
+      "rationale": "Stepping between authored values is what makes UI read as done, organized, trustworthy — the same discipline as the 8-grid, applied to color. Founder (2026-08-21): “You should be stepping between values on the ramp by default… A brand could then define their own versions of it, but MVDS should be opinionated about it being there.” Steps carry role contracts (1–2 tint surfaces, 3 decorative, 4–5 text-safe) that check:contrast enforces; an ad-hoc /10 alpha carries no contract at all. INTERACTION STATES ARE A DIFFERENT JOB and are exempt: a gradation step is an absolute position, but nothing binds --primary/--secondary to a rung on their own ladder (the default brand seats them exactly on steps; terracotta lands between steps, at a different rung per mode, and inverts light/dark polarity for secondary). A hover pinned to a fixed step is therefore a brand-specific guess — it was one, and check:contrast caught it breaking terracotta's dark secondary at 2.78:1 (openspec: ui-de-alpha, 2026-08-25). State modulation must be RELATIVE to the variant's own rest token, which self-scales to every brand.",
+      "fix": "Pick a gradation step by role: bg-primary-1/-2 for tint surfaces, -3 for decorative borders/gradients, text-primary-4/-5 for text. For a hover/active state, derive from the variant's rest token instead — color-mix(in oklch, var(--primary), var(--background) 20%). See the Foundations/Color specimen.",
       "severity": "error",
       "enforcement": "automated",
       "checkKind": "forbid-source",
@@ -630,7 +630,7 @@
       ],
       "status": {
         "level": "neutral",
-        "label": "20 commits behind",
+        "label": "23 commits behind",
         "detail": "Synced 2026-07-29 from 8f791b1634e16e8c4ea9a135061084126dfcfa7c — code-first, the mirror trails until the next requested sync."
       }
     },

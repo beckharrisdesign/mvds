@@ -5,6 +5,10 @@
 > behaviour MVDS's Storybook Intro is held to now — edit them via a new OpenSpec
 > change, not in place.
 
+## Purpose
+
+MVDS's Storybook opens on an Intro section that orients a reader before any component: what the system is, the design principles (read from the live manifest rather than restated), when and how the checks run, and how to install MVDS and wire up its CSS.
+
 ## Outcomes
 
 - **Who:** Peers and customers in Storybook; agents using the gallery.

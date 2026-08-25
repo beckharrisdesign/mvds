@@ -5,6 +5,10 @@
 > behaviour MVDS is held to now — edit them via a new OpenSpec change, not in
 > place.
 
+## Purpose
+
+MVDS applies tints and shades of a brand color from five **authored** gradation steps per brand family — `primary-1…5` and `secondary-1…5`, each carrying a light and a dark value — rather than from a derived 50–950 ramp. The steps have declared roles (1–2 tint surfaces, 3 decorative, 4–5 text-safe) that the contrast gate holds to WCAG AA in both modes, and UI steps between them by default.
+
 ## Outcomes
 
 - **Who:** Agents and humans applying tints/shades of brand colors; brands authoring their color voice; the checkers and mirrors that keep tokens honest.
