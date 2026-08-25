@@ -1,5 +1,12 @@
 # eval-rubric
 
+## Purpose
+
+The discovery eval's rubric as manifest data: `principles.config.mjs` records
+carrying an `evalLens` are the rubric, with Nielsen's ten heuristics as the
+first style — pluggable, founder-extensible, and consumable per-context,
+without the machine-enforced gates changing at all.
+
 ## Outcomes
 
 See [proposal.md](../../proposal.md) Outcomes — the rubric the eval judges

@@ -10,6 +10,8 @@
 #      dirty worktree gets a warning, never a force-remove)
 #   3. delete local branches genuinely merged into main
 #
+# A branch counts as merged via either of two checks:
+#
 # "Genuinely merged" = the tip is reachable from main but NOT on main's
 # first-parent chain. "Ancestor of main" alone is not enough: a fresh session
 # worktree with no commits yet sits at some past main tip, which becomes an
@@ -17,11 +19,24 @@
 # worktree. Old main tips live on the first-parent chain; merged side-branch
 # commits never do (this also survives GitHub's "update branch" flow, where the
 # PR's final tip is a merge-from-main and the local tip sits one level deeper).
-# Squash/ff-merged tips don't qualify → skipped; accepted trade-off — the hook
-# fails safe: a leftover worktree to clean by hand, never a deleted session.
 #
-# Everything here is the safe form (`git branch -d`, non-forced worktree remove);
-# nothing unmerged or uncommitted can be lost.
+# "Squash-merged" = the tip is NOT reachable from main (so the check above never
+# fires — GitHub's squash/rebase merge rewrites the work into new commits on
+# main), but git cherry proves the work itself landed. Two patch-id probes:
+# every branch commit individually patch-equivalent to one on main
+# (`git cherry main <branch>` all "-" — catches rebase merges), or the branch's
+# COMBINED diff — a synthetic commit of the branch tree parented on the
+# merge-base — patch-equivalent to one commit on main (catches squash merges of
+# multi-commit branches, where no individual commit matches the squashed patch).
+# Requires at least one commit: a fresh session worktree parked on an old main
+# tip has an EMPTY cherry list, so it never qualifies — the active-session
+# safety above carries over. Deleting such a branch needs `git branch -D` (git
+# itself can't see a squash merge), which is safe precisely because cherry just
+# proved the branch's work is on main.
+#
+# Everything else is the safe form (`git branch -d` for true merges, non-forced
+# worktree remove); nothing unmerged or uncommitted can be lost — a dirty
+# worktree is warned about, never removed.
 
 branch="$(git symbolic-ref --short HEAD 2>/dev/null)"
 [ "$branch" = "main" ] || exit 0
@@ -34,6 +49,17 @@ genuinely_merged() { # $1 = full sha
   git merge-base --is-ancestor "$1" main 2>/dev/null || return 1
   ! printf '%s\n' "$main_first_parents" | grep -qx "$1"
 }
+squash_merged() { # $1 = branch name; ≥1 commit whose work is on main by patch-id
+  cherry="$(git cherry main "$1" 2>/dev/null)" || return 1
+  [ -n "$cherry" ] || return 1
+  # rebase merge / cherry-pick: every commit individually patch-equivalent
+  if ! printf '%s\n' "$cherry" | grep -qv '^-'; then return 0; fi
+  # squash merge: the branch's combined diff (its tree as one synthetic commit
+  # off the merge-base) matches one commit on main
+  base="$(git merge-base main "$1" 2>/dev/null)" || return 1
+  synth="$(git commit-tree "$1^{tree}" -p "$base" -m squash-probe 2>/dev/null)" || return 1
+  [ "$(git cherry main "$synth" 2>/dev/null)" = "- $synth" ]
+}
 
 # Worktrees on merged branches: remove if clean, warn if dirty.
 # Porcelain output is parsed line-by-line in shell so paths with spaces survive.
@@ -43,7 +69,7 @@ git worktree list --porcelain | while IFS= read -r line; do
     "branch refs/heads/main") ;;
     "branch refs/heads/"*)
       wt_branch="${line#branch refs/heads/}"
-      genuinely_merged "$(git rev-parse "$wt_branch" 2>/dev/null)" || continue
+      genuinely_merged "$(git rev-parse "$wt_branch" 2>/dev/null)" || squash_merged "$wt_branch" || continue
       if [ -z "$(git -C "$wt" status --porcelain 2>/dev/null)" ]; then
         git worktree remove "$wt" && echo "✔ removed merged worktree $wt ($wt_branch)"
       else
@@ -59,8 +85,13 @@ git worktree prune
 git branch --format='%(refname:short)|%(worktreepath)' | while IFS='|' read -r b wtp; do
   [ "$b" = "main" ] && continue
   [ -n "$wtp" ] && continue
-  genuinely_merged "$(git rev-parse "$b" 2>/dev/null)" || continue
-  git branch -d "$b"
+  if genuinely_merged "$(git rev-parse "$b" 2>/dev/null)"; then
+    git branch -d "$b"
+  elif squash_merged "$b"; then
+    # -D because git can't see a squash merge; cherry just proved every
+    # commit's patch is already on main.
+    git branch -D "$b" && echo "✔ deleted squash-merged branch $b"
+  fi
 done
 
 exit 0

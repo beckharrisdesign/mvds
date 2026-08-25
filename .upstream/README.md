@@ -56,6 +56,12 @@ hardening and consciously leaving deliberate divergence (Storybook over
 `experiments/*/prototype/`, npm not pnpm, MVDS tokens and `AGENTS.md`, MVDS Core
 Figma, no Code Connect, draft PRs, `feat|fix|docs|chore/` branches).
 
+One divergence lives in the watched files themselves: the `spec.md` template and
+the schema's `specs` instruction add a **`## Purpose`** section the hub's copy has
+no equivalent for. It is not taste — `openspec validate` errors on a promoted spec
+without it, which aborts `openspec archive`. Port it upstream if the hub hits the
+same wall; until then, keep it when reconciling.
+
 ## Why a copy at all
 
 MVDS bootstrapped `experiment-hub-lite` rather than depending on it — see

@@ -5,6 +5,10 @@
 > behaviour MVDS is held to now — edit them via a new OpenSpec change, not in
 > place.
 
+## Purpose
+
+MVDS ships named, ready-made brands that a consumer can import and apply to a scope or a whole app with zero hand-written token values — starting with terracotta. A preset is a complete token set, so its pairings clear the same token-level WCAG AA bar in both modes as the shipped defaults.
+
 ## Outcomes
 
 - **Who:** Consumers who want a second brand without authoring one — starting with the terracotta palette the Etsy Listing Kit hand-rolled off-system.

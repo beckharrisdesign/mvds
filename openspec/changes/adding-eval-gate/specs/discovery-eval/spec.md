@@ -1,5 +1,12 @@
 # discovery-eval
 
+## Purpose
+
+The OpenSpec loop's discovery stage: the current surface is captured and
+evaluated (0.0 As-is → 0.5 Eval → 0.6 Eval Summary) before any proposal
+exists, the approved summary conditions the design proposal, and the proposal
+is judged comparatively via the 1.5 Eval Delta findings ledger.
+
 ## Outcomes
 
 See [proposal.md](../../proposal.md) Outcomes — the founder reviews the current

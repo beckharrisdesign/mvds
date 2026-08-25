@@ -5,6 +5,10 @@
 > behaviour MVDS is held to now — edit them via a new OpenSpec change, not in
 > place.
 
+## Purpose
+
+MVDS exports a `Dropzone` that accepts files by drag, drop, paste, or file picker entirely on-system, keeps the selection visible and removable, and hands the selected files to the app. It is keyboard- and screen-reader-accessible, and it ends at "files selected" — upload transport, progress, and previews belong to the consuming app.
+
 ## Outcomes
 
 - **Who:** Anyone prototyping an upload screen on MVDS — the ELK-shaped products that today hand-roll a 30-line dropzone.
