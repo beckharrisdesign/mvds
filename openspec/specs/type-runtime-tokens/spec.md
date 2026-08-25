@@ -5,6 +5,10 @@
 > behaviour MVDS is held to now — edit them via a new OpenSpec change, not in
 > place.
 
+## Purpose
+
+Typography is themeable the way color is: faces and per-step sizes live in the runtime token layer and are consumed by the ramp utilities through `var()`, so plain CSS overrides them app-wide or inside a `data-brand` sub-tree. The semantic ramp steps stay the only type API — shape (weight, tracking) remains contract.
+
 ## Outcomes
 
 - **Who:** Consumers and brands giving a product its own type voice — app-wide or on a `data-brand` sub-tree; agents, for whom the semantic ramp steps stay the only type API.

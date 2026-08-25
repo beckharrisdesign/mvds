@@ -9,7 +9,14 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/80",
+        // State modulation derives from the variant's own rest token, so it
+        // self-scales to any brand — a fixed gradation step would be a brand-
+        // specific guess, since nothing binds --primary to a rung on its own
+        // scale. Solid surfaces soften toward the page; muted ones firm up
+        // toward the text (see `secondary`) — each moving the way that reads
+        // as "state" for its variant.
+        default:
+          "bg-primary text-primary-foreground hover:bg-[color-mix(in_oklch,var(--primary),var(--background)_20%)]",
         outline:
           "border-border bg-background hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/50",
         secondary:

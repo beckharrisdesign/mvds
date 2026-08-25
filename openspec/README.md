@@ -23,6 +23,7 @@ Bootstrapped from **experiment-hub**’s [`experiment-hub-lite`](https://github.
 - UI = **AGENTS.md** tokens/primitives, not hub Tailwind kits
 - Figma = **MVDS Core** (`C20nU0mROzk3Zr0I9BELJF`); library sync only when explicitly asked ([`docs/SYNC.md`](../docs/SYNC.md))
 - Only **lite** is copied — no `bhd-experiment` / full `experiment-hub` schemas yet
+- Spec artifacts carry a **`## Purpose`** section above `## Outcomes` — the CLI validator requires it, and a promoted spec without one makes `openspec archive` abort ([`templates/spec.md`](schemas/experiment-hub-lite/templates/spec.md))
 
 **Staying current:** 14 files are mirrored from the hub — this schema, its four templates, and the nine
 [`skills/`](../skills/) files (four of which are byte-identical upstream). They are stamped to one hub commit in

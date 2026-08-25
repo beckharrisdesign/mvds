@@ -5,6 +5,10 @@
 > behaviour MVDS is held to now — edit them via a new OpenSpec change, not in
 > place.
 
+## Purpose
+
+MVDS ships a deliberately authored default typography scale — the sizes, weights, and tracking behind the semantic ramp — that reads well with nothing touched. Its values are recorded as authored, with provenance, so a brand can see what was chosen and why before changing it, and so the seams a brand reaches for are taught rather than discovered.
+
 ## Outcomes
 
 - **Who:** Every consumer who never touches a type token — the default must simply be good; the founder, who owns the scale's provenance from now on.
