@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils"
  * above-layout use case: overlay (backdrop/scrim), float (FABs, tooltips),
  * modal (dialogs, sheets, drawers), toast (alerts, always topmost).
  *
- * The z-level tokens (--z-overlay … --z-toast) in src/index.css are the
+ * The z-level tokens (--z-index-overlay … --z-index-toast) in src/index.css are the
  * source of truth — shadcn Dialog/Sheet/Toast reference these same tokens.
  * Use Layer directly for custom overlay needs; prefer the shadcn components
  * for standard patterns.

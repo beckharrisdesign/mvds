@@ -191,7 +191,7 @@ export const ChromeStory: Story = {
  * modal · toast). Shown here in a contained relative context; in production
  * Layer uses `fixed inset-0` and renders above the full viewport.
  *
- * The z-tokens (--z-overlay … --z-toast) in src/index.css are the shared
+ * The z-tokens (--z-index-overlay … --z-index-toast) in src/index.css are the shared
  * vocabulary — shadcn Dialog / Sheet / Toast reference these same values.
  */
 export const LayerStory: Story = {
@@ -200,10 +200,10 @@ export const LayerStory: Story = {
     <Stack gap={16}>
       {(["overlay", "float", "modal", "toast"] as const).map((level) => (
         <div key={level} className="relative h-16 overflow-hidden rounded-md border border-border">
-          <div className="absolute inset-0 flex items-center justify-center bg-muted">
+          <div className="absolute inset-0 flex items-center justify-start bg-muted pl-16">
             <span className="text-small text-muted-foreground">content beneath</span>
           </div>
-          <Layer level={level} className="absolute inset-0 flex items-center justify-center bg-foreground/10">
+          <Layer level={level} className="absolute inset-0 flex items-center justify-end bg-foreground/10 pr-16">
             <span className="text-small text-foreground">level=&quot;{level}&quot;</span>
           </Layer>
         </div>

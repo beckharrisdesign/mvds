@@ -108,12 +108,15 @@
      * Five named stacking levels cover every use case. Chrome sits above
      * scrolled content but below all overlays; toast is always topmost.
      * Consumed as Tailwind utilities: z-chrome · z-overlay · z-float ·
-     * z-modal · z-toast. */
-    --z-chrome: 10;
-    --z-overlay: 100;
-    --z-float: 200;
-    --z-modal: 300;
-    --z-toast: 400;
+     * z-modal · z-toast. The `--z-index-*` prefix is what earns those
+     * utilities: Tailwind v4 generates `z-<name>` from the `--z-index-*`
+     * theme namespace only. Named `--z-*` these were inert custom properties
+     * and every z-utility silently resolved to `z-index: auto`. */
+    --z-index-chrome: 10;
+    --z-index-overlay: 100;
+    --z-index-float: 200;
+    --z-index-modal: 300;
+    --z-index-toast: 400;
 
     /* ---- Spacing scale — multiples & fractions of 8 ---------------------------
      * LAYOUT spacing is built from multiples and fractions of 8 (best practice
