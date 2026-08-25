@@ -81,26 +81,32 @@ export const baseManifest = {
       id: "step-on-color-gradations",
       title: "Color modulation steps on the gradation scale",
       description:
-        "Tints and shades of brand families come from gradation steps (primary-1…5 / secondary-1…5) — not ad-hoc alpha or color-mix.",
+        "Tints and shades of brand families come from gradation steps (primary-1…5 / secondary-1…5) — not ad-hoc alpha. Interaction states may derive from the variant's own rest token.",
       rationale:
-        "Stepping between authored values is what makes UI read as done, organized, trustworthy — the same discipline as the 8-grid, applied to color. Founder (2026-08-21): “You should be stepping between values on the ramp by default… A brand could then define their own versions of it, but MVDS should be opinionated about it being there.” Steps carry role contracts (1–2 tint surfaces, 3 decorative, 4–5 text-safe) that check:contrast enforces; an ad-hoc /10 alpha carries no contract at all.",
+        "Stepping between authored values is what makes UI read as done, organized, trustworthy — the same discipline as the 8-grid, applied to color. Founder (2026-08-21): “You should be stepping between values on the ramp by default… A brand could then define their own versions of it, but MVDS should be opinionated about it being there.” Steps carry role contracts (1–2 tint surfaces, 3 decorative, 4–5 text-safe) that check:contrast enforces; an ad-hoc /10 alpha carries no contract at all. INTERACTION STATES ARE A DIFFERENT JOB and are exempt: a gradation step is an absolute position, but nothing binds --primary/--secondary to a rung on their own ladder (the default brand seats them exactly on steps; terracotta lands between steps, at a different rung per mode, and inverts light/dark polarity for secondary). A hover pinned to a fixed step is therefore a brand-specific guess — it was one, and check:contrast caught it breaking terracotta's dark secondary at 2.78:1 (openspec: ui-de-alpha, 2026-08-25). State modulation must be RELATIVE to the variant's own rest token, which self-scales to every brand.",
       severity: "error",
       enabled: true,
-      // Vendored ui/ still modulates via alpha (/80 hovers, /10 status tints) —
-      // carved out UNTIL the Phase-2 de-alpha change migrates it (see the MVDS
-      // vision roadmap). The carve-out is data here, visible and dated, not an
-      // invisible exception. Specimen stories stay in scope: a specimen must
-      // model the stepped vocabulary too.
-      scope: { include: [SRC, EXAMPLES], exclude: [VENDORED_UI] },
+      // Vendored ui/ is IN scope: the Phase-2 de-alpha change (openspec:
+      // ui-de-alpha) removed Button's brand alpha, so the carve-out this record
+      // shipped with is retired. Status tints (bg-success/10) are untouched —
+      // the triad has no gradation scale and the pattern stays sanctioned.
+      // Specimen stories stay in scope: a specimen must model the stepped
+      // vocabulary too.
+      scope: { include: [SRC, EXAMPLES], exclude: [] },
       check: {
         kind: "forbid-source",
         // brand-family utility with an alpha suffix (bg-primary/10, from-secondary/20 —
         // `-foreground/` variants don't match: the slash must follow the family name);
-        // or color-mix() reaching into a brand base variable.
+        // or color-mix() reaching into a brand base variable. The color-mix half
+        // exempts STATE modulation — a mix sitting directly inside a state-variant
+        // arbitrary value (hover:/focus:/focus-visible:/active:bg-[…]) — per the
+        // rationale above. A brand mix anywhere else is still an error. The
+        // optional `color:` is Tailwind's arbitrary-value type hint: not required
+        // here (a bare color-mix compiles), but accepted so the rule holds either way.
         pattern:
-          /\b(?:bg|text|border|ring|fill|stroke|from|via|to)-(?:primary|secondary)\/\d+\b|color-mix\([^)]*var\(--(?:primary|secondary)\)[^)]*\)/,
+          /\b(?:bg|text|border|ring|fill|stroke|from|via|to)-(?:primary|secondary)\/\d+\b|(?<!(?:hover|focus|focus-visible|active):bg-\[(?:color:)?)color-mix\([^)]*var\(--(?:primary|secondary)\)[^)]*\)/,
       },
-      fix: "Pick a gradation step by role: bg-primary-1/-2 for tint surfaces, -3 for decorative borders/gradients, text-primary-4/-5 for text. See the Foundations/Color specimen.",
+      fix: "Pick a gradation step by role: bg-primary-1/-2 for tint surfaces, -3 for decorative borders/gradients, text-primary-4/-5 for text. For a hover/active state, derive from the variant's rest token instead — color-mix(in oklch, var(--primary), var(--background) 20%). See the Foundations/Color specimen.",
       docs: "AGENTS.md (Golden rules — Color via tokens; Spacing — the 8 grid for the stepping idea)",
       source: FOUNDER,
     },
