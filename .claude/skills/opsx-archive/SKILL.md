@@ -17,7 +17,8 @@ Archive phase for an OpenSpec change. **Input:** optional change name —
 2. Archive has no schema phase of its own — it runs after apply, driven by the
    `openspec` CLI. The specs it reconciles into
    [`openspec/specs/`](../../../openspec/specs/) must keep the `## Purpose` section
-   the validator requires, or `openspec archive` aborts.
+   the validator requires — both schemas' `templates/spec.md` carry it — or
+   `openspec archive` aborts.
 3. Do not improvise steps from this stub.
 
 Shared output rules: [`skills/openspec-artifacts-output.md`](../../../skills/openspec-artifacts-output.md).

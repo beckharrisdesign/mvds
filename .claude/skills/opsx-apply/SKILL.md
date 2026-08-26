@@ -13,8 +13,10 @@ Apply phase for an OpenSpec change. **Input:** optional change name — `$ARGUME
 
 1. Read that file and follow it completely, including **step 8** (commit, push,
    open or update the **draft** PR).
-2. Read [`openspec/schemas/experiment-hub-lite/schema.yaml`](../../../openspec/schemas/experiment-hub-lite/schema.yaml)
-   → `apply.instruction` for the MVDS-specific constraints.
+2. Read the change's own schema → `apply.instruction` for the MVDS-specific
+   constraints — [`mvds-default`](../../../openspec/schemas/mvds-default/schema.yaml)
+   by default, or [`experiment-hub-lite`](../../../openspec/schemas/experiment-hub-lite/schema.yaml)
+   when the change's `.openspec.yaml` selects the archived mirror.
 3. Do not improvise steps from this stub.
 
 Shared output rules: [`skills/openspec-artifacts-output.md`](../../../skills/openspec-artifacts-output.md).

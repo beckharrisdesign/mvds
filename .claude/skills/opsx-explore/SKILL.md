@@ -15,8 +15,10 @@ Explore phase for an OpenSpec change. **Input:** a topic or change name —
    the founder asks for code, point them at `/opsx-propose` instead.
 2. Explore has no schema phase of its own — it is a stance, not a workflow. If it
    does capture thinking as artifacts, those follow the default schema
-   ([`openspec/config.yaml`](../../../openspec/config.yaml) → `experiment-hub-lite`)
-   and the `/opsx-propose` gate applies.
+   ([`openspec/config.yaml`](../../../openspec/config.yaml) → `mvds-default`) and
+   the `/opsx-propose` gate applies. Explore is *not* the discovery eval: `0.5` /
+   `0.6` are schema artifacts that run in an isolated subagent off the manifest
+   rubric, not freeform thinking.
 3. Do not improvise steps from this stub.
 
 Shared output rules: [`skills/openspec-artifacts-output.md`](../../../skills/openspec-artifacts-output.md).

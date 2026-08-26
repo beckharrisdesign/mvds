@@ -1,6 +1,6 @@
 ---
 name: opsx-propose
-description: Create a new OpenSpec change and generate its artifacts one approval at a time (proposal → specs → design → tasks). Use for /opsx-propose, or when the founder asks to propose, scope, or spec out a change before implementation.
+description: Create a new OpenSpec change and generate its artifacts one approval at a time (proposal → specs → discovery → design → tasks). Use for /opsx-propose, or when the founder asks to propose, scope, or spec out a change before implementation.
 ---
 
 # /opsx-propose
@@ -10,13 +10,21 @@ to build — `$ARGUMENTS`.
 
 **Single source of truth:** [`skills/openspec-propose.md`](../../../skills/openspec-propose.md).
 
-1. Read that file and follow it completely, including the **lite schema gate**:
-   a verbatim Human anchor before `proposal.md`, and **one artifact per turn** —
-   write it, show it, stop for approval before the next.
-2. The MVDS-specific constraints live in the schema's per-artifact `instruction`
-   fields; `openspec instructions <artifact-id> --change "<name>" --json` surfaces
-   them, and [`openspec/schemas/experiment-hub-lite/schema.yaml`](../../../openspec/schemas/experiment-hub-lite/schema.yaml)
+1. Read that file and follow it completely, including the **lite schema gate**
+   (it fires for `mvds-default` *and* `experiment-hub-lite`): a verbatim Human
+   anchor before `proposal.md`, and **one artifact per turn** — write it, show it,
+   stop for approval before the next.
+2. The default schema is **`mvds-default`**
+   ([`openspec/config.yaml`](../../../openspec/config.yaml)), which adds the
+   **discovery** stage — `0.0 As-is` → `0.5 Eval` → `0.6 Eval Summary` (founder
+   stop) before design `1.0`, then the informational `1.5 Eval Delta`. Its
+   per-artifact `instruction` fields carry the MVDS constraints;
+   `openspec instructions <artifact-id> --change "<name>" --json` surfaces them, and
+   [`openspec/schemas/mvds-default/schema.yaml`](../../../openspec/schemas/mvds-default/schema.yaml)
    is the file behind that.
+   [`experiment-hub-lite`](../../../openspec/schemas/experiment-hub-lite/schema.yaml)
+   is the archived hub mirror — same flow minus discovery — selectable per-change
+   via `.openspec.yaml`.
 3. Do not improvise steps from this stub.
 
 Shared output rules: [`skills/openspec-artifacts-output.md`](../../../skills/openspec-artifacts-output.md).

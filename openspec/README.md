@@ -10,7 +10,7 @@ Bootstrapped from **experiment-hub**’s [`experiment-hub-lite`](https://github.
 
 Two frontmatter fields carry policy across those four:
 
-- **`model:`** — the **per-phase model policy**. Only [`opsx-apply`](../.claude/skills/opsx-apply/SKILL.md) sets it (`model: sonnet`): apply is mechanical execution against an already-approved `tasks.md`, so it downshifts. Propose / explore / archive set nothing and inherit the founder's `/model` choice — they are judgment work (house rules, the Figma gate, reconciling delta specs into `specs/`). The policy only ever *lowers* the model, never raises it.
+- **`model:`** — the **per-phase model policy**. Only [`opsx-apply`](../.claude/skills/opsx-apply/SKILL.md) sets it (`model: sonnet`): apply is mechanical execution against an already-approved `tasks.md`, so it downshifts. Propose / explore / archive set nothing and inherit the founder's `/model` choice — they are judgment work (house rules, the discovery eval, the Figma gate, reconciling delta specs into `specs/`). Both schemas' `apply.instruction` record the rationale. The policy only ever *lowers* the model, never raises it.
 - **`disable-model-invocation: true`** — founder-triggered only, never auto-loaded. Set on the two side-effectful phases: [`opsx-apply`](../.claude/skills/opsx-apply/SKILL.md) (commits, pushes, opens PRs) and [`opsx-archive`](../.claude/skills/opsx-archive/SKILL.md) (moves the change directory, rewrites promoted specs, and is only correct *after* the PR merges). `opsx-propose` and `opsx-explore` stay auto-loadable — propose only adds files under `changes/<name>/` behind its own human-anchor and one-artifact-per-turn gate, and explore never writes code at all.
 
 | Piece | Path |
