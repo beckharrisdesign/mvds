@@ -1,0 +1,139 @@
+name: mvds-default
+version: 1
+
+# Provenance: forked 2026-08-25 from this repo's `experiment-hub-lite` copy
+# (itself stamped to experiment-hub@022d6ba) by the `adding-eval-gate` change.
+# DELIBERATELY DIVERGENT — the discovery eval stage (0.5 Eval / 0.6 Eval
+# Summary / 1.5 Eval Delta) is MVDS's own and is NOT tracked against the hub.
+# The mirrored `experiment-hub-lite` schema stays byte-identical and
+# drift-watched (`.upstream/`, `npm run check:upstream-drift`) as the safe
+# archived version; select it per-change via `.openspec.yaml` if needed.
+x-source: fork of experiment-hub-lite (experiment-hub@022d6ba), not hub-tracked
+description: >
+  MVDS's default OpenSpec loop: intent-first lite flow plus a discovery eval
+  stage — the founder reviews the current surface's evaluation before any
+  proposal exists, and reviews every proposal comparatively via an eval delta.
+
+artifacts:
+  - id: proposal
+    generates: proposal.md
+    description: Human anchor, outcomes, and scope in plain language (strategist voice).
+    template: proposal.md
+    instruction: |
+      Before writing, read `skills/experiment-creator.md` and apply its voice and prohibitions to this artifact only.
+
+      **Human anchor (required):** Quote founder prose verbatim (1–3 sentences). Do not proceed with an empty anchor or agent-only paraphrase without a quoted line.
+
+      **Outcomes (required):** Fill Who / Job / Done when / Not doing before Why.
+
+      **Lite constraints:** Max 2 new capabilities (kebab-case). Omit Evidence, Proceed attestation, and Visual board (those belong in design.md when needed).
+
+      **Stop rule:** After writing proposal.md, stop and wait for explicit user approval before creating specs, discovery, design, or tasks.
+
+  - id: specs
+    generates: specs/**/*.md
+    description: PM-style requirements with scenarios (prd-writer voice, max 5 requirements).
+    template: spec.md
+    requires:
+      - proposal
+    instruction: |
+      Before writing, read `skills/prd-writer.md` and apply outcomes + scenario patterns to this artifact only (not a full PRD file unless the user asked).
+
+      **Purpose (required):** One or two durable sentences on what the capability IS — 50+ characters. `openspec validate` fails a promoted spec without it, and that failure is what aborts `openspec archive`. It seeds a new capability spec's Purpose at archive time; an existing spec keeps its own.
+
+      **Outcomes:** Repeat or point to proposal Outcomes below Purpose.
+
+      **Requirements:** Max 5 `### Requirement:` blocks. Each requirement: one plain-language sentence, optional **Fails until:** line, then normative SHALL (one line max), then at least one `#### Scenario:` with WHEN/THEN.
+
+      **Alignment:** Scenario titles must match tasks.md §1 checkboxes 1:1.
+
+      **Delta ops:** Use ADDED/MODIFIED/REMOVED only when promoting to `openspec/specs/`; for new capabilities, ADDED is enough.
+
+      **Stop rule:** After writing spec(s), stop and wait for explicit user approval before discovery, design, or tasks.
+
+  - id: discovery
+    generates: discovery.md
+    description: As-is capture, structured eval of the current surface, and the eval summary that conditions the proposal.
+    template: discovery.md
+    requires:
+      - proposal
+    instruction: |
+      Before writing, read `skills/design-advisor.md` (heuristic-evaluation reference) and `rules/figma.mdc`.
+
+      **0.0 As-is (required):** Capture the current surface before any proposal exists: the `0.0 As is` Figma page per `rules/figma.mdc` (HF file — MVDS Core variables imported by key, never hand-mirrored hex), and — where one exists — the running Storybook story for the surface. **The story is the eval target** (richer signal, cheaper than walking Figma); **the Figma page is the visual record.**
+
+      **0.5 Eval (required):** Run the eval in a SEPARATE subagent context containing ONLY the surface under evaluation and the rubric — never proposal rationale, design intent, or prior eval conclusions. The rubric resolves entirely from `principles.config.mjs`: every record carrying an `evalLens` field, applied in its surface-evaluation sense — never a heuristics list embedded here or in a skill. Record each finding as violation / rubric item (record id) / predicted consequence / severity. Per-rubric scores are summary color ONLY — the findings ledger is the artifact; gate nothing on scores. **Cache this baseline:** proposal iterations re-run only the Eval Delta (design 1.5), never this pass.
+
+      **0.6 Eval Summary (required):** A compact brief the proposal will be generated against: top issues to fix, tradeoffs worth preserving, don't-breaks.
+
+      **N/A path:** Genuinely no-UI changes (same bar as the design gate's N/A — if it renders anything a user sees, it is not API-only) record one "N/A — no surface" row with rationale and leave 0.5/0.6 empty.
+
+      **Stop rule:** After writing discovery.md, stop and wait for explicit user approval before design. The approved Eval Summary is generation INPUT for the proposal — do not draft `Propose:` frames before this approval.
+
+  - id: design
+    generates: design.md
+    description: Proposal conditioned on the approved eval summary, Figma pair, breakpoints, and the eval delta (design-advisor voice).
+    template: design.md
+    requires:
+      - proposal
+      - discovery
+    instruction: |
+      Before writing, read `skills/design-advisor.md` and `rules/figma.mdc`; apply checklist thinking to this artifact only (full design report only if user asks).
+
+      **1.0 is conditioned on 0.6 (required):** Generate the proposed surface with the APPROVED Eval Summary from discovery.md in context. The proposal doesn't merely satisfy the change — it explicitly answers the prioritized findings. Fill the "Eval Summary → Proposal" table (one row per top issue) and call out any don't-break item the proposal touches.
+
+      **Figma gate (UI changes — REQUIRED, not skippable):** Any change that adds or alters UI MUST have a Figma **as-is + proposed** pair before design.md is approved, in this repo's page convention (`rules/figma.mdc`):
+        1. **`0.0 As is`** — already produced at discovery; reference it.
+        2. **`0N.0 Propose: <change-slug>`** — the changed surface, built on MVDS tokens and layout primitives (AGENTS.md, `src/index.css`), not bespoke chrome. New numbered page per iteration; never overwrite a prior one.
+      Then fill the Visual design / Figma table with the real **file URL**, **as-is + proposed page/frame names**, **library + version**, breakpoints (BHD Content Types S=480px / L=1024px unless the change is Storybook-only chrome), and status. "Reuses existing components" is NOT grounds to skip — reused components still get placed in a proposed frame.
+
+      **Removals count as UI changes.** Deleting a variant, prop, export, story, or visible component still gets an as-is + proposed pair — the proposed frame shows the surface with the element absent. MVDS is pre-1.0 and removes outright rather than deprecating (AGENTS.md), so this is the common case here, not the rare one.
+
+      **N/A is allowed ONLY for genuinely API-only / no-UI changes** — one row "N/A — no UI" with a brief rationale, consistent with discovery's N/A.
+
+      **1.5 Eval Delta (required when discovery ran an eval):** Re-run the same rubric against the proposal — same isolation rules as 0.5 (separate subagent, surface + rubric only). Disposition EVERY 0.5 baseline finding: addressed / deliberately preserved / regressed / new. **Informational, never blocking:** a regression is highlighted for the founder at this checkpoint, not auto-rejected. Iterations re-run only this delta against the newest `0N.0` page, reusing the cached 0.5 baseline.
+
+      **Libraries:** MVDS Core (`C20nU0mROzk3Zr0I9BELJF`) and/or a scratch file for iteration.
+      Do not schedule code→Figma library sync unless the founder asks (docs/SYNC.md).
+
+      **No Code Connect.** MVDS does not use it and does not plan to (AGENTS.md).
+
+      **Stop rule:** After writing design.md, stop and wait for explicit user approval before tasks.
+
+  - id: tasks
+    generates: tasks.md
+    description: User-outcome checkboxes first, then Storybook/preview and implementation.
+    template: tasks.md
+    requires:
+      - specs
+      - design
+    instruction: |
+      Before writing §1, read `skills/prd-writer.md` (outcomes / scenario mapping). Before §2+, read `skills/prototype-builder.md`.
+
+      **§1 User outcomes:** Copy every spec scenario as a numbered checkbox (1.1, 1.2, …). Wording should be user-visible ("User can …"), not file paths.
+
+      **§2 Preview:** Storybook story(ies) and/or landing reuse under `src/components/site/`. Dev command: `npm run storybook` (npm only).
+
+      **§3 Implementation:** `src/` + co-located `*.stories.tsx` per AGENTS.md.
+
+      **§4 QA:** Manual walkthrough aligned to Outcomes; automated `npm test` (stories + a11y light/dark) plus `npm run check:principles` / `check:contrast` / `build` as relevant.
+
+      **Stop rule:** After writing tasks.md, stop and wait for explicit user approval before `/opsx:apply`.
+
+apply:
+  requires:
+    - tasks
+  instruction: |
+    Read `skills/openspec-apply-change.md` and `skills/prototype-builder.md`.
+
+    Before coding: read proposal Outcomes and tasks.md §1; confirm Human anchor still matches what you are building. Re-read the discovery Eval Summary — the don't-breaks bind the implementation too.
+
+    **Preview path:** Storybook + site components under `src/components/site/` (and layout/ui as needed). Do not create `experiments/<slug>/prototype/`.
+
+    **Package manager:** npm (see root package.json).
+
+    **UI:** MVDS tokens and layout primitives only (AGENTS.md).
+
+    **Completion:** User runs manual §1 checks before `/opsx:archive`. Do not archive until outcomes checkboxes are satisfied or explicitly waived.
+
+    **When apply finishes** (tasks done, paused with progress, or blocked after coding): follow `skills/openspec-apply-change.md` step 8 — commit (conventional message matching branch type), push, open or update a **draft** PR via `gh` so CI runs. Branch naming per AGENTS.md (`feat/…`, `fix/…`, etc.); `<harness>/<change-name>` — whichever tool is driving, e.g. `claude/…` under Claude Code, `cursor/…` under Cursor — is also fine when it matches an active OpenSpec change. Never hardcode one harness. Skip only if the session changed no files. Never merge or approve the PR. Figma Core sync only if the founder explicitly asks.

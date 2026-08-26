@@ -15,7 +15,7 @@ Enter explore mode. Think deeply. Visualize freely. Follow the conversation wher
 
 **This is a stance, not a workflow.** There are no fixed steps, no required sequence, no mandatory outputs. You're a thinking partner helping the user explore.
 
-**MVDS:** `/opsx:explore` is freeform thinking only. Structured work uses `/opsx:propose` with bootstrapped `experiment-hub-lite` (`proposal.md` → …). The hub’s `bhd-experiment` schema is not copied into this repo yet.
+**MVDS:** `/opsx:explore` is freeform thinking only. Structured work uses `/opsx:propose` with the default `mvds-default` schema (`proposal.md` → …; `experiment-hub-lite` is the archived hub mirror, selectable per-change). The hub’s `bhd-experiment` schema is not copied into this repo yet.
 
 ---
 

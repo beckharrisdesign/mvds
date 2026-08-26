@@ -11,9 +11,9 @@ metadata:
 
 Propose a new change — create the change and generate artifacts (mode depends on schema).
 
-**MVDS:** Only **`experiment-hub-lite`** is bootstrapped (copied from experiment-hub, adapted in `openspec/config.yaml`). Do not pass `--schema bhd-experiment` / `experiment-hub` / `quickstart` until those schemas exist under `openspec/schemas/`.
+**MVDS:** Two schemas exist: **`mvds-default`** (default — see `openspec/config.yaml`) and **`experiment-hub-lite`** (archived hub mirror, selectable per-change). Do not pass `--schema bhd-experiment` / `experiment-hub` / `quickstart` until those schemas exist under `openspec/schemas/`.
 
-**`experiment-hub-lite` (default):** one artifact per approval turn — proposal → specs → design → tasks. Human anchor required before proposal.
+**`mvds-default` (default):** one artifact per approval turn — proposal → specs → **discovery** (0.0 As-is → 0.5 Eval → 0.6 Eval Summary) → design (1.0 conditioned on the approved summary; 1.5 Eval Delta) → tasks. Human anchor required before proposal. `experiment-hub-lite` runs the same flow without the discovery stage.
 
 When ready to implement, run /opsx:apply
 
@@ -39,7 +39,7 @@ When ready to implement, run /opsx:apply
    openspec new change "<name>"
    ```
 
-   This creates a scaffolded change at `openspec/changes/<name>/` with `.openspec.yaml` using the **default schema** from `openspec/config.yaml` (**`experiment-hub-lite`**).
+   This creates a scaffolded change at `openspec/changes/<name>/` with `.openspec.yaml` using the **default schema** from `openspec/config.yaml` (**`mvds-default`**).
 
 3. **Get the artifact build order**
 
@@ -51,7 +51,7 @@ When ready to implement, run /opsx:apply
    - `applyRequires`: array of artifact IDs needed before implementation (e.g., `["tasks"]`)
    - `artifacts`: list of all artifacts with their status and dependencies
 
-4. **Lite schema gate (when `schemaName` is `experiment-hub-lite`)**
+4. **Lite schema gate (when `schemaName` is `mvds-default` or `experiment-hub-lite`)**
 
    Before creating `proposal`:
    - Require **Human anchor** — founder quote verbatim. If missing, ask for it; do not invent anchor-only prose.
@@ -119,7 +119,7 @@ After completing all artifacts, summarize:
 
 **Guardrails**
 
-- **experiment-hub-lite:** Human anchor non-empty; max 2 capabilities in proposal; max 5 requirements in specs; one artifact per approval; load `skills/<skill>.md` per schema `instruction` in `openspec instructions` JSON; prefer AGENTS.md over hub paths in copied voice skills
+- **mvds-default / experiment-hub-lite:** Human anchor non-empty; max 2 capabilities in proposal; max 5 requirements in specs; one artifact per approval; load `skills/<skill>.md` per schema `instruction` in `openspec instructions` JSON; prefer AGENTS.md over hub paths in copied voice skills. mvds-default additionally: eval in an isolated subagent, rubric from the manifest only, findings ledger over scores, delta informational
 - Create ALL artifacts needed for implementation (as defined by schema's `apply.requires`) — but for lite, only one per approval turn
 - Always read dependency artifacts before creating a new one
 - If context is critically unclear, ask the user - but prefer making reasonable decisions to keep momentum
