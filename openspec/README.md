@@ -4,7 +4,9 @@ Bootstrapped from **experiment-hub**’s [`experiment-hub-lite`](https://github.
 
 **CLI:** `npx openspec` — `@fission-ai/openspec` is a **devDependency**, so `npm install` provides it (in worktrees too) and `package-lock.json` pins the version. Do not call `@latest`: that re-downloads on every invocation and floats the tool that drives this workflow, which is the same currency problem the schema copy has.
 
-**Cursor / Claude:** `/opsx:propose`, `/opsx:apply`, `/opsx:archive`, `/opsx:explore` — stubs in [`.cursor/commands/`](../.cursor/commands/); workflow in [`skills/openspec-*.md`](../skills/).
+**Cursor:** `/opsx:propose`, `/opsx:apply`, `/opsx:archive`, `/opsx:explore` — stubs in [`.cursor/commands/`](../.cursor/commands/); workflow in [`skills/openspec-*.md`](../skills/).
+
+**Claude Code:** `/opsx-apply` — [`.claude/skills/opsx-apply/`](../.claude/skills/opsx-apply/SKILL.md). Claude Code discovers `.claude/skills/<name>/SKILL.md` directories and `.claude/commands/<name>.md` flat files only, so the flat `skills/*.md` symlinks under `.claude/skills/` are **not** loaded as commands there — they are read by path off the schema's `instruction` fields, which is how the other three phases still work. Only apply has a directory entry point so far, because only apply needed one: it carries the **per-phase model policy** (`model: sonnet`), downshifting mechanical execution while propose / specs / design inherit the founder's selected model. Cursor's `/opsx:apply` and Claude Code's `/opsx-apply` differ by one character — a colon in a skill directory name would collide with the `plugin:skill` namespace syntax.
 
 | Piece | Path |
 |---|---|
