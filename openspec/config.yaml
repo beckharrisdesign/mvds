@@ -1,10 +1,13 @@
-# OpenSpec defaults for MVDS (bootstrapped from experiment-hub's experiment-hub-lite).
-# New changes use `schema` unless overridden in openspec/changes/<name>/.openspec.yaml.
-schema: experiment-hub-lite
+# OpenSpec defaults for MVDS. New changes use `schema` unless overridden in
+# openspec/changes/<name>/.openspec.yaml. `mvds-default` is the evolved fork
+# (adds the discovery eval stage); `experiment-hub-lite` remains the pristine,
+# drift-watched hub mirror — selectable per-change (openspec: adding-eval-gate).
+schema: mvds-default
 
 context: |
-  MVDS — Minimum Viable Design System (this repo). OpenSpec schema is a copy of
-  experiment-hub-lite, adapted for a design-system package (not Experiment Hub).
+  MVDS — Minimum Viable Design System (this repo). Default schema is
+  mvds-default: the experiment-hub-lite flow plus a discovery eval stage
+  (0.5 Eval / 0.6 Eval Summary before the proposal; 1.5 Eval Delta against it).
 
   **Human anchor** — founder prose quoted in proposal.md before specs/design/tasks.
 
@@ -12,9 +15,14 @@ context: |
   tasks §1 (user-visible checkboxes).
 
   **Skills per artifact** — experiment-creator (proposal), prd-writer (specs/tasks §1),
-  design-advisor (design), prototype-builder (apply). See
-  openspec/schemas/experiment-hub-lite/schema.yaml instructions. Hub voice skills are
+  design-advisor (discovery + design), prototype-builder (apply). See
+  openspec/schemas/mvds-default/schema.yaml instructions. Hub voice skills are
   copied under skills/ for now; prefer AGENTS.md over hub-specific paths when they conflict.
+
+  **Eval rubric** — records in principles.config.mjs carrying an `evalLens`;
+  the discovery eval (0.5/1.5) resolves the rubric from the manifest only, in an
+  isolated subagent (surface + rubric, no proposal rationale). Findings ledger
+  over scores; delta is informational, never auto-blocking.
 
   **UI system (always):** AGENTS.md golden rules — layout primitives (Stack/Inline/Grid),
   8-grid spacing, semantic type ramp, color tokens, no raw flex/grid for layout, no
@@ -33,5 +41,7 @@ context: |
   manager is npm. Gates: `npm run build`, `npm run check:contrast`,
   `npm run check:principles`, `npm test`.
 
-  **Schemas in this repo:** Only `experiment-hub-lite` is bootstrapped. Do not invent
-  bhd-experiment / experiment-hub / quickstart until those schemas are copied in.
+  **Schemas in this repo:** `mvds-default` (default) and `experiment-hub-lite`
+  (pristine hub mirror — the safe archived version, drift-watched; select
+  per-change via .openspec.yaml). Do not invent bhd-experiment / experiment-hub /
+  quickstart until those schemas are copied in.

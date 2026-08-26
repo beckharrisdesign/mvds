@@ -5,7 +5,7 @@ description: Shared rules for ## Artifacts markdown links at the end of every /o
 
 # OpenSpec Artifacts output (shared)
 
-Every opsx agent response that **creates, updates, or moves** files under `openspec/changes/` MUST end with a clickable **Artifacts** block. In MVDS, the bootstrapped schema is `experiment-hub-lite` (same rule applies if more schemas are copied later).
+Every opsx agent response that **creates, updates, or moves** files under `openspec/changes/` MUST end with a clickable **Artifacts** block. In MVDS, the schemas are `mvds-default` (default) and `experiment-hub-lite` (archived hub mirror) — the same rule applies to both and to any schema copied later.
 
 ## Format
 

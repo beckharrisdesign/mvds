@@ -84,6 +84,17 @@ export interface Principle {
     exclude: string[]
   }
   check: CheckSpec
+  /**
+   * Surface-evaluation lens — how the discovery-stage eval (mvds-default
+   * schema: 0.5 Eval / 1.5 Eval Delta) judges a RENDERED SURFACE against this
+   * principle in its original published sense. Distinct from `rationale`,
+   * which is the system-design reading of the same record (same record, two
+   * consumers). Presence of this field is what makes a record part of the
+   * eval rubric — a context layer or consumer adds rubric items by adding
+   * records with a lens, never by editing the schema (openspec:
+   * adding-eval-gate). Deliberately NOT rendered in any UI.
+   */
+  evalLens?: string
   /** Remediation hint shown in the failure report. */
   fix: string
   /** Optional AGENTS.md anchor or URL. */

@@ -253,6 +253,8 @@ from the experiment-hub rules — keep the two in sync.)
 - [`src/components/ui/`](src/components/ui) — vendored shadcn (don't hand-edit).
 - [`docs/SYNC.md`](docs/SYNC.md) — code→Figma workflow & Pro-tier constraints.
 - [`docs/VERIFICATION.md`](docs/VERIFICATION.md) — How we enforce (plan → code → test → world).
-- [`openspec/`](openspec/) — propose → design (Figma) → tasks → apply loop
-  (`experiment-hub-lite`, copied from experiment-hub; see `openspec/README.md`).
+- [`openspec/`](openspec/) — propose → specs → discovery (eval) → design
+  (Figma + eval delta) → tasks → apply loop (`mvds-default`, forked from the
+  hub's `experiment-hub-lite`, which remains as the archived mirror; see
+  `openspec/README.md`).
 - [`README.md`](README.md) — overview for humans.

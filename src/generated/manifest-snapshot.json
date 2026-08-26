@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-08-25T18:27:08-05:00",
-  "commit": "02bfe27",
+  "generatedAt": "2026-08-25T18:49:12-05:00",
+  "commit": "2e8eb57",
   "dirty": true,
   "lock": {
     "fileKey": "C20nU0mROzk3Zr0I9BELJF",
     "syncedAt": "2026-07-29",
     "syncedFromCommit": "8f791b1634e16e8c4ea9a135061084126dfcfa7c",
-    "commitsBehind": 23
+    "commitsBehind": 29
   },
   "gates": [
     {
@@ -27,7 +27,7 @@
       "detail": "The golden rules, machine-enforced from the principle manifest.",
       "command": "npm run check:principles",
       "verifiedAt": "build",
-      "result": "87 files clear 9 enforced MVDS principles (light + dark) (+5 guiding, by judgment).",
+      "result": "87 files clear 9 enforced MVDS principles (light + dark) (+10 guiding, by judgment).",
       "status": {
         "level": "success",
         "label": "passing"
@@ -225,40 +225,6 @@
       }
     },
     {
-      "id": "consistency-and-standards",
-      "title": "One concept, one expression",
-      "description": "One concept, one expression — a thing that behaves the same should look the same everywhere.",
-      "rationale": "This is the whole argument for a token layer and a fixed variant set. Every ad-hoc value is a second dialect a reader has to learn, and an agent has to guess between. The mechanical half is enforced (no-hardcoded-color, no-raw-flex-grid); the judgment half is deciding when a genuinely new case deserves a new variant instead of a one-off.",
-      "fix": "Before adding a variant or a bespoke style, find the existing expression of the same idea and reuse it. If none fits, add it to the system rather than to the screen.",
-      "severity": "error",
-      "enforcement": "judgment",
-      "checkKind": "guiding",
-      "docs": "AGENTS.md (Golden rules)",
-      "source": {
-        "kind": "external",
-        "name": "Nielsen Norman Group",
-        "url": "https://www.nngroup.com/articles/ten-usability-heuristics/",
-        "ref": "Heuristic 4: Consistency and standards"
-      }
-    },
-    {
-      "id": "aesthetic-and-minimalist-design",
-      "title": "Cut surface that doesn’t earn its place",
-      "description": "Every element competes for attention with every other one — so carry no surface you cannot justify.",
-      "rationale": "Why the component set is deliberately tiny and why pre-1.0 MVDS deletes rather than deprecates. Unused variants are not free: they dilute the signal of the ones that matter and enlarge the space an agent chooses from.",
-      "fix": "Cut it. If a variant, prop, or export is not earning its place, remove it outright — there are no external consumers to protect yet.",
-      "severity": "error",
-      "enforcement": "judgment",
-      "checkKind": "guiding",
-      "docs": "AGENTS.md (Pre-1.0: breaking changes are fine)",
-      "source": {
-        "kind": "external",
-        "name": "Nielsen Norman Group",
-        "url": "https://www.nngroup.com/articles/ten-usability-heuristics/",
-        "ref": "Heuristic 8: Aesthetic and minimalist design"
-      }
-    },
-    {
       "id": "visibility-of-system-status",
       "title": "Show real status, don’t claim it in prose",
       "description": "The system tells you what it knows about itself, in time to matter.",
@@ -273,6 +239,57 @@
         "name": "Nielsen Norman Group",
         "url": "https://www.nngroup.com/articles/ten-usability-heuristics/",
         "ref": "Heuristic 1: Visibility of system status"
+      }
+    },
+    {
+      "id": "match-system-and-real-world",
+      "title": "Speak the user’s world",
+      "description": "The surface speaks the reader's language — words, flows, and objects match how the work actually happens.",
+      "rationale": "Why primitive props take pixels and tokens speak roles — the system's names mirror the designer's intent, not the implementation's units.",
+      "fix": "Name things for the reader's job, not the implementation. If a prop, label, or token needs translating before use, rename it.",
+      "severity": "error",
+      "enforcement": "judgment",
+      "checkKind": "guiding",
+      "docs": "AGENTS.md (Golden rules — Type via the semantic ramp)",
+      "source": {
+        "kind": "external",
+        "name": "Nielsen Norman Group",
+        "url": "https://www.nngroup.com/articles/ten-usability-heuristics/",
+        "ref": "Heuristic 2: Match between system and the real world"
+      }
+    },
+    {
+      "id": "user-control-and-freedom",
+      "title": "Every path has an exit",
+      "description": "No dead ends: actions can be undone, escaped, or backed out of without penalty.",
+      "rationale": "Why suppressions are explicit and visible (mvds-allow), and why pre-1.0 removals are clean breaks — no state you cannot see your way out of.",
+      "fix": "Provide the way out: make suppressions visible (mvds-allow), removals clean, and every state escapable.",
+      "severity": "error",
+      "enforcement": "judgment",
+      "checkKind": "guiding",
+      "docs": "AGENTS.md (Pre-1.0: breaking changes are fine)",
+      "source": {
+        "kind": "external",
+        "name": "Nielsen Norman Group",
+        "url": "https://www.nngroup.com/articles/ten-usability-heuristics/",
+        "ref": "Heuristic 3: User control and freedom"
+      }
+    },
+    {
+      "id": "consistency-and-standards",
+      "title": "One concept, one expression",
+      "description": "One concept, one expression — a thing that behaves the same should look the same everywhere.",
+      "rationale": "This is the whole argument for a token layer and a fixed variant set. Every ad-hoc value is a second dialect a reader has to learn, and an agent has to guess between. The mechanical half is enforced (no-hardcoded-color, no-raw-flex-grid); the judgment half is deciding when a genuinely new case deserves a new variant instead of a one-off.",
+      "fix": "Before adding a variant or a bespoke style, find the existing expression of the same idea and reuse it. If none fits, add it to the system rather than to the screen.",
+      "severity": "error",
+      "enforcement": "judgment",
+      "checkKind": "guiding",
+      "docs": "AGENTS.md (Golden rules)",
+      "source": {
+        "kind": "external",
+        "name": "Nielsen Norman Group",
+        "url": "https://www.nngroup.com/articles/ten-usability-heuristics/",
+        "ref": "Heuristic 4: Consistency and standards"
       }
     },
     {
@@ -308,6 +325,74 @@
         "url": "https://www.nngroup.com/articles/ten-usability-heuristics/",
         "ref": "Heuristic 6: Recognition rather than recall"
       }
+    },
+    {
+      "id": "flexibility-and-efficiency-of-use",
+      "title": "Fast for experts, obvious for first-timers",
+      "description": "Accelerators exist for the practiced hand without hiding the plain path.",
+      "rationale": "Why the primitives are few and composable: the expert path and the beginner path are the same path, just faster.",
+      "fix": "Add the accelerator beside the plain path, never instead of it — one vocabulary, two speeds.",
+      "severity": "error",
+      "enforcement": "judgment",
+      "checkKind": "guiding",
+      "docs": "AGENTS.md (Layout primitives)",
+      "source": {
+        "kind": "external",
+        "name": "Nielsen Norman Group",
+        "url": "https://www.nngroup.com/articles/ten-usability-heuristics/",
+        "ref": "Heuristic 7: Flexibility and efficiency of use"
+      }
+    },
+    {
+      "id": "aesthetic-and-minimalist-design",
+      "title": "Cut surface that doesn’t earn its place",
+      "description": "Every element competes for attention with every other one — so carry no surface you cannot justify.",
+      "rationale": "Why the component set is deliberately tiny and why pre-1.0 MVDS deletes rather than deprecates. Unused variants are not free: they dilute the signal of the ones that matter and enlarge the space an agent chooses from.",
+      "fix": "Cut it. If a variant, prop, or export is not earning its place, remove it outright — there are no external consumers to protect yet.",
+      "severity": "error",
+      "enforcement": "judgment",
+      "checkKind": "guiding",
+      "docs": "AGENTS.md (Pre-1.0: breaking changes are fine)",
+      "source": {
+        "kind": "external",
+        "name": "Nielsen Norman Group",
+        "url": "https://www.nngroup.com/articles/ten-usability-heuristics/",
+        "ref": "Heuristic 8: Aesthetic and minimalist design"
+      }
+    },
+    {
+      "id": "error-recovery",
+      "title": "Errors say what to do next",
+      "description": "An error names the problem in plain language and carries its own fix.",
+      "rationale": "Why every manifest record carries a fix: line — the gate that fails you also tells you the way out.",
+      "fix": "When you author a failure message, include the fix — a gate that only says no is half a gate.",
+      "severity": "error",
+      "enforcement": "judgment",
+      "checkKind": "guiding",
+      "docs": "AGENTS.md (Before you call a change done)",
+      "source": {
+        "kind": "external",
+        "name": "Nielsen Norman Group",
+        "url": "https://www.nngroup.com/articles/ten-usability-heuristics/",
+        "ref": "Heuristic 9: Help users recognize, diagnose, and recover from errors"
+      }
+    },
+    {
+      "id": "help-and-documentation",
+      "title": "Help lives where the work happens",
+      "description": "Guidance is co-located with the task — searchable, concrete, and short.",
+      "rationale": "Why stories are co-located and autodocs generated — documentation that lives beside the code it documents cannot drift far.",
+      "fix": "Put the guidance where the work happens: co-located stories, autodocs, and comments that state constraints.",
+      "severity": "error",
+      "enforcement": "judgment",
+      "checkKind": "guiding",
+      "docs": "AGENTS.md (Storybook — first-class verification surface)",
+      "source": {
+        "kind": "external",
+        "name": "Nielsen Norman Group",
+        "url": "https://www.nngroup.com/articles/ten-usability-heuristics/",
+        "ref": "Heuristic 10: Help and documentation"
+      }
     }
   ],
   "figmaExports": {
@@ -336,7 +421,7 @@
       "counts": [
         {
           "label": "principles",
-          "value": 14
+          "value": 19
         },
         {
           "label": "automated",
@@ -344,11 +429,11 @@
         },
         {
           "label": "by judgment",
-          "value": 5
+          "value": 10
         },
         {
           "label": "externally sourced",
-          "value": 5
+          "value": 10
         }
       ],
       "status": {
@@ -394,15 +479,19 @@
           "meta": "require-sibling-file · error"
         },
         {
-          "name": "consistency-and-standards",
-          "meta": "guiding · error"
-        },
-        {
-          "name": "aesthetic-and-minimalist-design",
-          "meta": "guiding · error"
-        },
-        {
           "name": "visibility-of-system-status",
+          "meta": "guiding · error"
+        },
+        {
+          "name": "match-system-and-real-world",
+          "meta": "guiding · error"
+        },
+        {
+          "name": "user-control-and-freedom",
+          "meta": "guiding · error"
+        },
+        {
+          "name": "consistency-and-standards",
           "meta": "guiding · error"
         },
         {
@@ -411,6 +500,22 @@
         },
         {
           "name": "recognition-rather-than-recall",
+          "meta": "guiding · error"
+        },
+        {
+          "name": "flexibility-and-efficiency-of-use",
+          "meta": "guiding · error"
+        },
+        {
+          "name": "aesthetic-and-minimalist-design",
+          "meta": "guiding · error"
+        },
+        {
+          "name": "error-recovery",
+          "meta": "guiding · error"
+        },
+        {
+          "name": "help-and-documentation",
           "meta": "guiding · error"
         }
       ]
@@ -630,7 +735,7 @@
       ],
       "status": {
         "level": "neutral",
-        "label": "23 commits behind",
+        "label": "29 commits behind",
         "detail": "Synced 2026-07-29 from 8f791b1634e16e8c4ea9a135061084126dfcfa7c — code-first, the mirror trails until the next requested sync."
       }
     },
