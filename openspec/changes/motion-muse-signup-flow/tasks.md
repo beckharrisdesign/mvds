@@ -2,20 +2,23 @@
 
 ## 1. User outcomes (from spec scenarios)
 
-- [ ] 1.1 CTA leads to the form — clicking any of the seven entry points lands
+> Founder-approved 2026-08-27 ("approved"), after the endpoint landed on the
+> hub path and the end-to-end submission was verified from the running page.
+
+- [x] 1.1 CTA leads to the form — clicking any of the seven entry points lands
   the visitor at the on-page form with their offer pre-selected and the first
   field ready for focus; no mail client launches
-- [ ] 1.2 Filling in the form — four labeled fields (name, email, offer
+- [x] 1.2 Filling in the form — four labeled fields (name, email, offer
   interest, optional note), system focus states, no offer pre-selected unless
   a CTA chose one
-- [ ] 1.3 Invalid email is rejected inline — missing name / malformed email /
+- [x] 1.3 Invalid email is rejected inline — missing name / malformed email /
   missing offer choice produce inline destructive errors at the field, marked
   for assistive tech, focus moved to the first invalid; form never clears
-- [ ] 1.4 Valid submission confirms — details delivered to the configured
+- [x] 1.4 Valid submission confirms — details delivered to the configured
   endpoint; "Your note is in." confirmation replaces the form, naming the
   offer and the reply window; send failure shows the banner with the visible
   email fallback
-- [ ] 1.5 Both modes and breakpoints — every state legible at AA in light +
+- [x] 1.5 Both modes and breakpoints — every state legible at AA in light +
   dark at 480/1024, on-grid, keyboard operable end to end, no runts in the
   copy
 
