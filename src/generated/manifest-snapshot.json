@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-08-25T18:49:12-05:00",
-  "commit": "2e8eb57",
+  "generatedAt": "2026-08-25T19:13:22-05:00",
+  "commit": "a387e02",
   "dirty": true,
   "lock": {
     "fileKey": "C20nU0mROzk3Zr0I9BELJF",
@@ -27,7 +27,7 @@
       "detail": "The golden rules, machine-enforced from the principle manifest.",
       "command": "npm run check:principles",
       "verifiedAt": "build",
-      "result": "87 files clear 9 enforced MVDS principles (light + dark) (+10 guiding, by judgment).",
+      "result": "87 files clear 9 enforced MVDS principles (light + dark) (+11 guiding, by judgment).",
       "status": {
         "level": "success",
         "label": "passing"
@@ -393,6 +393,23 @@
         "url": "https://www.nngroup.com/articles/ten-usability-heuristics/",
         "ref": "Heuristic 10: Help and documentation"
       }
+    },
+    {
+      "id": "no-runts",
+      "title": "No runt stands alone",
+      "description": "Break lines so no single word or short phrase is stranded on its own — no runts, and no widowed or orphaned lines at a break.",
+      "rationale": "A runt (a lone word or short phrase on its own line — the classic case is a headline breaking right after a period), a widow (a paragraph's last line alone at the top of a break), and an orphan (its first line alone at the bottom) all snap the reading rhythm and make finished work read as unconsidered. Headlines are the loudest offenders: display sizes make a dangling word impossible to unsee.",
+      "fix": "Rebreak the line: shorten or rewrite the copy, set a deliberate break, or use balanced wrapping (text-wrap: balance on headings, text-wrap: pretty on body) so no word stands alone.",
+      "severity": "error",
+      "enforcement": "judgment",
+      "checkKind": "guiding",
+      "docs": "AGENTS.md (Type via the semantic ramp)",
+      "source": {
+        "kind": "founder",
+        "name": "MVDS house rules",
+        "url": "https://github.com/beckharrisdesign/mvds/blob/main/AGENTS.md",
+        "ref": null
+      }
     }
   ],
   "figmaExports": {
@@ -421,7 +438,7 @@
       "counts": [
         {
           "label": "principles",
-          "value": 19
+          "value": 20
         },
         {
           "label": "automated",
@@ -429,7 +446,7 @@
         },
         {
           "label": "by judgment",
-          "value": 10
+          "value": 11
         },
         {
           "label": "externally sourced",
@@ -516,6 +533,10 @@
         },
         {
           "name": "help-and-documentation",
+          "meta": "guiding · error"
+        },
+        {
+          "name": "no-runts",
           "meta": "guiding · error"
         }
       ]

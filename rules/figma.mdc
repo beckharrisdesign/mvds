@@ -86,13 +86,26 @@ Then the **Visual design / Figma** table records:
 
 Under the default `mvds-default` schema this design gate sits inside a stage
 model (openspec: adding-eval-gate): **0.5 Eval**, **0.6 Eval Summary**, and
-**1.5 Eval Delta** are **markdown artifacts in the change directory**
-(`discovery.md` / `design.md`) — they are NOT Figma pages. The page convention
-above is unchanged: `0.0 As is` is produced at the discovery stage (and doubles
-as its visual record; the running Storybook story is the eval target where one
-exists), and `0N.0 Propose:` pages are generated at the design stage **with the
-approved Eval Summary in context**. Don't confuse the two number lines — pages
-are `0.0 / 01.0 / 02.0 …`; stages are `0.5 / 0.6 / 1.0 / 1.5`.
+**1.5 Eval Delta**. The **canonical** stage artifacts are markdown in the
+change directory (`discovery.md` / `design.md`) — that is what conditions
+generation and what the delta dispositions against. But the number line is
+the page order, so every stage **also lands as a page** in the HF file
+(founder amendment, 2026-08-26 — an eval you can only read outside Figma
+doesn't review like one):
+
+| Page | Stage | Content |
+|---|---|---|
+| `0.0 As is` | discovery | the current surface, faithfully |
+| `0.5 Eval` | discovery | duplicates of the as-is frames pinned with numbered findings (F1…), plus per-rubric summary and 0.6 Eval Summary boards |
+| `0N.0 Propose: <change>` | design | proposed surface, conditioned on the approved 0.6 |
+| `0N.5 Eval Delta` | design | duplicates of that iteration's propose frames pinned with the disposition of every baseline finding (addressed / preserved / regressed / new) |
+
+Pins and boards are an **annotation layer** — hand-styled chrome is fine
+there; the surface frames they sit on keep their variable bindings. Markdown
+stays canonical: don't hand-edit page annotations without updating the
+markdown, and never treat the pages as the source the next stage generates
+from. The running Storybook story is still the eval *target* where one
+exists; the pages are the visual record.
 
 ## Code Connect
 

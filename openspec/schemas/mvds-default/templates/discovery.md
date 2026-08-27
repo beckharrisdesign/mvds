@@ -21,6 +21,10 @@
 | --- | --- | --- | --- | --- |
 | F1 | | | | |
 
+**Figma `0.5 Eval` page:** URL + frame/board names (pinned duplicates of the
+as-is frames + summary boards — annotation layer over bound frames,
+`rules/figma.mdc` stage model; markdown above stays canonical)
+
 ## Eval Summary (0.6)
 
 > Generation input for the design proposal — not a report.

@@ -4,20 +4,29 @@
 
 From `specs/discovery-eval/spec.md`:
 
-- [ ] 1.1 Founder approves discovery before any proposal exists
-- [ ] 1.2 Founder reads auditable findings from the as-is surface
-- [ ] 1.3 Eval runs blind to proposal rationale
-- [ ] 1.4 Proposal answers the approved eval summary
-- [ ] 1.5 Founder reviews the proposal as a delta against baseline
-- [ ] 1.6 Iterations re-run only the delta
+- [x] 1.1 Founder approves discovery before any proposal exists
+- [x] 1.2 Founder reads auditable findings from the as-is surface
+- [x] 1.3 Eval runs blind to proposal rationale
+- [x] 1.4 Proposal answers the approved eval summary
+- [x] 1.5 Founder reviews the proposal as a delta against baseline
+- [x] 1.6 Iterations re-run only the delta
 
 From `specs/eval-rubric/spec.md`:
 
 - [x] 1.7 Eval applies exactly what the manifest carries
 - [x] 1.8 All ten heuristics evaluate a surface
-- [ ] 1.9 A founder-added rubric item applies on the next eval
+- [x] 1.9 A founder-added rubric item applies on the next eval
 - [x] 1.10 Principles gate is byte-for-byte indifferent to eval lenses
 
+> **Verified 2026-08-26 by `motion-muse-signup-flow`** — the first real run:
+> discovery (0.5 blind eval / 0.6 summary) approved before design existed
+> (1.1, 1.2, 1.3); the proposal answered the approved summary via the
+> "Eval Summary → Proposal" table (1.4); the founder reviewed 1.5 and 3.5
+> delta ledgers (1.5); iterations 01.0 → 03.0 re-ran only the delta against
+> the cached 0.5 baseline (1.6); and the founder-added `no-runts` record
+> joined the rubric mid-change and caught four findings on its first eval
+> (1.9). See openspec/changes/motion-muse-signup-flow/{discovery,design}.md.
+>
 > 1.1–1.6 and 1.9 are behaviors of a change *run under* `mvds-default` — they
 > verify in the founder's planned test change (first real run of the new loop),
 > not inside this PR. 1.7, 1.8, and 1.10 verify here (manifest + gate).
