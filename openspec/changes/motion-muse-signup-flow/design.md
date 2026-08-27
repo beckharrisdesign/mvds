@@ -184,9 +184,12 @@ findings / eleven-row per-rubric boards.
 - **Replace the closing band** rather than add an eighth section: the band's
   job (last-chance conversion) is exactly the form's job; adding both would
   fail aesthetic-and-minimalist-design.
-- **Endpoint via `VITE_SIGNUP_ENDPOINT`** with the send-failed state as the
-  honest degradation path — if unset/unreachable, the user still converts via
-  the visible address.
+- **Endpoint: experiment-hub's shared landing-submission path** (settled
+  post-apply, 2026-08-27, on founder direction "the default for experiment
+  hub"): the form POSTs to `labs.beckharrisdesign.com/api/landing-submission`
+  → the hub's `experiment_submissions` table, offer in `metadata`. No new
+  service, no client secret. `VITE_SIGNUP_ENDPOINT` is a dev/test override
+  only; the send-failed state remains the honest degradation path.
 - **Form never clears on error**; success replaces the form rather than
   toasting — no toast primitive exists in MVDS, and none is needed (deliberate
   non-expansion of DS surface, per proposal's capability budget of zero).
