@@ -73,9 +73,15 @@ From `specs/eval-rubric/spec.md`:
 
 ## 4. QA
 
-- [ ] 4.1 Manual walkthrough of Outcomes: 1.7/1.8/1.10 here; 1.1–1.6 + 1.9
+- [x] 4.1 Manual walkthrough of Outcomes: 1.7/1.8/1.10 here; 1.1–1.6 + 1.9
       deferred to the founder's test change under `mvds-default` (do not
       archive this change until that run passes or the founder waives)
+      — **founder-verified 2026-08-27** against the archived
+      `motion-muse-signup-flow` artifacts: ledger rubric ids all resolve to
+      manifest records, `no-runts` absent before / present after its addition
+      (1.7); all ten per-rubric rows present incl. no-finding greens, eleven
+      at `03.0` (1.8); `check:principles` byte-identical across the evalLens
+      additions (1.10). Test change passed → deferral satisfied.
 - [x] 4.2 `npm run build` · `npm run check:contrast` · `npm run
       check:principles` (must be byte-for-byte indifferent to the new records
       per 1.10) · `npm test` (stories + a11y, light + dark)
