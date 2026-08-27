@@ -64,6 +64,8 @@ artifacts:
 
       **0.5 Eval (required):** Run the eval in a SEPARATE subagent context containing ONLY the surface under evaluation and the rubric — never proposal rationale, design intent, or prior eval conclusions. The rubric resolves entirely from `principles.config.mjs`: every record carrying an `evalLens` field, applied in its surface-evaluation sense — never a heuristics list embedded here or in a skill. Record each finding as violation / rubric item (record id) / predicted consequence / severity. Per-rubric scores are summary color ONLY — the findings ledger is the artifact; gate nothing on scores. **Cache this baseline:** proposal iterations re-run only the Eval Delta (design 1.5), never this pass.
 
+      **0.5 Eval page (required with the eval):** Mirror the ledger into the HF file as a `0.5 Eval` page — duplicates of the as-is frames pinned with the numbered findings, plus per-rubric summary and Eval Summary boards (`rules/figma.mdc` stage model). Annotation layer only: the underlying frames keep their variable bindings, and the markdown here stays canonical. Record the page URL + frame names in discovery.md.
+
       **0.6 Eval Summary (required):** A compact brief the proposal will be generated against: top issues to fix, tradeoffs worth preserving, don't-breaks.
 
       **N/A path:** Genuinely no-UI changes (same bar as the design gate's N/A — if it renders anything a user sees, it is not API-only) record one "N/A — no surface" row with rationale and leave 0.5/0.6 empty.
@@ -91,7 +93,7 @@ artifacts:
 
       **N/A is allowed ONLY for genuinely API-only / no-UI changes** — one row "N/A — no UI" with a brief rationale, consistent with discovery's N/A.
 
-      **1.5 Eval Delta (required when discovery ran an eval):** Re-run the same rubric against the proposal — same isolation rules as 0.5 (separate subagent, surface + rubric only). Disposition EVERY 0.5 baseline finding: addressed / deliberately preserved / regressed / new. **Informational, never blocking:** a regression is highlighted for the founder at this checkpoint, not auto-rejected. Iterations re-run only this delta against the newest `0N.0` page, reusing the cached 0.5 baseline.
+      **1.5 Eval Delta (required when discovery ran an eval):** Re-run the same rubric against the proposal — same isolation rules as 0.5 (separate subagent, surface + rubric only). Disposition EVERY 0.5 baseline finding: addressed / deliberately preserved / regressed / new. **Informational, never blocking:** a regression is highlighted for the founder at this checkpoint, not auto-rejected. Iterations re-run only this delta against the newest `0N.0` page, reusing the cached 0.5 baseline. Mirror each delta into the HF file as a `0N.5 Eval Delta` page after the `0N.0` page it judges — pinned duplicates of the propose frames, dispositions marked (`rules/figma.mdc` stage model; design.md stays canonical).
 
       **Libraries:** MVDS Core (`C20nU0mROzk3Zr0I9BELJF`) and/or a scratch file for iteration.
       Do not schedule code→Figma library sync unless the founder asks (docs/SYNC.md).

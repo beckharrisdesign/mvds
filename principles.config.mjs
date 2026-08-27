@@ -437,6 +437,29 @@ export const baseManifest = {
       docs: "AGENTS.md (Storybook — first-class verification surface)",
       source: nng("Heuristic 10: Help and documentation"),
     },
+
+    // --- Typography craft --------------------------------------------------------
+    // Founder-added 2026-08-26, mid design review of motion-muse-signup-flow —
+    // the first rubric addition after the ten adopted heuristics, and the live
+    // proof that a founder-added rubric item applies on the next eval
+    // (openspec: adding-eval-gate, outcome 1.9).
+    {
+      id: "no-runts",
+      title: "No runt stands alone",
+      description:
+        "Break lines so no single word or short phrase is stranded on its own — no runts, and no widowed or orphaned lines at a break.",
+      rationale:
+        "A runt (a lone word or short phrase on its own line — the classic case is a headline breaking right after a period), a widow (a paragraph's last line alone at the top of a break), and an orphan (its first line alone at the bottom) all snap the reading rhythm and make finished work read as unconsidered. Headlines are the loudest offenders: display sizes make a dangling word impossible to unsee.",
+      severity: "error",
+      enabled: true,
+      scope: NO_FILES,
+      check: { kind: "guiding" },
+      evalLens:
+        "Does any heading or paragraph on the surface strand a single word or short phrase on its own line (runt), or leave a lone first or last line at a break (widow/orphan)?",
+      fix: "Rebreak the line: shorten or rewrite the copy, set a deliberate break, or use balanced wrapping (text-wrap: balance on headings, text-wrap: pretty on body) so no word stands alone.",
+      docs: "AGENTS.md (Type via the semantic ramp)",
+      source: FOUNDER,
+    },
   ],
 }
 

@@ -1,7 +1,6 @@
 ---
 name: opsx-apply
 description: Implement tasks from an approved OpenSpec change (the apply phase). Use for /opsx-apply, or when the founder asks to start implementing, continue implementation, or work through tasks.md.
-disable-model-invocation: true
 model: sonnet
 ---
 
@@ -50,5 +49,9 @@ to re-pin it. No mechanism gives durable-across-turns *and* keeps conversation
 context, and apply needs the conversation: step 8 writes a PR description that
 quotes the founder's original intent in the founder's own framing.
 
-`disable-model-invocation: true` is deliberate — apply commits, pushes, and opens
-PRs, so it is founder-triggered only, never auto-loaded.
+`disable-model-invocation` was removed on founder direction (2026-08-26, during
+`motion-muse-signup-flow`): the typed-command-only gate added friction without
+protection the flow doesn't already have — apply still runs only against an
+approved `tasks.md`, and the founder still triggers it explicitly (in words or
+by `/opsx-apply`). It is never auto-loaded on inference: an unprompted "let's
+implement" still routes through the propose loop's approvals first.
