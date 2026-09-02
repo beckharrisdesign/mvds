@@ -14,7 +14,7 @@ const ELEMENTS = [
   "Token layer",
   "Component library",
   "Figma library",
-  "Openspec schemas",
+  "OpenSpec schemas",
   "Skills",
 ]
 

@@ -42,7 +42,7 @@ export const Default: Story = {
       "Token layer",
       "Component library",
       "Figma library",
-      "Openspec schemas",
+      "OpenSpec schemas",
       "Skills",
     ])
 
@@ -58,7 +58,7 @@ export const Default: Story = {
     ])
     for (const link of links) {
       await expect(link).toHaveAttribute("href")
-      await expect(link.textContent).not.toMatch(/[↗→]/)
+      await expect(link.textContent ?? "").not.toMatch(/[↗→]/)
     }
   },
 }

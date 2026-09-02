@@ -19,7 +19,7 @@ The founder's canonical framing (anchored in proposal.md) replaces the hero's ea
 
 ## User flow / IA
 
-Header chrome (wordmark, theme toggle, Figma / GitHub / Storybook routes) over the hero: badges → headline → supporting copy → **elements row** → **expressions row**. The founder's model (03.0 iteration): the checklist names the six *elements* of MVDS (what the system is — Principles, Token layer, Component library, Figma library, Openspec schemas, Skills, matching the sections her parallel session is expanding below the fold), and the buttons beneath name its *expressions* (where it shows up — Starter app, Storybook, Figma, GitHub, npm), with "keep reading" as the first expression, buttonless because the page itself is that expression. The old action-CTA row ("Browse the system" …) is gone.
+Header chrome (wordmark, theme toggle, Figma / GitHub / Storybook routes) over the hero: badges → headline → supporting copy → **elements row** → **expressions row**. The founder's model (03.0 iteration): the checklist names the six *elements* of MVDS (what the system is — Principles, Token layer, Component library, Figma library, OpenSpec schemas, Skills, matching the sections her parallel session is expanding below the fold), and the buttons beneath name its *expressions* (where it shows up — Starter app, Storybook, Figma, GitHub, npm), with "keep reading" as the first expression, buttonless because the page itself is that expression. The old action-CTA row ("Browse the system" …) is gone.
 
 ## Visual design / Figma
 
@@ -92,7 +92,7 @@ Per-rubric: 11/11 dispositioned by the blind run — `no-runts` **pass**, `aesth
 | Q2 | Toggle styled identically to nav pills | amber | Pre-existing (was P2), unchanged here; recorded for the founder |
 | Q3 | Same three destinations in shuffled order: header "Figma · GitHub · Storybook" vs expressions "Storybook · Figma · GitHub" | low | **Addressed:** header reordered to Storybook · Figma · GitHub — the founder's expressions order — on the amended 03.0 frames; `App.tsx` follows at apply |
 | Q4 | Five equal-weight pills, no primary CTA | amber | **Resolved by founder direction (2026-09-02): all five expressions buttons are primary** ("make the buttons primary - they feel lightweight right now"). 03.0 frames amended to Core `Button variant=default`; code follows at apply |
-| Q5 | "human and agentic founders" / "Openspec schemas" / "Skills" read as insider vocabulary | amber | **Deliberately preserved:** founder-canonical voice, and the six elements intentionally name what the page itself expands below the fold — the expansion is the in-context definition |
+| Q5 | "human and agentic founders" / "OpenSpec schemas" / "Skills" read as insider vocabulary | amber | **Deliberately preserved:** founder-canonical voice, and the six elements intentionally name what the page itself expands below the fold — the expansion is the in-context definition |
 | Q6 | ✓ glyphs half-read as status results | low | Founder-directed treatment (was P3); preserved, still flagged |
 
 **Figma `03.5 Eval Delta` page:** frames `Delta — Landing 1024 — Light` / `— Dark` with Q-pins + disposition board (annotation layer; this markdown canonical).

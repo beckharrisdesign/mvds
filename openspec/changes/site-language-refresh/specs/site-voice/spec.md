@@ -39,7 +39,7 @@ The hero SHALL render the six MVDS elements as a list with real list semantics (
 #### Scenario: Proof line reads as a checklist
 
 - **WHEN** the hero renders
-- **THEN** a list labeled "The elements of MVDS" contains exactly six items — Principles, Token layer, Component library, Figma library, Openspec schemas, Skills — each with a check glyph, and the expressions button row sits directly below it
+- **THEN** a list labeled "The elements of MVDS" contains exactly six items — Principles, Token layer, Component library, Figma library, OpenSpec schemas, Skills — each with a check glyph, and the expressions button row sits directly below it
 
 ### Requirement: README opener matches the site
 

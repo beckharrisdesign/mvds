@@ -14,12 +14,6 @@
       "port": 5173
     },
     {
-      "name": "mvds-asis",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": ["--prefix", "/private/tmp/claude-501/-Users-katybharris-Documents-code-mvds--claude-worktrees-mvds-accomplishments-review-d6fd5f/394ae233-e009-47cc-94e7-9e886f47ac3e/scratchpad/asis", "run", "dev", "--", "--port", "5175", "--strictPort"],
-      "port": 5175
-    },
-    {
       "name": "mvds-site",
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "dev", "--", "--port", "5174", "--strictPort"],
