@@ -1,7 +1,7 @@
-// Manifest snapshot generator — aggregates every MVDS manifest (principles,
-// Figma component manifests, conventions, figma.lock.json, the token layer,
-// the spacing scale) into one committed JSON the landing page renders as
-// object cards: name, path, counts, and code-vs-Figma mapping status.
+// Manifest snapshot generator — aggregates every MVDS manifest into one
+// committed JSON. The landing page renders it as "Elements of the MVDS":
+// six peer elements (principles, tokens, component library, Figma library,
+// workflow schemas, skills), each with an inventory tally and a full list.
 //
 //   npm run generate:snapshot     → writes src/generated/manifest-snapshot.json
 //
@@ -11,12 +11,9 @@
 // committed so vite dev / Storybook / vitest work on a fresh clone with no
 // pre-hook; `prebuild` and build-site.mjs regenerate it before any deploy.
 //
-// Status semantics (maps onto the Badge triad — see AGENTS.md):
-//   success     = in-sync: the lock matches the manifest / lock current at HEAD
-//   neutral     = informational, or not synced yet / lock trailing HEAD — the
-//                 EXPECTED state in a code-first repo (the mirror trails)
-//   destructive = genuine disagreement (lock variant drift, light/dark token
-//                 mismatch) — something a sync or token fix must resolve
+// The elements section carries no status: live gate results render in the
+// Verification section (the `gates` array below), and mirror sync state in
+// the Figma preview section (openspec: improve-manifests-ia).
 
 import { execSync } from "node:child_process"
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs"
@@ -210,11 +207,6 @@ const gates = LIVE_GATES.map((gate) => {
   },
 ])
 
-// --- status helpers --------------------------------------------------------------
-const WORST = { destructive: 2, neutral: 1, success: 0 }
-const worstLevel = (statuses) =>
-  statuses.reduce((a, s) => (WORST[s.level] > WORST[a] ? s.level : a), "success")
-
 // --- cards ------------------------------------------------------------------------
 // The principles, in full, for the landing page's first-class section. Carries
 // provenance so a reader can tell what MVDS asserts on its own authority from
@@ -237,169 +229,192 @@ const principleRecords = principles.map((p) => ({
   },
 }))
 
-const principlesCard = {
-  id: "principles",
-  name: "Principles",
-  path: "principles.config.mjs",
-  kind: "enforcement",
-  description:
-    "Golden rules encoded as data — machine-enforced by check:principles and the edit-guard hook.",
-  counts: [
-    { label: "principles", value: principles.length },
-    {
-      label: "automated",
-      value: principleRecords.filter((p) => p.enforcement === "automated").length,
-    },
-    {
-      label: "by judgment",
-      value: principleRecords.filter((p) => p.enforcement === "judgment").length,
-    },
-    {
-      label: "externally sourced",
-      value: principleRecords.filter((p) => p.source.kind === "external").length,
-    },
-  ],
-  status: { level: "neutral", label: "code-only", detail: "No Figma mapping applies." },
-  items: principles.map((p) => ({
-    name: p.id,
-    meta: `${p.check.kind} · ${p.severity}${p.enabled ? "" : " · disabled"}`,
-  })),
+// --- elements ---------------------------------------------------------------------
+// "Elements of the MVDS" (openspec: improve-manifests-ia): six peer elements,
+// each with an inventory tally and a full list behind a disclosure. Copy is
+// founder-authored and lives in the component; everything here is derived
+// from the repo so the section stays a projection of generated data.
+
+import { readdirSync } from "node:fs"
+
+const pascal = (f) =>
+  f
+    .replace(/\.tsx$/, "")
+    .split("-")
+    .map((w) => w[0].toUpperCase() + w.slice(1))
+    .join("")
+const familyComponents = (dir) =>
+  readdirSync(join(ROOT, "src", "components", dir))
+    .filter((f) => f.endsWith(".tsx") && !f.includes(".stories."))
+    .map(pascal)
+    .sort()
+
+const layoutComponents = familyComponents("layout")
+const uiComponents = familyComponents("ui")
+const blockComponents = familyComponents("blocks")
+const formComponents = familyComponents("forms")
+
+const spacingSteps = conventions.spacing.scale
+const radiusNames = [...css.matchAll(/^\s*--radius-([\w-]+):/gm)].map((m) => m[1])
+const rampNames = [...css.matchAll(/^\s*--(text-[\w-]+):/gm)]
+  .map((m) => m[1])
+  .filter((name) => !name.includes("--"))
+  .map((name) => name.replace(/^text-/, ""))
+// Token families are the stable grouping vocabulary of src/index.css; each
+// family below is asserted against the parsed light tokens so the list cannot
+// silently outlive the file.
+const COLOR_FAMILIES = [
+  ["background", "background"],
+  ["foreground", "foreground"],
+  ["card", "card"],
+  ["muted", "muted"],
+  ["border", "border"],
+  ["primary 1\u20135", "primary-1"],
+  ["secondary 1\u20135", "secondary-1"],
+  ["gray 50\u2013950", "gray-500"],
+  ["success", "success"],
+  ["neutral", "neutral"],
+  ["destructive", "destructive"],
+]
+for (const [label, probe] of COLOR_FAMILIES) {
+  if (!lightProps.has(probe))
+    throw new Error(`token family "${label}" missing from :root (probe --${probe})`)
 }
 
-const componentItems = componentManifests.map((m) => {
-  const declared = m.axes.reduce((n, axis) => n * axis.options.length, 1)
-  const entry = lock.components?.[m.name]
-  const synced = entry ? Object.keys(entry.variants ?? {}).length : 0
-  const status =
-    !entry || !entry.componentSetId
-      ? { level: "neutral", label: "not synced" }
-      : synced === declared
-        ? { level: "success", label: `synced ${synced}/${declared}` }
-        : { level: "destructive", label: `drift ${synced}/${declared}` }
-  return {
-    name: m.name,
-    meta: `${m.axes.length} ${m.axes.length === 1 ? "axis" : "axes"} · ${declared} variants · ${m.code.file}`,
-    status,
-  }
+const schemaDirs = readdirSync(join(ROOT, "openspec", "schemas"), {
+  withFileTypes: true,
 })
+  .filter((d) => d.isDirectory())
+  .map((d) => d.name)
+  .sort()
+const claudeSkillDirs = readdirSync(join(ROOT, ".claude", "skills"), {
+  withFileTypes: true,
+})
+  .filter((d) => d.isDirectory())
+  .map((d) => d.name)
+const entrySkills = claudeSkillDirs.filter((n) => n.startsWith("opsx-")).sort()
+const mvdsSkills = claudeSkillDirs.filter((n) => n.startsWith("mvds-")).sort()
+const voiceSkills = readdirSync(join(ROOT, "skills"))
+  .filter((f) => f.endsWith(".md") && !f.startsWith("openspec"))
+  .map((f) => f.replace(/\.md$/, ""))
+  .sort()
+const ruleFiles = readdirSync(join(ROOT, "rules"))
+  .filter((f) => f.endsWith(".mdc"))
+  .map((f) => f.replace(/\.mdc$/, ""))
+  .sort()
 
 const declaredTotal = componentManifests.reduce(
   (n, m) => n + m.axes.reduce((v, a) => v * a.options.length, 1),
   0
 )
-const syncedTotal = Object.values(lock.components ?? {}).reduce(
-  (n, e) => n + Object.keys(e.variants ?? {}).length,
-  0
-)
-const componentsLevel = worstLevel(componentItems.map((i) => i.status))
-const componentsCard = {
-  id: "figma-components",
-  name: "Figma component manifests",
-  path: "figma/components.config.mjs",
-  kind: "figma mirror",
-  description:
-    "Per-component variant specs, drift-guarded against the code by check:figma; the sync skill reads them as the mirror spec.",
-  counts: [
-    { label: "components", value: componentManifests.length },
-    { label: "declared variants", value: declaredTotal },
-    { label: "synced variants", value: syncedTotal },
-  ],
-  status:
-    componentsLevel === "success"
-      ? { level: "success", label: `synced ${syncedTotal}/${declaredTotal}` }
-      : componentsLevel === "neutral"
-        ? { level: "neutral", label: `synced ${syncedTotal}/${declaredTotal}` }
-        : { level: "destructive", label: `drift ${syncedTotal}/${declaredTotal}` },
-  items: componentItems,
-}
+const STAGES =
+  "proposal \u00b7 specs \u00b7 discovery (as-is, eval, summary) \u00b7 design (propose, eval delta) \u00b7 tasks"
 
-const conventionsCard = {
-  id: "conventions",
-  name: "Conventions",
-  path: "figma/conventions.mjs",
-  kind: "mapping rules",
-  description:
-    "Mechanical code → Figma mapping, declared once: which utility binds to which variable or text style.",
-  counts: [
-    { label: "text styles", value: Object.keys(conventions.textStyles).length },
-    { label: "spacing steps", value: conventions.spacing.scale.length },
-    { label: "radius mappings", value: Object.keys(conventions.radius).length },
-    {
-      label: "font weights",
-      value: Object.keys(conventions.typography.weightToFigmaStyle).length,
-    },
-  ],
-  status: { level: "neutral", label: "code-only", detail: "Rules, not synced state." },
-}
-
-const derivedVariables = Object.keys(lock.derivedVariables ?? {}).filter(
-  (k) => !k.startsWith("$")
-).length
-const lockCard = {
-  id: "figma-lock",
-  name: "Figma lock",
-  path: "figma/figma.lock.json",
-  kind: "lock file",
-  description:
-    "Machine-recorded Figma reality — node IDs written by the sync skills so re-syncs update in place.",
-  counts: [
-    { label: "components", value: Object.keys(lock.components ?? {}).length },
-    { label: "derived variables", value: derivedVariables },
-    { label: "pages", value: Object.keys(lock.pages ?? {}).length },
-  ],
-  status:
-    commitsBehind === 0
-      ? { level: "success", label: "current", detail: `Synced ${lock.syncedAt} at HEAD.` }
-      : commitsBehind === null
-        ? { level: "neutral", label: "unknown", detail: "Git history unavailable." }
-        : {
-            level: "neutral",
-            label: `${commitsBehind} commit${commitsBehind === 1 ? "" : "s"} behind`,
-            detail: `Synced ${lock.syncedAt} from ${lock.syncedFromCommit} — code-first, the mirror trails until the next requested sync.`,
-          },
-}
-
-const tokensCard = {
-  id: "tokens",
-  name: "Token layer",
-  path: "src/index.css",
-  kind: "source of truth",
-  description:
-    "Colors (light + dark), radius, breakpoints, and the type ramp — the single source every surface reads.",
-  counts: [
-    { label: "color utilities", value: colorUtilities },
-    { label: "light tokens", value: lightProps.size },
-    { label: "dark tokens", value: darkProps.size },
-    { label: "radius steps", value: radiusSteps },
-    { label: "type ramp", value: rampSteps },
-  ],
-  status: parityOk
-    ? { level: "success", label: "light/dark parity" }
-    : {
-        level: "destructive",
-        label: "mode drift",
-        detail: [
-          lightOnly.length ? `light-only: ${lightOnly.join(", ")}` : null,
-          darkOnly.length ? `dark-only: ${darkOnly.join(", ")}` : null,
-        ]
-          .filter(Boolean)
-          .join(" · "),
+const elements = [
+  {
+    id: "principles",
+    name: "Principles",
+    tally: [
+      { label: "principles", value: principles.length },
+      {
+        label: "automated",
+        value: principleRecords.filter((p) => p.enforcement === "automated").length,
       },
-}
-
-const scalesCard = {
-  id: "scales",
-  name: "Spacing scale",
-  path: "src/components/layout/scales.ts",
-  kind: "spacing scale",
-  description: `The 8-grid — multiples & fractions of 8: ${conventions.spacing.scale.join(" · ")}. Purge-safe class maps for the layout primitives.`,
-  counts: [{ label: "steps", value: conventions.spacing.scale.length }],
-  status: {
-    level: "neutral",
-    label: "code-only",
-    detail: "Mirrored to Figma as the Scales collection (space-{px}).",
+      {
+        label: "by judgment",
+        value: principleRecords.filter((p) => p.enforcement === "judgment").length,
+      },
+    ],
+    lists: [{ label: null, items: principleRecords.map((p) => p.title) }],
+    action: { label: "All 20 with sources", kind: "anchor", anchor: "principles" },
   },
-}
+  {
+    id: "tokens",
+    name: "Token layer",
+    tally: [
+      { label: "color utilities", value: colorUtilities },
+      { label: "light tokens", value: lightProps.size },
+      { label: "dark overrides", value: darkProps.size },
+      { label: "spacing steps", value: spacingSteps.length },
+      { label: "radius steps", value: radiusNames.length },
+      { label: "ramp steps", value: rampSteps },
+    ],
+    lists: [
+      { label: "Color", items: COLOR_FAMILIES.map(([label]) => label) },
+      { label: "Type", items: rampNames },
+      { label: "Spacing", items: spacingSteps.map(String) },
+      { label: "Radius", items: radiusNames },
+    ],
+    action: { label: "src/index.css", kind: "repo-file", path: "src/index.css" },
+  },
+  {
+    id: "components",
+    name: "Component library",
+    tally: [
+      { label: "layout primitives", value: layoutComponents.length },
+      { label: "ui components", value: uiComponents.length },
+      { label: "blocks", value: blockComponents.length },
+      { label: "form components", value: formComponents.length },
+    ],
+    lists: [
+      { label: "Layout", items: layoutComponents },
+      { label: "UI", items: uiComponents },
+      { label: "Blocks", items: blockComponents },
+      { label: "Forms", items: formComponents },
+    ],
+    action: { label: "src/components", kind: "repo-dir", path: "src/components" },
+  },
+  {
+    id: "figma",
+    name: "Figma library",
+    tally: [
+      { label: "components", value: componentManifests.length },
+      { label: "declared variants", value: declaredTotal },
+      { label: "text styles", value: Object.keys(conventions.textStyles).length },
+      { label: "pages", value: Object.keys(lock.pages ?? {}).length },
+    ],
+    lists: [
+      {
+        label: "Collections",
+        items: ["Tokens (Light / Dark)", "Scales", "Customize Here"],
+      },
+      { label: "Components", items: componentManifests.map((m) => m.name) },
+      { label: "Pages", items: Object.keys(lock.pages ?? {}) },
+    ],
+    action: { label: "figma/", kind: "repo-dir", path: "figma" },
+  },
+  {
+    id: "schemas",
+    name: "Workflow schemas",
+    tally: [
+      { label: "schemas", value: schemaDirs.length },
+      { label: "stages", value: 5 },
+      { label: "eval gate", value: 1 },
+    ],
+    lists: [
+      { label: "Schemas", items: schemaDirs },
+      { label: "Stages", items: [STAGES] },
+    ],
+    action: { label: "openspec/", kind: "repo-dir", path: "openspec" },
+  },
+  {
+    id: "skills",
+    name: "Skills",
+    tally: [
+      { label: "workflow entry points", value: entrySkills.length },
+      { label: "voice skills", value: voiceSkills.length },
+      { label: "MVDS skills", value: mvdsSkills.length },
+      { label: "rule files", value: ruleFiles.length },
+    ],
+    lists: [
+      { label: "Entry points", items: entrySkills },
+      { label: "Voice", items: voiceSkills },
+      { label: "MVDS", items: mvdsSkills },
+      { label: "Rules", items: ruleFiles },
+    ],
+    action: { label: ".claude/skills", kind: "repo-dir", path: ".claude/skills" },
+  },
+]
 
 // --- assemble + idempotent write --------------------------------------------------
 const snapshot = {
@@ -425,14 +440,7 @@ const snapshot = {
         })),
       }
     : null,
-  manifests: [
-    principlesCard,
-    componentsCard,
-    conventionsCard,
-    lockCard,
-    tokensCard,
-    scalesCard,
-  ],
+  elements,
 }
 
 const json = JSON.stringify(snapshot, null, 2) + "\n"

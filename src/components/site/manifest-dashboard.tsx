@@ -1,115 +1,145 @@
-import { Badge } from "@/components/ui/badge"
+import { useState } from "react"
+import { Button } from "@/components/ui/button"
 import {
   Card,
   CardHeader,
   CardTitle,
-  CardDescription,
-  CardAction,
   CardContent,
 } from "@/components/ui/card"
-import { Grid, Inline, Stack } from "@/components/layout"
-import type {
-  ManifestCard as ManifestCardData,
-  ManifestItem,
-  ManifestSnapshot,
-  ManifestStatus,
-} from "./manifest-snapshot.types"
+import { Grid, Stack, Inline } from "@/components/layout"
+import { repoFileUrl, repoUrl } from "./repo-links"
+import type { ElementEntry, ManifestSnapshot } from "./manifest-snapshot.types"
 
 /**
- * ManifestDashboard — renders the generated manifest snapshot
- * (src/generated/manifest-snapshot.json) as object cards: one Card per
- * manifest with its name, path, kind, counts, and code-vs-Figma mapping
- * status. Status levels map 1:1 onto the Badge semantic triad.
+ * ElementsOfMvds — "Elements of the MVDS" (openspec: improve-manifests-ia).
+ * Six peer cards, one per element, each with founder-authored copy, a
+ * generated inventory tally, a disclosure that fully lists the inventory, and
+ * two Button actions: the toggle and the underlying detail. The section is an
+ * ecosystem description; live gate results and sync state render in the
+ * Verification and Figma preview sections.
+ *
+ * The copy below is founder-authored (design.md "Founder copy edits on 15.0")
+ * and ships verbatim; only the numbers and lists come from the snapshot.
  */
 
-function StatusBadge({ status }: { status: ManifestStatus }) {
+const INTRO =
+  "Six elements make up MVDS, and they work together as one system that can be accessed by human and agent alike."
+
+const COPY: Record<string, string> = {
+  principles:
+    "The golden rules begin with industry standard accessibility and usability principles by default, and can then be extended by individual users to include development, content, product, and business values. Principles are stored as data alongside the rest of MVDS, and where possible they cascade into implementation through unit tests and other automated checks. Design principle checks can — and should — fail builds.",
+  tokens:
+    "Colors, type, spacing, and radius live in one CSS file, and every surface in the system reads from it.",
+  components: "The primitives and components that consumers compose with.",
+  figma:
+    "The same tokens, components, variants, and text styles, available in Figma. Design and code always match, so you can iterate in either and hand the result back in a language the code understands. A spec declares which components and variants appear, conventions bind the shared names, and a lock lets each sync update the file in place.",
+  schemas:
+    "Every change moves through proposal, specs, discovery, design, and tasks, with founder approval between each step. The default schema adds an eval gate: the surface is captured and judged against the principles before and after design. The loop is adapted from the Experiment Hub, which remains the archived reference.",
+  skills:
+    "Skills give agents repeatable jobs with the house rules built in. Entry points run the workflow. Voice skills carry the writing standards for each artifact. The sync skills push tokens and components into the Figma library when asked.",
+}
+
+function actionHref(element: ElementEntry, commit: string): string {
+  const action = element.action
+  if (action.kind === "anchor") return `#${action.anchor}`
+  if (action.kind === "repo-file") return repoFileUrl(commit, action.path)
+  return repoUrl(commit, action.path)
+}
+
+function ElementList({ element }: { element: ElementEntry }) {
+  const plain = element.lists.length === 1 && element.lists[0].label === null
+  if (plain) {
+    return (
+      <Grid cols={{ base: 1, md: 2 }} gap={8}>
+        {element.lists[0].items.map((item) => (
+          <span key={item} className="text-small">
+            {item}
+          </span>
+        ))}
+      </Grid>
+    )
+  }
   return (
-    <Badge variant={status.level} title={status.detail}>
-      {status.label}
-    </Badge>
+    <Stack gap={8}>
+      {element.lists.map((list) => (
+        <p key={list.label} className="text-small text-pretty">
+          <span className="font-medium">{list.label}: </span>
+          {list.items.join(" · ")}
+        </p>
+      ))}
+    </Stack>
   )
 }
 
-function ItemRow({ item }: { item: ManifestItem }) {
+function ElementCard({
+  element,
+  commit,
+}: {
+  element: ElementEntry
+  commit: string
+}) {
+  const [expanded, setExpanded] = useState(false)
   return (
-    <Inline gap={8} align="baseline" justify="between">
-      <Stack gap={0}>
-        <span className="text-small">{item.name}</span>
-        <span className="text-caption text-muted-foreground">{item.meta}</span>
-      </Stack>
-      {item.status && <StatusBadge status={item.status} />}
-    </Inline>
-  )
-}
-
-function ManifestCard({ manifest }: { manifest: ManifestCardData }) {
-  return (
-    <Card size="sm" className="h-full">
+    <Card>
       <CardHeader>
-        <CardTitle className="text-body font-medium">{manifest.name}</CardTitle>
-        <CardDescription className="text-caption">
-          {manifest.path}
-        </CardDescription>
-        <CardAction>
-          <StatusBadge status={manifest.status} />
-        </CardAction>
+        <CardTitle>{element.name}</CardTitle>
       </CardHeader>
       <CardContent>
-        <Stack gap={8}>
-          <p className="text-caption text-muted-foreground">
-            {manifest.description}
+        <Stack gap={16}>
+          <p className="text-small text-muted-foreground text-pretty">
+            {COPY[element.id]}
           </p>
-          <Inline gap={4}>
-            <Badge variant="outline">{manifest.kind}</Badge>
-            {manifest.counts.map((count) => (
-              <Badge key={count.label} variant="muted">
-                {count.value} {count.label}
-              </Badge>
-            ))}
+          <p className="text-small">
+            {element.tally
+              .map((t) => `${t.value} ${t.label}`)
+              .join(" · ")}
+          </p>
+          {expanded && <ElementList element={element} />}
+          <Inline gap={8}>
+            <Button
+              variant="outline"
+              onClick={() => setExpanded((open) => !open)}
+              aria-expanded={expanded}
+            >
+              {expanded ? "Hide the list" : "Show the full list"}
+            </Button>
+            <Button variant="outline" asChild>
+              <a
+                href={actionHref(element, commit)}
+                {...(element.action.kind === "anchor"
+                  ? {}
+                  : { target: "_blank", rel: "noopener noreferrer" })}
+              >
+                {element.action.label}
+              </a>
+            </Button>
           </Inline>
-          {manifest.items && (
-            <Stack gap={8}>
-              {manifest.items.map((item) => (
-                <ItemRow key={item.name} item={item} />
-              ))}
-            </Stack>
-          )}
         </Stack>
       </CardContent>
     </Card>
   )
 }
 
-function ManifestDashboard({ snapshot }: { snapshot: ManifestSnapshot }) {
+function ElementsOfMvds({ snapshot }: { snapshot: ManifestSnapshot }) {
   return (
-    <Stack gap={24}>
-      <Stack gap={8}>
-        <h2 className="text-h2">What the system knows about itself</h2>
-        <p className="text-body text-muted-foreground max-w-prose">
-          Every manifest in the repo, with its real counts and its code-vs-Figma
-          state. Code is the single source of truth and Figma is a generated
-          mirror synced only on request — so a lock that trails HEAD is the{" "}
-          <em>designed</em> state, not a fault. Amber means the mirror has yet to
-          catch up; only red means something genuinely disagrees.
+    <Stack gap={32}>
+      <Stack gap={16}>
+        <h2 className="text-h2 text-balance">Elements of the MVDS</h2>
+        <p className="text-body text-muted-foreground text-pretty max-w-prose">
+          {INTRO}
         </p>
-        <Inline gap={8} align="center" wrap>
-          <p className="text-caption text-muted-foreground">
-            Generated {snapshot.generatedAt.slice(0, 10)} · commit{" "}
-            {snapshot.commit} · Figma synced {snapshot.lock.syncedAt} from{" "}
-            {snapshot.lock.syncedFromCommit.slice(0, 7)}
-          </p>
-          {snapshot.dirty && (
-            <Badge variant="neutral">uncommitted changes</Badge>
-          )}
-        </Inline>
       </Stack>
-      <Grid cols={{ base: 1, md: 2, lg: 3 }} gap={16}>
-        {snapshot.manifests.map((manifest) => (
-          <ManifestCard key={manifest.id} manifest={manifest} />
+      <Stack gap={24}>
+        {snapshot.elements.map((element) => (
+          <ElementCard
+            key={element.id}
+            element={element}
+            commit={snapshot.commit}
+          />
         ))}
-      </Grid>
+      </Stack>
     </Stack>
   )
 }
 
-export { ManifestDashboard }
+export { ElementsOfMvds }

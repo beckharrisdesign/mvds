@@ -1,7 +1,7 @@
 /**
  * Shape of src/generated/manifest-snapshot.json — written by
- * scripts/generate-manifest-snapshot.mjs, one record per manifest in the repo.
- * Keep this in lockstep with the generator's card builders.
+ * scripts/generate-manifest-snapshot.mjs. Keep this in lockstep with the
+ * generator's element builders.
  */
 
 /** Maps 1:1 onto the Badge status triad. */
@@ -13,21 +13,21 @@ export interface ManifestStatus {
   detail?: string
 }
 
-export interface ManifestItem {
-  name: string
-  meta: string
-  status?: ManifestStatus
-}
-
-export interface ManifestCard {
+/**
+ * One element of the MVDS (openspec: improve-manifests-ia). Carries the
+ * generated inventory only — the descriptive copy is founder-authored and
+ * lives in the component. No status: live gate results belong to the
+ * Verification section, sync state to the Figma preview section.
+ */
+export interface ElementEntry {
   id: string
   name: string
-  path: string
-  kind: string
-  description: string
-  counts: { label: string; value: number }[]
-  status: ManifestStatus
-  items?: ManifestItem[]
+  tally: { label: string; value: number }[]
+  /** Full inventory shown by the card's disclosure; label null = plain list. */
+  lists: { label: string | null; items: string[] }[]
+  action:
+    | { label: string; kind: "repo-file" | "repo-dir"; path: string }
+    | { label: string; kind: "anchor"; anchor: string }
 }
 
 /**
@@ -100,5 +100,5 @@ export interface ManifestSnapshot {
     capturedAt: string
     pages: { id: string; name: string; file: string }[]
   } | null
-  manifests: ManifestCard[]
+  elements: ElementEntry[]
 }
