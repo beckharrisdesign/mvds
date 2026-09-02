@@ -6,9 +6,9 @@
 
 ## 1. User outcomes (from spec scenarios)
 
-- [ ] 1.1 Hero speaks the canonical framing — h1 "An opinionated design system that doesn’t drift."; supporting paragraph in the founder's iterated wording ending "…so every new experiment starts with strong principles, and stays that way."; the expressions row reads Starter app · Storybook · Figma · GitHub · npm (the page itself is the first expression, no button).
-- [ ] 1.2 Proof line reads as a checklist — a list labeled "The elements of MVDS" with exactly six checked items: Principles, Token layer, Component library, Figma library, OpenSpec schemas, Skills; the expressions row sits directly below it.
-- [ ] 1.3 README opener matches the site — the opening paragraph carries the same framing, and the getting-started / project-layout lines describe the site, not the retired demo app.
+- [x] 1.1 Hero speaks the canonical framing — h1 "An opinionated design system that doesn’t drift."; supporting paragraph in the founder's iterated wording ending "…so every new experiment starts with strong principles, and stays that way."; the expressions row reads Starter app · Storybook · Figma · GitHub · npm (the page itself is the first expression, no button).
+- [x] 1.2 Proof line reads as a checklist — a list labeled "The elements of MVDS" with exactly six checked items: Principles, Token layer, Component library, Figma library, OpenSpec schemas, Skills; the expressions row sits directly below it.
+- [x] 1.3 README opener matches the site — the opening paragraph carries the same framing, and the getting-started / project-layout lines describe the site, not the retired demo app.
 
 ## 2. Preview (Storybook)
 
@@ -26,3 +26,5 @@
 
 - [x] 4.1 Manual walkthrough against Outcomes — live page at 1280 and 480, light and dark; no runts in hero rows (the 3.5/04.0 delta baseline), single h1, no horizontal overflow at 480.
 - [x] 4.2 `npm run build` · `npm run check:contrast` · `npm run check:principles` · `npm test` (light + dark) — all green.
+
+> §1 verified by the founder 2026-09-02 ("they read right") after reviewing the live preview, approving the Chromatic baselines, and merging PR #105.
