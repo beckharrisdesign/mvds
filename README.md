@@ -1,10 +1,10 @@
 # MVDS — Minimum Viable Design System
 
-An **opinionated design system that doesn’t drift** — built for products made
-with people and AI agents. MVDS turns design intent into reusable primitives and
-machine-enforced constraints, so every new experiment starts coherent, and stays
-that way: tokens, semantic type, layout primitives, component manifests, and
-checks that can fail a build.
+An **opinionated design system that doesn’t drift** — built for both human and
+agentic founders. MVDS turns intent into reusable primitives and machine-enforced
+constraints — so every new experiment starts with strong principles, and stays
+that way. Its elements: principles, the token layer, the component library, the
+Figma library, OpenSpec schemas, and skills.
 
 Under the hood it proves a strong link between shadcn/ui + Tailwind code and Figma
 components, with **code as the single source of truth**.

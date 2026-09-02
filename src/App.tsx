@@ -12,7 +12,7 @@ import { SiteHero } from "@/components/site/site-hero"
 import { VerificationPanel } from "@/components/site/verification-panel"
 import { PrinciplesPanel } from "@/components/site/principles-panel"
 import { FigmaMirror } from "@/components/site/figma-mirror"
-import { REPO_URL } from "@/components/site/repo-links"
+import { figmaUrl, REPO_URL } from "@/components/site/repo-links"
 import { PackageDocs } from "@/components/site/package-docs"
 import { ManifestDashboard } from "@/components/site/manifest-dashboard"
 import type { ManifestSnapshot } from "@/components/site/manifest-snapshot.types"
@@ -47,9 +47,20 @@ function App() {
           <Inline gap={8} justify="between" align="center" className="h-full">
             {/* A wordmark, not the page heading — the hero owns the single h1. */}
             <span className="text-h4 font-semibold">MVDS</span>
+            {/* Destination-titled, icon-free, in the expressions order
+                (Storybook · Figma · GitHub) — founder link rule + design 04.0. */}
             <Inline gap={8}>
               <Button variant="outline" size="sm" onClick={toggleTheme}>
                 {dark ? "Light" : "Dark"} mode
+              </Button>
+              <Button variant="outline" size="sm" asChild>
+                <a
+                  href={STORYBOOK_HREF}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Storybook
+                </a>
               </Button>
               {/* Jump to the in-page mirror (checked-in previews). Only shown
                   when previews are actually committed. */}
@@ -60,16 +71,7 @@ function App() {
               )}
               <Button variant="outline" size="sm" asChild>
                 <a href={REPO_URL} target="_blank" rel="noopener noreferrer">
-                  GitHub ↗
-                </a>
-              </Button>
-              <Button variant="outline" size="sm" asChild>
-                <a
-                  href={STORYBOOK_HREF}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Storybook →
+                  GitHub
                 </a>
               </Button>
             </Inline>
@@ -81,6 +83,7 @@ function App() {
         <Section py={64}>
           <SiteHero
             storybookHref={STORYBOOK_HREF}
+            figmaHref={figmaUrl(snapshot.lock.fileKey)}
             commit={snapshot.commit}
           />
         </Section>
