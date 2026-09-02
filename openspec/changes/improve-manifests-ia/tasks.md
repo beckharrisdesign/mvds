@@ -58,7 +58,7 @@
 
 ## 4. QA
 
-- [ ] 4.1 Manual walkthrough against §1 outcomes, light and dark, 1024 and
+- [x] 4.1 Manual walkthrough against §1 outcomes, light and dark, 1024 and
       480 (no mid-unit count-line breaks, no stranded words in the founder
       copy where CSS can prevent it).
 - [x] 4.2 `npm run build` · `npm run check:contrast` ·
