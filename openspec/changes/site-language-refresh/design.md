@@ -28,7 +28,7 @@ Header chrome (wordmark, theme toggle, Figma / GitHub / Storybook routes) over t
 | Primary file URL      | https://www.figma.com/design/buIM7pFiGK07xzSkWNjcQw (HF MVDS Site — scratch/HF, not Core) |
 | As-is page / frame    | `0.0 As is` — `Landing 1024 — Light` / `Landing 1024 — Dark` (from discovery) |
 | Proposed page / frame | `03.0 Propose: site-language-refresh update` — `Landing 1024 — Light` / `Landing 1024 — Dark` (current iteration; header + hero; dark = Tokens mode flip). Prior iterations kept: `01.0` (initial), `02.0` (founder wording + six elements — canonized from her edit of the 01.5 working frame) |
-| Libraries / version   | MVDS Core (`C20nU0mROzk3Zr0I9BELJF`) Tokens + `Type/*` text styles, imported by key; matches `@beckharrisdesign/mvds@0.4.0` |
+| Libraries / version   | MVDS Core (`C20nU0mROzk3Zr0I9BELJF`) Tokens + `Type/*` text styles imported by key; **Button/Badge on the 03.0 frames are Core component instances** (founder attached the Core asset library 2026-09-02). Core components synced 2026-07-29 from 8f791b1 — trails main by design; see parity review |
 | Breakpoints           | L · 1024px in Figma; S · 480px verified on the coded surface at apply (wrapping guards are code-level: nowrap spans + `text-balance`) |
 | Status                | iterating (03.0 + 03.5 complete) — ready for founder review |
 
@@ -91,7 +91,7 @@ Per-rubric: 11/11 dispositioned by the blind run — `no-runts` **pass**, `aesth
 | Q1 | Dark frame's toggle reads "Dark mode" — state-blind | red | **Mockup artifact** (as P1): the coded toggle relabels "Light mode" in dark; no code change |
 | Q2 | Toggle styled identically to nav pills | amber | Pre-existing (was P2), unchanged here; recorded for the founder |
 | Q3 | Same three destinations in shuffled order: header "Figma · GitHub · Storybook" vs expressions "Storybook · Figma · GitHub" | low | **Addressed:** header reordered to Storybook · Figma · GitHub — the founder's expressions order — on the amended 03.0 frames; `App.tsx` follows at apply |
-| Q4 | Five equal-weight pills, no primary CTA | amber | **Deliberate:** "keep reading" is the primary, buttonless expression (Decision 0); a solid pill would compete with it. Flagged for founder judgment at this stop — flipping "Starter app" to primary is a one-line change if she wants a rendered primary |
+| Q4 | Five equal-weight pills, no primary CTA | amber | **Resolved by founder direction (2026-09-02): all five expressions buttons are primary** ("make the buttons primary - they feel lightweight right now"). 03.0 frames amended to Core `Button variant=default`; code follows at apply |
 | Q5 | "human and agentic founders" / "Openspec schemas" / "Skills" read as insider vocabulary | amber | **Deliberately preserved:** founder-canonical voice, and the six elements intentionally name what the page itself expands below the fold — the expansion is the in-context definition |
 | Q6 | ✓ glyphs half-read as status results | low | Founder-directed treatment (was P3); preserved, still flagged |
 
@@ -99,7 +99,20 @@ Per-rubric: 11/11 dispositioned by the blind run — `no-runts` **pass**, `aesth
 
 ## Decisions
 
-0. **Elements / expressions model (founder, 03.0).** The checklist names what MVDS *is* (six elements, mirroring the page's below-the-fold sections); the button row names where MVDS *shows up* (five expressions, destination-titled, matching the header). "Keep reading" is the first expression and gets no button — the page is it. Consequences taken as design calls, open to founder redline: all five expression buttons are equal-weight outline (a solid primary would compete with the buttonless primary path of reading on), and the checklist's accessible label becomes "The elements of MVDS".
+0. **Elements / expressions model (founder, 03.0).** The checklist names what MVDS *is* (six elements, mirroring the page's below-the-fold sections); the button row names where MVDS *shows up* (five expressions, destination-titled, matching the header). "Keep reading" is the first expression and gets no button — the page is it. All five expression buttons are **primary** (founder redline 2026-09-02, superseding the earlier equal-weight-outline call); the checklist's accessible label becomes "The elements of MVDS".
+
+### Core library parity review (founder ask, 2026-09-02)
+
+With the Core asset library attached to the HF file, the 03.0 frames' Button/Badge lookalikes were replaced with real Core instances (header: `variant=outline, size=sm`; expressions: `variant=default, size=default`; badges: `variant=success` / `variant=outline`) and measured against the code's tuned metrics:
+
+| Element | Code (`src/components/ui/`) | Core instance | Parity |
+| --- | --- | --- | --- |
+| Button `size=sm` height / pad | 24px (`h-6`) / 8px (`px-2`) | 24px / 8px | ✓ |
+| Button `size=default` height / pad | **32px** (`h-8`) / 16px (`px-4`) | **29px** / 16px | ✗ height — Core hugs to 29 instead of fixed 32 |
+| Badge padding | **8px** (`px-2`) | **16px** | ✗ |
+| Color/type bindings | tokens + semantic ramp | Tokens variables + `Type/*` styles | ✓ |
+
+The gaps are in the Core **components**, not the frames: the component library was last synced 2026-07-29 from `8f791b1` (33 commits behind — the designed trailing state), predating the v0.4.0-era tuning. Fix is the founder-requested component sync (`mvds-figma-component-sync`), not hand-editing Core. The frames use the instances as published — true to what the library currently ships.
 2. **Checklist proof line.** Five ✓ items with real list semantics (`role="list"`/`listitem`) — founder direction ("styled like a checklist or some visually more strong presentation"). Check glyphs in `text-success`.
 3. **Link rule applied to chrome, not to the CTAs' voice.** Header buttons are destination titles without icons. The hero CTAs are founder-canonical action labels — the rule's "button format" half; they carry no icons either.
 4. **Runt guards live in code.** `whitespace-nowrap` spans on "that doesn’t drift." / "and stays that way." and `text-balance`/`text-pretty` where they help — the no-runts fix line's sanctioned tools.
