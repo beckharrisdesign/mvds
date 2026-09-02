@@ -6,27 +6,23 @@ import { sourceLabel } from "./principle-display"
 /**
  * PrinciplesPanel — the design principles, as a first-class section.
  *
- * The manifest gives every record two independent answers, and the section's
- * job is keeping both visible without conflating them (they used to coincide;
- * `no-runts` — founder-authored, judgment-held — broke the coincidence):
+ * Two distinctions carry the whole section, and both are read from the manifest
+ * rather than styled in by hand:
  *
- *   enforcement — the GROUPING. `automated` fails a build; `judgment` does
- *                 not, and saying so plainly is the point: the rules that
- *                 matter most to a design system are usually the ones no
- *                 regex can catch, and hiding them would imply only the
- *                 mechanisable ones are real. Judgment records also serve as
- *                 the discovery eval's rubric (openspec: adding-eval-gate).
- *   provenance  — the PER-CARD source line. `founder` is MVDS's own assertion
- *                 and can change when the founder changes her mind. `external`
- *                 was adopted from published work and is answerable to it, so
- *                 it always links its source. Showing them identically would
- *                 let borrowed authority quietly launder an in-house opinion.
+ *   provenance  — `founder` is MVDS's own assertion and can change when the
+ *                 founder changes her mind. `external` was adopted from published
+ *                 work and is answerable to it, so it always links its source.
+ *                 Showing them identically would let borrowed authority quietly
+ *                 launder an in-house opinion.
+ *   enforcement — `automated` fails a build. `judgment` does not, and saying so
+ *                 plainly is the point: the rules that matter most to a design
+ *                 system are usually the ones no regex can catch, and hiding
+ *                 them would imply only the mechanisable ones are real.
  *
  * The card is deliberately lean (openspec: adding-eval-gate, founder review of
  * the 02.0 pair): the manifest's `rationale` and `evalLens` are data for their
  * consumers (docs/agents and the discovery eval), not card copy — and the
- * source is a plain link, not chrome dressed as a Badge. With enforcement
- * carried by the section, the card drops its enforcement Badge too.
+ * source is a plain link, not chrome dressed as a Badge.
  */
 
 function SourceLink({ principle }: { principle: PrincipleRecord }) {
@@ -48,9 +44,16 @@ function SourceLink({ principle }: { principle: PrincipleRecord }) {
 }
 
 function PrincipleCard({ principle }: { principle: PrincipleRecord }) {
+  const automated = principle.enforcement === "automated"
+
   return (
     <Stack gap={8} className="border-border rounded-lg border p-4">
-      <span className="text-body font-medium">{principle.title}</span>
+      <Inline gap={8} align="start" justify="between" wrap>
+        <span className="text-body font-medium">{principle.title}</span>
+        <Badge variant={automated ? "success" : "neutral"}>
+          {automated ? "enforced" : "judgment"}
+        </Badge>
+      </Inline>
 
       <p className="text-small text-muted-foreground">{principle.description}</p>
 
@@ -69,8 +72,9 @@ function PrinciplesPanel({
 }: {
   principles: PrincipleRecord[]
 }) {
+  const authored = principles.filter((p) => p.source.kind === "founder")
+  const adopted = principles.filter((p) => p.source.kind === "external")
   const enforced = principles.filter((p) => p.enforcement === "automated")
-  const guiding = principles.filter((p) => p.enforcement !== "automated")
 
   return (
     <Stack gap={32}>
@@ -79,30 +83,31 @@ function PrinciplesPanel({
           <h2 className="text-h2">Design principles</h2>
           <Inline gap={4} align="center">
             <Badge variant="success">{enforced.length} enforced</Badge>
-            <Badge variant="neutral">{guiding.length} by judgment</Badge>
+            <Badge variant="neutral">
+              {principles.length - enforced.length} by judgment
+            </Badge>
           </Inline>
         </Inline>
         <p className="text-body text-muted-foreground max-w-prose">
           The rules this system actually applies — held as data in{" "}
           <code className="font-mono">principles.config.mjs</code>, not as prose
-          somewhere. Every record answers two questions about itself: can a
-          machine catch you breaking it, and where did it come from — asserted
-          here on MVDS’s own authority, or adopted from published usability
-          work and cited so you can check it.
+          somewhere. Each one says where it came from and whether a machine can
+          catch you breaking it. Some MVDS asserts on its own authority; others
+          are adopted from published usability work and link back to it.
         </p>
       </Stack>
 
       <Stack gap={16}>
         <Stack gap={4}>
-          <h3 className="text-h4">Enforced — fails the build</h3>
+          <h3 className="text-h4">Authored here</h3>
           <p className="text-small text-muted-foreground max-w-prose">
-            Checked mechanically — at the keystroke, on every build, and on
-            every pull request. Break one and the gate names the line and the
-            fix.
+            MVDS's own rules. Every one is machine-enforced — they exist because
+            they could be, and a rule that can fail a build is worth more than a
+            rule in a document.
           </p>
         </Stack>
         <Grid cols={{ base: 1, md: 2 }} gap={16}>
-          {enforced.map((principle) => (
+          {authored.map((principle) => (
             <PrincipleCard key={principle.id} principle={principle} />
           ))}
         </Grid>
@@ -110,15 +115,14 @@ function PrinciplesPanel({
 
       <Stack gap={16}>
         <Stack gap={4}>
-          <h3 className="text-h4">Held by judgment</h3>
+          <h3 className="text-h4">Adopted from published work</h3>
           <p className="text-small text-muted-foreground max-w-prose">
-            No regex can catch these — saying so plainly is the point. Each one
-            works twice: as the rationale for how the system is shaped, and as
-            the rubric the discovery eval holds new surfaces to.
+            Not invented here, and cited so you can check them — every card
+            links the original.
           </p>
         </Stack>
         <Grid cols={{ base: 1, md: 2 }} gap={16}>
-          {guiding.map((principle) => (
+          {adopted.map((principle) => (
             <PrincipleCard key={principle.id} principle={principle} />
           ))}
         </Grid>
