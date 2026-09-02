@@ -42,6 +42,12 @@ Per-rubric summary (color only): visibility-of-system-status **pass** · match-s
 > Generation input for the design proposal — not a report. Scoped to the hero
 > per the 2026-09-02 amendment; out-of-scope findings are listed as a hand-off.
 
+**Founder direction (2026-09-02, applies to the design stage):**
+
+> "url links with icons in this underlined style is visually awkward. Either use the title of the page we're sending people to with a button format, or a full url link. Don't put an icon in general"
+
+Link presentation rule: a link is either a **button titled with the destination's name** or a **full URL** — never an underlined label with an icon glyph, and no ↗/→ icons in general. In this change's scope that hits the header chrome ("GitHub ↗", "Storybook →" — arrows go, and the F3 naming fix applies the rule). The principles source links ("MVDS ↗" / "NN/g H# ↗") are the same pattern's biggest offender — routed to the hand-off below for the manifests session.
+
 **Top issues to fix (in scope — hero):**
 
 1. **F3 (+F2):** one concept, one name — the hero CTA and the header's "Storybook →" name the same destination differently. Whatever the CTA says, it and the header label must read as one concept. (F2's localhost dead-end is dev-env-only — deployed serves `/storybook/` — but the label split stands everywhere.)
@@ -54,6 +60,7 @@ Per-rubric summary (color only): visibility-of-system-status **pass** · match-s
 - **F5 (amber):** citation links land at document tops — no per-rule anchors.
 - **F6 (low):** "NN/g H#" shorthand never expanded.
 - **F7 + F8 (card rows, amber):** card runts at both widths, including on the no-runts card itself.
+- **Founder link rule (2026-09-02):** the cards' underlined "MVDS ↗" / "NN/g H# ↗" source links are exactly the pattern the founder rejected — destination-titled button or full URL, no icons.
 
 **Tradeoffs worth preserving:**
 
