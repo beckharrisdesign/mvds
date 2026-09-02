@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-08-25T19:13:22-05:00",
-  "commit": "a387e02",
+  "generatedAt": "2026-08-27T09:31:34-05:00",
+  "commit": "c84e494",
   "dirty": true,
   "lock": {
     "fileKey": "C20nU0mROzk3Zr0I9BELJF",
     "syncedAt": "2026-07-29",
     "syncedFromCommit": "8f791b1634e16e8c4ea9a135061084126dfcfa7c",
-    "commitsBehind": 29
+    "commitsBehind": 33
   },
   "gates": [
     {
@@ -27,7 +27,7 @@
       "detail": "The golden rules, machine-enforced from the principle manifest.",
       "command": "npm run check:principles",
       "verifiedAt": "build",
-      "result": "87 files clear 9 enforced MVDS principles (light + dark) (+11 guiding, by judgment).",
+      "result": "86 files clear 9 enforced MVDS principles (light + dark) (+11 guiding, by judgment).",
       "status": {
         "level": "success",
         "label": "passing"
@@ -428,14 +428,11 @@
       }
     ]
   },
-  "manifests": [
+  "elements": [
     {
       "id": "principles",
       "name": "Principles",
-      "path": "principles.config.mjs",
-      "kind": "enforcement",
-      "description": "Golden rules encoded as data — machine-enforced by check:principles and the edit-guard hook.",
-      "counts": [
+      "tally": [
         {
           "label": "principles",
           "value": 20
@@ -447,326 +444,45 @@
         {
           "label": "by judgment",
           "value": 11
-        },
-        {
-          "label": "externally sourced",
-          "value": 10
         }
       ],
-      "status": {
-        "level": "neutral",
-        "label": "code-only",
-        "detail": "No Figma mapping applies."
-      },
-      "items": [
+      "lists": [
         {
-          "name": "no-hardcoded-color",
-          "meta": "forbid-source · error"
-        },
-        {
-          "name": "step-on-color-gradations",
-          "meta": "forbid-source · error"
-        },
-        {
-          "name": "step-on-type-ramp",
-          "meta": "forbid-source · error"
-        },
-        {
-          "name": "no-margin-spacing",
-          "meta": "forbid-classname · error"
-        },
-        {
-          "name": "no-raw-flex-grid",
-          "meta": "forbid-classname · error"
-        },
-        {
-          "name": "story-coverage-ui",
-          "meta": "require-sibling-file · error"
-        },
-        {
-          "name": "story-coverage-site",
-          "meta": "require-sibling-file · error"
-        },
-        {
-          "name": "story-coverage-layout",
-          "meta": "require-sibling-file · error"
-        },
-        {
-          "name": "story-coverage-blocks",
-          "meta": "require-sibling-file · error"
-        },
-        {
-          "name": "visibility-of-system-status",
-          "meta": "guiding · error"
-        },
-        {
-          "name": "match-system-and-real-world",
-          "meta": "guiding · error"
-        },
-        {
-          "name": "user-control-and-freedom",
-          "meta": "guiding · error"
-        },
-        {
-          "name": "consistency-and-standards",
-          "meta": "guiding · error"
-        },
-        {
-          "name": "error-prevention",
-          "meta": "guiding · error"
-        },
-        {
-          "name": "recognition-rather-than-recall",
-          "meta": "guiding · error"
-        },
-        {
-          "name": "flexibility-and-efficiency-of-use",
-          "meta": "guiding · error"
-        },
-        {
-          "name": "aesthetic-and-minimalist-design",
-          "meta": "guiding · error"
-        },
-        {
-          "name": "error-recovery",
-          "meta": "guiding · error"
-        },
-        {
-          "name": "help-and-documentation",
-          "meta": "guiding · error"
-        },
-        {
-          "name": "no-runts",
-          "meta": "guiding · error"
-        }
-      ]
-    },
-    {
-      "id": "figma-components",
-      "name": "Figma component manifests",
-      "path": "figma/components.config.mjs",
-      "kind": "figma mirror",
-      "description": "Per-component variant specs, drift-guarded against the code by check:figma; the sync skill reads them as the mirror spec.",
-      "counts": [
-        {
-          "label": "components",
-          "value": 17
-        },
-        {
-          "label": "declared variants",
-          "value": 137
-        },
-        {
-          "label": "synced variants",
-          "value": 134
+          "label": null,
+          "items": [
+            "Don’t drift from the color tokens",
+            "Color modulation steps on the gradation scale",
+            "Typography size steps on the semantic ramp",
+            "Space siblings with gap, not margins",
+            "Layout only via Stack / Inline / Grid",
+            "Every UI component has a story",
+            "Every site section has a story",
+            "Layout family covered in one story",
+            "Blocks family covered in one story",
+            "Show real status, don’t claim it in prose",
+            "Speak the user’s world",
+            "Every path has an exit",
+            "One concept, one expression",
+            "Make the wrong thing hard to type",
+            "Names that mean what they say",
+            "Fast for experts, obvious for first-timers",
+            "Cut surface that doesn’t earn its place",
+            "Errors say what to do next",
+            "Help lives where the work happens",
+            "No runt stands alone"
+          ]
         }
       ],
-      "status": {
-        "level": "neutral",
-        "label": "synced 134/137"
-      },
-      "items": [
-        {
-          "name": "Button",
-          "meta": "3 axes · 72 variants · src/components/ui/button.tsx",
-          "status": {
-            "level": "success",
-            "label": "synced 72/72"
-          }
-        },
-        {
-          "name": "Badge",
-          "meta": "1 axis · 6 variants · src/components/ui/badge.tsx",
-          "status": {
-            "level": "success",
-            "label": "synced 6/6"
-          }
-        },
-        {
-          "name": "Card",
-          "meta": "1 axis · 2 variants · src/components/ui/card.tsx",
-          "status": {
-            "level": "success",
-            "label": "synced 2/2"
-          }
-        },
-        {
-          "name": "Checkbox",
-          "meta": "1 axis · 2 variants · src/components/ui/checkbox.tsx",
-          "status": {
-            "level": "success",
-            "label": "synced 2/2"
-          }
-        },
-        {
-          "name": "Label",
-          "meta": "0 axes · 1 variants · src/components/ui/label.tsx",
-          "status": {
-            "level": "neutral",
-            "label": "not synced"
-          }
-        },
-        {
-          "name": "RadioGroupItem",
-          "meta": "1 axis · 2 variants · src/components/ui/radio-group.tsx",
-          "status": {
-            "level": "success",
-            "label": "synced 2/2"
-          }
-        },
-        {
-          "name": "Select",
-          "meta": "1 axis · 2 variants · src/components/ui/select.tsx",
-          "status": {
-            "level": "success",
-            "label": "synced 2/2"
-          }
-        },
-        {
-          "name": "Switch",
-          "meta": "2 axes · 4 variants · src/components/ui/switch.tsx",
-          "status": {
-            "level": "success",
-            "label": "synced 4/4"
-          }
-        },
-        {
-          "name": "Textarea",
-          "meta": "0 axes · 1 variants · src/components/ui/textarea.tsx",
-          "status": {
-            "level": "neutral",
-            "label": "not synced"
-          }
-        },
-        {
-          "name": "Field",
-          "meta": "1 axis · 2 variants · src/components/forms/field.tsx",
-          "status": {
-            "level": "success",
-            "label": "synced 2/2"
-          }
-        },
-        {
-          "name": "Hero",
-          "meta": "1 axis · 2 variants · src/components/blocks/hero.tsx",
-          "status": {
-            "level": "success",
-            "label": "synced 2/2"
-          }
-        },
-        {
-          "name": "MediaFrame",
-          "meta": "1 axis · 4 variants · src/components/blocks/media-frame.tsx",
-          "status": {
-            "level": "success",
-            "label": "synced 4/4"
-          }
-        },
-        {
-          "name": "Blockquote",
-          "meta": "0 axes · 1 variants · src/components/blocks/blockquote.tsx",
-          "status": {
-            "level": "neutral",
-            "label": "not synced"
-          }
-        },
-        {
-          "name": "Callout",
-          "meta": "1 axis · 2 variants · src/components/blocks/callout.tsx",
-          "status": {
-            "level": "success",
-            "label": "synced 2/2"
-          }
-        },
-        {
-          "name": "Chrome",
-          "meta": "2 axes · 20 variants · src/components/layout/chrome.tsx",
-          "status": {
-            "level": "success",
-            "label": "synced 20/20"
-          }
-        },
-        {
-          "name": "Section",
-          "meta": "2 axes · 10 variants · src/components/layout/section.tsx",
-          "status": {
-            "level": "success",
-            "label": "synced 10/10"
-          }
-        },
-        {
-          "name": "Layer",
-          "meta": "1 axis · 4 variants · src/components/layout/layer.tsx",
-          "status": {
-            "level": "success",
-            "label": "synced 4/4"
-          }
-        }
-      ]
-    },
-    {
-      "id": "conventions",
-      "name": "Conventions",
-      "path": "figma/conventions.mjs",
-      "kind": "mapping rules",
-      "description": "Mechanical code → Figma mapping, declared once: which utility binds to which variable or text style.",
-      "counts": [
-        {
-          "label": "text styles",
-          "value": 9
-        },
-        {
-          "label": "spacing steps",
-          "value": 10
-        },
-        {
-          "label": "radius mappings",
-          "value": 7
-        },
-        {
-          "label": "font weights",
-          "value": 3
-        }
-      ],
-      "status": {
-        "level": "neutral",
-        "label": "code-only",
-        "detail": "Rules, not synced state."
-      }
-    },
-    {
-      "id": "figma-lock",
-      "name": "Figma lock",
-      "path": "figma/figma.lock.json",
-      "kind": "lock file",
-      "description": "Machine-recorded Figma reality — node IDs written by the sync skills so re-syncs update in place.",
-      "counts": [
-        {
-          "label": "components",
-          "value": 17
-        },
-        {
-          "label": "derived variables",
-          "value": 5
-        },
-        {
-          "label": "pages",
-          "value": 3
-        }
-      ],
-      "status": {
-        "level": "neutral",
-        "label": "29 commits behind",
-        "detail": "Synced 2026-07-29 from 8f791b1634e16e8c4ea9a135061084126dfcfa7c — code-first, the mirror trails until the next requested sync."
+      "action": {
+        "label": "All 20 with sources",
+        "kind": "anchor",
+        "anchor": "principles"
       }
     },
     {
       "id": "tokens",
       "name": "Token layer",
-      "path": "src/index.css",
-      "kind": "source of truth",
-      "description": "Colors (light + dark), radius, breakpoints, and the type ramp — the single source every surface reads.",
-      "counts": [
+      "tally": [
         {
           "label": "color utilities",
           "value": 44
@@ -776,39 +492,333 @@
           "value": 63
         },
         {
-          "label": "dark tokens",
+          "label": "dark overrides",
           "value": 36
+        },
+        {
+          "label": "spacing steps",
+          "value": 10
         },
         {
           "label": "radius steps",
           "value": 4
         },
         {
-          "label": "type ramp",
+          "label": "ramp steps",
           "value": 18
         }
       ],
-      "status": {
-        "level": "success",
-        "label": "light/dark parity"
+      "lists": [
+        {
+          "label": "Color",
+          "items": [
+            "background",
+            "foreground",
+            "card",
+            "muted",
+            "border",
+            "primary 1–5",
+            "secondary 1–5",
+            "gray 50–950",
+            "success",
+            "neutral",
+            "destructive"
+          ]
+        },
+        {
+          "label": "Type",
+          "items": [
+            "display",
+            "h1",
+            "h2",
+            "h3",
+            "h4",
+            "body-lg",
+            "body",
+            "small",
+            "caption",
+            "display-size",
+            "h1-size",
+            "h2-size",
+            "h3-size",
+            "h4-size",
+            "body-lg-size",
+            "body-size",
+            "small-size",
+            "caption-size"
+          ]
+        },
+        {
+          "label": "Spacing",
+          "items": [
+            "4",
+            "8",
+            "16",
+            "24",
+            "32",
+            "40",
+            "48",
+            "64",
+            "80",
+            "96"
+          ]
+        },
+        {
+          "label": "Radius",
+          "items": [
+            "sm",
+            "md",
+            "lg",
+            "xl"
+          ]
+        }
+      ],
+      "action": {
+        "label": "src/index.css",
+        "kind": "repo-file",
+        "path": "src/index.css"
       }
     },
     {
-      "id": "scales",
-      "name": "Spacing scale",
-      "path": "src/components/layout/scales.ts",
-      "kind": "spacing scale",
-      "description": "The 8-grid — multiples & fractions of 8: 4 · 8 · 16 · 24 · 32 · 40 · 48 · 64 · 80 · 96. Purge-safe class maps for the layout primitives.",
-      "counts": [
+      "id": "components",
+      "name": "Component library",
+      "tally": [
         {
-          "label": "steps",
+          "label": "layout primitives",
+          "value": 9
+        },
+        {
+          "label": "ui components",
           "value": 10
+        },
+        {
+          "label": "blocks",
+          "value": 4
+        },
+        {
+          "label": "form components",
+          "value": 2
         }
       ],
-      "status": {
-        "level": "neutral",
-        "label": "code-only",
-        "detail": "Mirrored to Figma as the Scales collection (space-{px})."
+      "lists": [
+        {
+          "label": "Layout",
+          "items": [
+            "Chrome",
+            "Container",
+            "Grid",
+            "GridItem",
+            "Inline",
+            "Layer",
+            "Section",
+            "Spacer",
+            "Stack"
+          ]
+        },
+        {
+          "label": "UI",
+          "items": [
+            "Badge",
+            "Button",
+            "Card",
+            "Checkbox",
+            "Input",
+            "Label",
+            "RadioGroup",
+            "Select",
+            "Switch",
+            "Textarea"
+          ]
+        },
+        {
+          "label": "Blocks",
+          "items": [
+            "Blockquote",
+            "Callout",
+            "Hero",
+            "MediaFrame"
+          ]
+        },
+        {
+          "label": "Forms",
+          "items": [
+            "Dropzone",
+            "Field"
+          ]
+        }
+      ],
+      "action": {
+        "label": "src/components",
+        "kind": "repo-dir",
+        "path": "src/components"
+      }
+    },
+    {
+      "id": "figma",
+      "name": "Figma library",
+      "tally": [
+        {
+          "label": "components",
+          "value": 17
+        },
+        {
+          "label": "declared variants",
+          "value": 137
+        },
+        {
+          "label": "text styles",
+          "value": 9
+        },
+        {
+          "label": "pages",
+          "value": 3
+        }
+      ],
+      "lists": [
+        {
+          "label": "Collections",
+          "items": [
+            "Tokens (Light / Dark)",
+            "Scales",
+            "Customize Here"
+          ]
+        },
+        {
+          "label": "Components",
+          "items": [
+            "Button",
+            "Badge",
+            "Card",
+            "Checkbox",
+            "Label",
+            "RadioGroupItem",
+            "Select",
+            "Switch",
+            "Textarea",
+            "Field",
+            "Hero",
+            "MediaFrame",
+            "Blockquote",
+            "Callout",
+            "Chrome",
+            "Section",
+            "Layer"
+          ]
+        },
+        {
+          "label": "Pages",
+          "items": [
+            "foundations",
+            "components",
+            "syncReports"
+          ]
+        }
+      ],
+      "action": {
+        "label": "figma/",
+        "kind": "repo-dir",
+        "path": "figma"
+      }
+    },
+    {
+      "id": "schemas",
+      "name": "Workflow schemas",
+      "tally": [
+        {
+          "label": "schemas",
+          "value": 2
+        },
+        {
+          "label": "stages",
+          "value": 5
+        },
+        {
+          "label": "eval gate",
+          "value": 1
+        }
+      ],
+      "lists": [
+        {
+          "label": "Schemas",
+          "items": [
+            "experiment-hub-lite",
+            "mvds-default"
+          ]
+        },
+        {
+          "label": "Stages",
+          "items": [
+            "proposal · specs · discovery (as-is, eval, summary) · design (propose, eval delta) · tasks"
+          ]
+        }
+      ],
+      "action": {
+        "label": "openspec/",
+        "kind": "repo-dir",
+        "path": "openspec"
+      }
+    },
+    {
+      "id": "skills",
+      "name": "Skills",
+      "tally": [
+        {
+          "label": "workflow entry points",
+          "value": 4
+        },
+        {
+          "label": "voice skills",
+          "value": 4
+        },
+        {
+          "label": "MVDS skills",
+          "value": 3
+        },
+        {
+          "label": "rule files",
+          "value": 3
+        }
+      ],
+      "lists": [
+        {
+          "label": "Entry points",
+          "items": [
+            "opsx-apply",
+            "opsx-archive",
+            "opsx-explore",
+            "opsx-propose"
+          ]
+        },
+        {
+          "label": "Voice",
+          "items": [
+            "design-advisor",
+            "experiment-creator",
+            "prd-writer",
+            "prototype-builder"
+          ]
+        },
+        {
+          "label": "MVDS",
+          "items": [
+            "mvds-figma-component-sync",
+            "mvds-figma-token-sync",
+            "mvds-release-notes"
+          ]
+        },
+        {
+          "label": "Rules",
+          "items": [
+            "figma",
+            "github-workflow",
+            "openspec-workflow"
+          ]
+        }
+      ],
+      "action": {
+        "label": ".claude/skills",
+        "kind": "repo-dir",
+        "path": ".claude/skills"
       }
     }
   ]

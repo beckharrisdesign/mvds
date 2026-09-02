@@ -14,7 +14,7 @@ import { PrinciplesPanel } from "@/components/site/principles-panel"
 import { FigmaMirror } from "@/components/site/figma-mirror"
 import { REPO_URL } from "@/components/site/repo-links"
 import { PackageDocs } from "@/components/site/package-docs"
-import { ManifestDashboard } from "@/components/site/manifest-dashboard"
+import { ElementsOfMvds } from "@/components/site/manifest-dashboard"
 import type { ManifestSnapshot } from "@/components/site/manifest-snapshot.types"
 import snapshotData from "@/generated/manifest-snapshot.json"
 
@@ -85,7 +85,7 @@ function App() {
           />
         </Section>
 
-        <Section bg="card" py={64}>
+        <Section bg="card" py={64} id="principles">
           <PrinciplesPanel principles={snapshot.principles} />
         </Section>
 
@@ -107,7 +107,7 @@ function App() {
         )}
 
         <Section bg="card" py={64}>
-          <ManifestDashboard snapshot={snapshot} />
+          <ElementsOfMvds snapshot={snapshot} />
         </Section>
       </main>
 
