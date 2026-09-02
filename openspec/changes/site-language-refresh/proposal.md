@@ -6,6 +6,13 @@
 
 Supplied with the anchor, the founder's canonical framing (from her own tighter-language session, to be used verbatim): headline "An opinionated design system that doesn't drift."; supporting copy "MVDS is built for products made with people and AI agents. It turns design intent into reusable primitives and machine-enforced constraints—so every new experiment starts coherent, and stays that way." ("experiment" chosen by the founder over screen/product/experience); proof line "Tokens, semantic type, layout primitives, component manifests, and checks that can fail a build." (founder direction: presented as a checklist, not a sentence); CTAs "Browse the system" / "Start with the starter app" / "View package on npm".
 
+**Founder iterations at the design gate (2026-09-02, edited in the HF file and canonized on the 02.0/03.0 pages — these supersede the corresponding copy above):**
+
+- Supporting copy: "MVDS is built for both human and agentic founders. It turns intent into reusable primitives and machine-enforced constraints — so every new experiment starts with strong principles, and stays that way."
+- The checklist is the **elements of MVDS**, six items matching the sections she is expanding below the fold in her parallel session: Principles · Token layer · Component library · Figma library · Openspec schemas · Skills.
+- The button row below it is the **expressions of MVDS**, matching the header's destination naming, in order: keep reading (no button) · Starter app · Storybook · Figma · GitHub · npm — "the elements … are in a nice row, while the EXPRESSIONS of MVDS are separate … Let's make the buttons below the checkmarks match."
+- Headline unchanged.
+
 ## Outcomes
 
 > Amended 2026-09-02 on founder direction: "fwiw this change is focused on the

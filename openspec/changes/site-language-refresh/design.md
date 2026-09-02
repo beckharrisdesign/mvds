@@ -19,7 +19,7 @@ The founder's canonical framing (anchored in proposal.md) replaces the hero's ea
 
 ## User flow / IA
 
-Unchanged: header chrome (wordmark, theme toggle, Figma / GitHub / Storybook routes) over the hero (badges → headline → supporting copy → proof checklist → CTA row). The proof line's promotion from sentence to checklist is the one structural change — it becomes a `role="list"` of five checked items, ending on "Checks that can fail a build".
+Header chrome (wordmark, theme toggle, Figma / GitHub / Storybook routes) over the hero: badges → headline → supporting copy → **elements row** → **expressions row**. The founder's model (03.0 iteration): the checklist names the six *elements* of MVDS (what the system is — Principles, Token layer, Component library, Figma library, Openspec schemas, Skills, matching the sections her parallel session is expanding below the fold), and the buttons beneath name its *expressions* (where it shows up — Starter app, Storybook, Figma, GitHub, npm), with "keep reading" as the first expression, buttonless because the page itself is that expression. The old action-CTA row ("Browse the system" …) is gone.
 
 ## Visual design / Figma
 
@@ -27,10 +27,10 @@ Unchanged: header chrome (wordmark, theme toggle, Figma / GitHub / Storybook rou
 | --------------------- | ----- |
 | Primary file URL      | https://www.figma.com/design/buIM7pFiGK07xzSkWNjcQw (HF MVDS Site — scratch/HF, not Core) |
 | As-is page / frame    | `0.0 As is` — `Landing 1024 — Light` / `Landing 1024 — Dark` (from discovery) |
-| Proposed page / frame | `01.0 Propose: site-language-refresh` — `Landing 1024 — Light` / `Landing 1024 — Dark` (header + hero; dark = Tokens mode flip) |
+| Proposed page / frame | `03.0 Propose: site-language-refresh update` — `Landing 1024 — Light` / `Landing 1024 — Dark` (current iteration; header + hero; dark = Tokens mode flip). Prior iterations kept: `01.0` (initial), `02.0` (founder wording + six elements — canonized from her edit of the 01.5 working frame) |
 | Libraries / version   | MVDS Core (`C20nU0mROzk3Zr0I9BELJF`) Tokens + `Type/*` text styles, imported by key; matches `@beckharrisdesign/mvds@0.4.0` |
 | Breakpoints           | L · 1024px in Figma; S · 480px verified on the coded surface at apply (wrapping guards are code-level: nowrap spans + `text-balance`) |
-| Status                | iterating — ready for founder review |
+| Status                | iterating (03.0 + 03.5 complete) — ready for founder review |
 
 Mapping to code: `src/components/site/site-hero.tsx` (already drafted on this branch) + `src/App.tsx` header labels (new work for tasks). Semantic ramp only (`text-display`, `text-body-lg`, `text-small`, `text-caption`); spacing on the 8-grid via Stack/Inline gaps; checklist glyph in `text-success`.
 
@@ -38,7 +38,7 @@ Mapping to code: `src/components/site/site-hero.tsx` (already drafted on this br
 
 | 0.6 item | How the proposal addresses it |
 | --- | --- |
-| F3 (+F2) one concept, one name | Header button retitles to the destination per the link rule: "Storybook" (arrow dropped). The hero CTA keeps the founder's canonical "Browse the system" — an action label in her voice. Two labels remain, but now one names the destination and one names the action, and neither is an unexplained hybrid; see Decisions for the residual trade-off. F2's dead-end is dev-env-only (deployed `/storybook/`) — unchanged. |
+| F3 (+F2) one concept, one name | **Fully resolved by the 03.0 iteration:** every route is destination-titled, identically in header and expressions row ("Storybook" is "Storybook" everywhere; no "gallery", no "Browse"). The hero/header overlap is now deliberate parallelism — persistent chrome vs the in-flow expressions index. F2's dead-end is dev-env-only (deployed `/storybook/`) — unchanged. |
 | F8 (hero rows) wrapping | Deliberate breaks encoded, not hoped for: headline holds "that doesn’t drift." unbreakable; supporting copy holds "and stays that way."; checklist items are atomic units that wrap between, never inside. Verified at 1280/480 both modes at the apply gates (the Figma pair is 1024-only). |
 | F4 CTA verb honesty | Founder's canonical "Start with the starter app" replaces "Copy the starter app" — the verb no longer promises a copy action the link doesn't perform. |
 | Founder link rule | Header: "GitHub ↗" → "GitHub", "Storybook →" → "Storybook"; no icon glyphs anywhere in the chrome. (Checklist ✓ marks are status glyphs on list items, not link icons — kept.) |
@@ -78,14 +78,34 @@ Per-rubric: 11/11 dispositioned by the blind run — `no-runts` **pass**, `aesth
 
 **Figma `01.5 Eval Delta` page:** frames `Delta — Landing 1024 — Light` / `— Dark` with P-pins + disposition board (annotation layer; this markdown canonical).
 
+## Eval Delta (3.5 — against the 03.0 elements/expressions iteration)
+
+> Blind re-run of the same rubric against the `03.0` frames after the founder's
+> two iterations (02.0 wording + six elements; 03.0 expressions row). Same
+> medium limits as 1.5. `no-runts`: **pass** — headline break confirmed
+> deliberate, paragraph last line near full width. Baseline F dispositions
+> unchanged from 1.5.
+
+| # | Finding | Severity | Disposition |
+| --- | --- | --- | --- |
+| Q1 | Dark frame's toggle reads "Dark mode" — state-blind | red | **Mockup artifact** (as P1): the coded toggle relabels "Light mode" in dark; no code change |
+| Q2 | Toggle styled identically to nav pills | amber | Pre-existing (was P2), unchanged here; recorded for the founder |
+| Q3 | Same three destinations in shuffled order: header "Figma · GitHub · Storybook" vs expressions "Storybook · Figma · GitHub" | low | **Addressed:** header reordered to Storybook · Figma · GitHub — the founder's expressions order — on the amended 03.0 frames; `App.tsx` follows at apply |
+| Q4 | Five equal-weight pills, no primary CTA | amber | **Deliberate:** "keep reading" is the primary, buttonless expression (Decision 0); a solid pill would compete with it. Flagged for founder judgment at this stop — flipping "Starter app" to primary is a one-line change if she wants a rendered primary |
+| Q5 | "human and agentic founders" / "Openspec schemas" / "Skills" read as insider vocabulary | amber | **Deliberately preserved:** founder-canonical voice, and the six elements intentionally name what the page itself expands below the fold — the expansion is the in-context definition |
+| Q6 | ✓ glyphs half-read as status results | low | Founder-directed treatment (was P3); preserved, still flagged |
+
+**Figma `03.5 Eval Delta` page:** frames `Delta — Landing 1024 — Light` / `— Dark` with Q-pins + disposition board (annotation layer; this markdown canonical).
+
 ## Decisions
 
-1. **Founder copy is immutable input.** Headline, supporting copy, proof items, and CTA labels are hers verbatim; design work is presentation (breaks, checklist, chrome), never wording.
+0. **Elements / expressions model (founder, 03.0).** The checklist names what MVDS *is* (six elements, mirroring the page's below-the-fold sections); the button row names where MVDS *shows up* (five expressions, destination-titled, matching the header). "Keep reading" is the first expression and gets no button — the page is it. Consequences taken as design calls, open to founder redline: all five expression buttons are equal-weight outline (a solid primary would compete with the buttonless primary path of reading on), and the checklist's accessible label becomes "The elements of MVDS".
 2. **Checklist proof line.** Five ✓ items with real list semantics (`role="list"`/`listitem`) — founder direction ("styled like a checklist or some visually more strong presentation"). Check glyphs in `text-success`.
 3. **Link rule applied to chrome, not to the CTAs' voice.** Header buttons are destination titles without icons. The hero CTAs are founder-canonical action labels — the rule's "button format" half; they carry no icons either.
 4. **Runt guards live in code.** `whitespace-nowrap` spans on "that doesn’t drift." / "and stays that way." and `text-balance`/`text-pretty` where they help — the no-runts fix line's sanctioned tools.
 
 ## Risks / Trade-offs
 
-- **Residual F3:** "Browse the system" (hero) and "Storybook" (header) still name one destination two ways. Accepted for now: the founder's CTA label is canonical, and the header now at least names the real destination. If the delta or founder review reads it as still confusing, the fallback is dropping the header Storybook button on the landing page (the hero CTA two lines below covers the route).
+- **Hero/header duplication is now deliberate:** Storybook / Figma / GitHub appear in both the header and the expressions row, identically named. Accepted as parallelism (chrome vs index); if founder review reads it as redundant, the fallback is thinning the header on the landing page.
+- **The starter-app scenario in specs** still says buttons per the 03.0 set; the story and README must move with it at apply (six elements, five expressions).
 - **Figma pair is 1024-only:** 480 behavior is asserted by code guards + apply-gate verification, not a mockup frame. Consistent with "the story is the eval target; the pages are the visual record."

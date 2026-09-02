@@ -26,20 +26,20 @@ The hero SHALL render the founder's headline, supporting copy, and CTA labels ve
 #### Scenario: Hero speaks the canonical framing
 
 - **WHEN** a visitor loads the landing page
-- **THEN** the single h1 reads "An opinionated design system that doesn’t drift.", the supporting paragraph reads the anchored copy ending "…so every new experiment starts coherent, and stays that way.", and the CTAs read "Browse the system", "Start with the starter app", "View package on npm"
+- **THEN** the single h1 reads "An opinionated design system that doesn’t drift.", the supporting paragraph reads the anchored copy (as iterated at the design gate) ending "…so every new experiment starts with strong principles, and stays that way.", and the expressions row renders five destination-titled buttons in order: "Starter app", "Storybook", "Figma", "GitHub", "npm" — the page itself is the first expression and gets no button
 
 ### Requirement: Proof line as checklist
 
-The proof of the claim is a scannable checklist, not a sentence — each capability a checked item, ending on the punch.
+The proof of the claim is a scannable checklist, not a sentence — the elements of MVDS, each a checked item, matched below by the expressions row.
 
 **Fails until:** the proof renders as prose instead of a list.
 
-The hero SHALL render the five proof claims as a list with real list semantics (list/listitem roles), each item check-marked.
+The hero SHALL render the six MVDS elements as a list with real list semantics (list/listitem roles), each item check-marked, with the expressions buttons rendered as a matching row directly beneath.
 
 #### Scenario: Proof line reads as a checklist
 
 - **WHEN** the hero renders
-- **THEN** a list labeled "What MVDS ships" contains exactly five items — Tokens, Semantic type, Layout primitives, Component manifests, Checks that can fail a build — each with a check glyph
+- **THEN** a list labeled "The elements of MVDS" contains exactly six items — Principles, Token layer, Component library, Figma library, Openspec schemas, Skills — each with a check glyph, and the expressions button row sits directly below it
 
 ### Requirement: README opener matches the site
 
