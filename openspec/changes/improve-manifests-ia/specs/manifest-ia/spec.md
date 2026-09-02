@@ -40,10 +40,10 @@ incidental array order.
 
 #### Scenario: Dashboard groups manifests by taxonomy
 
-- **WHEN** the landing page's "What the system knows about itself" section
-  renders the manifest snapshot
-- **THEN** manifests appear organized by the approved taxonomy, and the
-  grouping/order is driven by declared snapshot data rather than incidental
+- **WHEN** the landing page's "Elements of the MVDS" section renders the
+  manifest snapshot
+- **THEN** the six elements appear in the approved order (Principles first),
+  driven by the snapshot's declared element order rather than incidental
   ordering.
 
 ### Requirement: The manifest inventory is truthful and complete
@@ -102,11 +102,15 @@ The principles manifest makes visible which principles are industry standards
 (e.g. usability heuristics) and which are founder-authored — a permanent split
 the IA expresses instead of blurring.
 
-**Fails until:** Provenance is readable per principle in the dashboard's
-principles presentation, not only as aggregate counts.
+**Fails until:** The Principles card states the split in its founder-authored
+description, and its "All 20 with sources" action reaches the
+Design-principles section, where provenance is legible per principle.
 
 #### Scenario: Industry vs founder-authored principles distinguishable
 
-- **WHEN** a reader views the principles manifest on the dashboard
-- **THEN** each principle's provenance (externally sourced vs founder-authored)
-  is legible at the item level, and the split is also visible in summary.
+- **WHEN** a reader views the Principles card
+- **THEN** the description states that the golden rules begin with industry
+  standard principles and are extended by the user, and the "All 20 with
+  sources" action reaches the Design-principles section, where each
+  principle's provenance (externally sourced vs founder-authored) is legible
+  at the item level.

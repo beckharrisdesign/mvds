@@ -17,14 +17,14 @@
       card states that the golden rules begin with industry standard
       accessibility and usability principles, and the Token layer card names
       the contrast check.
-- [x] 1.5 Industry vs founder-authored principles distinguishable: the tally
-      carries the split, the expanded list shows all twenty titles, and
-      "All 20 with sources" reaches the Design-principles section for
-      item-level provenance.
+- [x] 1.5 Industry vs founder-authored principles distinguishable: the
+      founder-authored description states the split, the expanded list shows
+      all twenty titles, and "All 20 with sources" reaches the
+      Design-principles section for item-level provenance.
 
 ## 2. Preview (Storybook)
 
-- [x] 2.1 `Site/ManifestDashboard` stories render the new section: collapsed
+- [x] 2.1 `Site/ElementsOfMvds` stories render the new section: collapsed
       default, expanded state, and the live snapshot, in light and dark;
       `npm run storybook`.
 
