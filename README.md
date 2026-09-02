@@ -1,9 +1,10 @@
 # MVDS — Minimum Viable Design System
 
-An **agent-first design system** for early startup prototyping with solid
-foundational design strategy. It encodes intent in code — tokens, an 8-point
-spacing grid, a type ramp, and layout primitives — so both people and LLM agents
-generate consistent, on-brand UI from day one.
+An **opinionated design system that doesn’t drift** — built for both human and
+agentic founders. MVDS turns intent into reusable primitives and machine-enforced
+constraints — so every new experiment starts with strong principles, and stays
+that way. Its elements: principles, the token layer, the component library, the
+Figma library, OpenSpec schemas, and skills.
 
 Under the hood it proves a strong link between shadcn/ui + Tailwind code and Figma
 components, with **code as the single source of truth**.
@@ -69,7 +70,7 @@ Add more anytime: `npx shadcn@latest add dialog tabs …` — then re-apply the
 
 ```bash
 npm install
-npm run dev              # demo app — Card + Button, with a light/dark toggle
+npm run dev              # the MVDS site — landing page + manifest dashboard, light/dark toggle
 npm run storybook        # the living component gallery at http://localhost:6006
 ```
 
@@ -130,8 +131,9 @@ src/
   components/forms/      ← Field + Dropzone (MVDS-authored form patterns)
   components/layout/     ← the layout primitives + scales.ts
   components/blocks/     ← Hero, Callout, Blockquote, MediaFrame
+  components/site/       ← the landing page's sections (hero, principles, gates)
   lib/utils.ts           ← cn() helper
-  App.tsx                ← demo composition
+  App.tsx                ← the site: landing page + manifest dashboard
 .storybook/              ← Storybook config (preview imports the token layer)
 docs/SYNC.md             ← the re-runnable code → Figma workflow
 docs/CONSUMING.md        ← install + wire MVDS into an app (agent-followable)
