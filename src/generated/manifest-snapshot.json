@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-08-25T19:13:22-05:00",
-  "commit": "a387e02",
+  "generatedAt": "2026-08-27T09:31:34-05:00",
+  "commit": "c84e494",
   "dirty": true,
   "lock": {
     "fileKey": "C20nU0mROzk3Zr0I9BELJF",
     "syncedAt": "2026-07-29",
     "syncedFromCommit": "8f791b1634e16e8c4ea9a135061084126dfcfa7c",
-    "commitsBehind": 29
+    "commitsBehind": 33
   },
   "gates": [
     {
@@ -756,7 +756,7 @@
       ],
       "status": {
         "level": "neutral",
-        "label": "29 commits behind",
+        "label": "33 commits behind",
         "detail": "Synced 2026-07-29 from 8f791b1634e16e8c4ea9a135061084126dfcfa7c — code-first, the mirror trails until the next requested sync."
       }
     },

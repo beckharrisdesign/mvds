@@ -1,11 +1,12 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
-import { expect } from "storybook/test"
+import { expect, within } from "storybook/test"
 import { SiteHero } from "./site-hero"
 
 /**
- * SiteHero is the landing page's first screen: the claim, the differentiator,
- * and the two routes a visitor wants (gallery, install). It reads the live
- * package version, so the badge here is whatever `package.json` says today.
+ * SiteHero is the landing page's first screen: headline, supporting copy,
+ * proof line, and the three routes a visitor wants (gallery, starter, npm).
+ * It reads the live package version, so the badge here is whatever
+ * `package.json` says today.
  */
 const meta = {
   title: "Site/SiteHero",
@@ -27,12 +28,18 @@ export const Default: Story = {
       canvas.getByRole("heading", { level: 1 })
     ).toBeInTheDocument()
 
+    // The proof line is a checklist with real list semantics — five claims,
+    // ending on "checks that can fail a build".
+    const proof = canvas.getByRole("list", { name: "What MVDS ships" })
+    await expect(proof).toBeInTheDocument()
+    await expect(within(proof).getAllByRole("listitem")).toHaveLength(5)
+
     // Each CTA must be a real link with an href — they are the page's only
     // route out to the gallery, the starter, and the registry.
     for (const name of [
-      "Browse the gallery",
-      "Copy the starter app",
-      "View on npm",
+      "Browse the system",
+      "Start with the starter app",
+      "View package on npm",
     ]) {
       const link = canvas.getByRole("link", { name })
       await expect(link).toHaveAttribute("href")

@@ -7,10 +7,19 @@ import { starterUrl } from "./repo-links"
 
 const NPM_URL = "https://www.npmjs.com/package/@beckharrisdesign/mvds"
 
+/** The proof line as items — the founder's list, in her order. */
+const PROOF_ITEMS = [
+  "Tokens",
+  "Semantic type",
+  "Layout primitives",
+  "Component manifests",
+  "Checks that can fail a build",
+]
+
 /**
- * SiteHero — the first screen. States what MVDS is, who it is for, and what
- * makes it different, then routes to the two things a visitor actually wants:
- * the gallery (look at it) and the install (use it).
+ * SiteHero — the first screen: headline, supporting copy, proof line, then the
+ * three routes a visitor actually wants (browse it, start from it, install it).
+ * Copy is the founder's canonical MVDS framing — keep it in her words.
  *
  * `storybookHref` and `commit` are injected rather than read from
  * import.meta.env / the snapshot so the story renders deterministically.
@@ -30,32 +39,48 @@ function SiteHero({
       </Inline>
 
       <Stack gap={16}>
-        <h1 className="text-display max-w-[20ch]">
-          A design system that agents can’t drift from.
+        {/* The deliberate break (no-runts): "that doesn’t drift." is kept
+            unbreakable so the clause always lands whole — one line when it
+            fits, else after "system" — never stranding "drift." */}
+        <h1 className="text-display max-w-[29ch]">
+          An opinionated design system{" "}
+          <span className="whitespace-nowrap">that doesn’t drift.</span>
         </h1>
-        <p className="text-body-lg text-muted-foreground max-w-prose">
-          MVDS encodes design intent as data — tokens, an 8-point
-          grid, {/* mvds-allow no-raw-flex-grid — prose copy, not a utility class */}
-          a semantic type ramp — and then <em>enforces</em> it. The rules are a
-          manifest a machine reads, not prose in a wiki that a generated screen
-          quietly ignores.
+        <p className="text-body-lg text-muted-foreground max-w-prose text-pretty">
+          MVDS is built for products made with people and AI agents. It turns
+          design intent into reusable primitives and machine-enforced
+          constraints—so every new experiment starts coherent,{" "}
+          <span className="whitespace-nowrap">and stays that way.</span>
         </p>
+        {/* The proof line, set as a checklist — each claim a checked item, in
+            the founder's order, ending on the punch. role/aria: Inline renders
+            a div, so restore list semantics for screen readers. */}
+        <Inline gap={16} wrap role="list" aria-label="What MVDS ships">
+          {PROOF_ITEMS.map((item) => (
+            <Inline key={item} gap={4} align="center" role="listitem">
+              <span aria-hidden="true" className="text-success">
+                ✓
+              </span>
+              <span className="text-small font-medium">{item}</span>
+            </Inline>
+          ))}
+        </Inline>
       </Stack>
 
       <Inline gap={8} wrap>
         <Button asChild>
           <a href={storybookHref} target="_blank" rel="noopener noreferrer">
-            Browse the gallery
+            Browse the system
           </a>
         </Button>
         <Button variant="outline" asChild>
           <a href={starterUrl(commit)} target="_blank" rel="noopener noreferrer">
-            Copy the starter app
+            Start with the starter app
           </a>
         </Button>
         <Button variant="outline" asChild>
           <a href={NPM_URL} target="_blank" rel="noopener noreferrer">
-            View on npm
+            View package on npm
           </a>
         </Button>
       </Inline>

@@ -8,10 +8,12 @@ import type {
 import liveSnapshot from "@/generated/manifest-snapshot.json"
 
 /**
- * PrinciplesPanel renders the principle manifest with its provenance intact.
- * The fixture pins one of each kind so both distinctions — founder vs external,
- * automated vs judgment — render deterministically; `Live` is the real manifest
- * the landing page ships.
+ * PrinciplesPanel groups by enforcement (the manifest's own IA) and keeps
+ * provenance as a per-card source line. The fixture pins the three cases that
+ * exist in the manifest — founder+enforced, external+judgment, and the
+ * axis-crossing founder+judgment (`no-runts`) that made the two independent —
+ * so the grouping renders deterministically; `Live` is the real manifest the
+ * landing page ships.
  */
 const FIXTURE: PrincipleRecord[] = [
   {
@@ -50,6 +52,24 @@ const FIXTURE: PrincipleRecord[] = [
       ref: "Heuristic 4: Consistency and standards",
     },
   },
+  {
+    id: "no-runts",
+    title: "No runt stands alone",
+    description:
+      "Break lines so no single word or short phrase is stranded on its own — no runts, and no widowed or orphaned lines at a break.",
+    rationale: "A runt snaps the reading rhythm and reads as unconsidered.",
+    fix: "Rebreak the line, or use balanced wrapping so no word stands alone.",
+    severity: "error",
+    enforcement: "judgment",
+    checkKind: "guiding",
+    docs: "AGENTS.md (Type via the semantic ramp)",
+    source: {
+      kind: "founder",
+      name: "MVDS house rules",
+      url: "https://github.com/beckharrisdesign/mvds/blob/main/AGENTS.md",
+      ref: null,
+    },
+  },
 ]
 
 const meta = {
@@ -63,19 +83,27 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 /**
- * BothProvenances — the section's whole job is keeping two distinctions visible,
- * so both are asserted: an authored+enforced rule and an adopted+judgment one.
+ * AxesIndependent — enforcement is the grouping, provenance is the per-card
+ * source line, and neither implies the other. The founder+judgment record
+ * must land in the judgment section (the case the old provenance-first layout
+ * could not place honestly).
  */
-export const BothProvenances: Story = {
+export const AxesIndependent: Story = {
   play: async ({ canvas }) => {
     await expect(canvas.getByText("1 enforced")).toBeInTheDocument()
-    await expect(canvas.getByText("1 by judgment")).toBeInTheDocument()
+    await expect(canvas.getByText("2 by judgment")).toBeInTheDocument()
 
     await expect(
-      canvas.getByRole("heading", { name: "Authored here" })
+      canvas.getByRole("heading", { name: "Enforced — fails the build" })
     ).toBeInTheDocument()
     await expect(
-      canvas.getByRole("heading", { name: "Adopted from published work" })
+      canvas.getByRole("heading", { name: "Held by judgment" })
+    ).toBeInTheDocument()
+
+    // The axis-crossing card renders alongside the adopted heuristic in the
+    // judgment section, carrying its founder source line.
+    await expect(
+      canvas.getByText("No runt stands alone")
     ).toBeInTheDocument()
 
     // An external principle without a working citation is not a citation —
