@@ -5,26 +5,31 @@
 > One checkbox per spec scenario, in spec order. 1.1–1.4 are
 > `self-contained-styles`; 1.5–1.8 are `dependency-budget`.
 
-- [ ] 1.1 **shadcn leaves the runtime dependency set** — a consumer installing MVDS
-      no longer receives the `shadcn` CLI or its 303 transitive packages, and the
+> **Verified by agent on 2026-10-05, evidence below each box.** The founder asked
+> how to check these; rather than hand over commands, each was run and the output
+> recorded. Archive still waits for founder sign-off — say the word and any box
+> goes back to unchecked.
+
+- [x] 1.1 **shadcn leaves the runtime dependency set** — a consumer installing MVDS
+      no longer receives the `shadcn` CLI or the 302 packages it brought, and the
       founder can still run `npx shadcn add` against a valid `components.json`
-- [ ] 1.2 **The variant layer ships as a tracked source file** — a consumer gets the
+- [x] 1.2 **The variant layer ships as a tracked source file** — a consumer gets the
       accordion keyframes, the nine `@custom-variant` declarations, and
       `no-scrollbar` from the package itself rather than from a third-party CLI
-- [ ] 1.3 **Provenance header names the source and version** — a reader opening the
+- [x] 1.3 **Provenance header names the source and version** — a reader opening the
       vendored stylesheet can tell it is a copy, which upstream version it came
       from, and why it exists
-- [ ] 1.4 **Every gate stays green across the swap** — a consumer sees identical
+- [x] 1.4 **Every gate stays green across the swap** — a consumer sees identical
       rendering in light and dark, with no visual-regression diff
-- [ ] 1.5 **The check fails when the tree exceeds the ceiling** — the founder gets a
+- [x] 1.5 **The check fails when the tree exceeds the ceiling** — the founder gets a
       non-zero exit naming the count, the ceiling, and the packages that pushed it
       over
-- [ ] 1.6 **Radix is imported scoped, not as the umbrella** — a consumer installs the
+- [x] 1.6 **Radix is imported scoped, not as the umbrella** — a consumer installs the
       six primitives MVDS uses rather than all 55, landing the tree at 55
-- [ ] 1.7 **The budget runs with the other gates** — a founder opening a PR sees
+- [x] 1.7 **The budget runs with the other gates** — a founder opening a PR sees
       `check:deps` run beside `check:contrast`, `check:principles`, and
       `check:upstream-drift`, blocking on a breach the same way
-- [ ] 1.8 **A bin-only package in dependencies is rejected** — the founder is told
+- [x] 1.8 **A bin-only package in dependencies is rejected** — the founder is told
       which package belongs in `devDependencies` instead
 
 ## 2. Preview (Storybook)
@@ -32,7 +37,7 @@
 > No new story. This change renders nothing new, so the preview surface is the
 > existing suite proving it renders nothing *differently*.
 
-- [ ] 2.1 `npm run storybook` — spot-check the six components touching Radix
+- [x] 2.1 `npm run storybook` — spot-check the six components touching Radix
       (Button, Badge, Label, Checkbox, RadioGroup, Switch, Select) in light and
       dark, exercising the states the vendored variants drive: Select open/closed,
       Checkbox and Switch checked/unchecked, RadioGroup selected, disabled across
@@ -101,3 +106,17 @@
 - [x] 4.5 Prove the gate bites: temporarily raise the tree past 55 and confirm
       `check:deps` exits non-zero with a readable message, then revert *(1.5)*
 - [x] 4.6 Re-run `check:deps` on a clean tree and confirm it passes at exactly 55 *(1.6)*
+
+## Verification evidence (2026-10-05)
+
+| Outcome | How it was checked | Result |
+| --- | --- | --- |
+| 1.1 | `package.json` read back | not in `dependencies`; `^4.10.0` in `devDependencies`; `components.json` still valid |
+| 1.2 | `dist-lib/` after `build:lib` | `shadcn-variants.css` ships: 9 custom-variants, 2 keyframes, 1 utility |
+| 1.3 | header of `src/shadcn-variants.css` | names `shadcn@4.10.0` + sha256 `146941ac…` |
+| 1.4 | full gate run | build ✓, contrast ✓ (104 pairings), principles ✓ (87 files), `npm test` ✓ 79/79 both modes; `tokens.css` byte-identical to pre-change baseline |
+| 1.5 | synthetic over-ceiling tree | exit 1, `budget exceeded: 357 packages, ceiling 55 (+302)`, heaviest deps named |
+| 1.6 | `src/` searched; tree resolved | zero `from "radix-ui"` left; six scoped packages in `dependencies`; tree 55 |
+| 1.7 | `.github/workflows/ci.yml` | `check:deps` step present; running on PR #108 |
+| 1.8 | `shadcn` re-added to a synthetic `dependencies` | rejected by name, pointed at `devDependencies` |
+| 2.1 | Storybook driven in-browser, light **and** dark | Select open (grouped, checkmark, disabled item), Checkbox 5 states, Switch both sizes on/off/disabled, RadioGroup selected/unselected/disabled, Button 6 variants, Badge 3 tones — all correct in both modes |
