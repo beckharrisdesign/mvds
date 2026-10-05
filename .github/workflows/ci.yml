@@ -50,6 +50,9 @@ jobs:
       - name: Design principles (manifest-driven golden rules)
         run: npm run check:principles
 
+      - name: Dependency budget (published tree size + tooling-only deps)
+        run: npm run check:deps
+
       - name: Figma manifest drift (component axes vs code)
         run: npm run check:figma
 

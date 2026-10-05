@@ -2,12 +2,12 @@
 
 ## Context
 
-The published package resolves 385 transitive packages. 303 of them are the
+The published package resolves 386 transitive packages. 303 of them are the
 `shadcn` CLI, present solely to satisfy `src/index.css:16`
 (`@import "shadcn/tailwind.css"`), which supplies 95 lines / 1.6 KB of static
 CSS. A further 29 come from importing the `radix-ui` umbrella (55 declared
 dependencies, every primitive) when `src/` uses six. Removing both lands the tree
-at 54.
+at 55.
 
 Discovery took the N/A path: nothing rendered changes, and all eleven `evalLens`
 rubric records ask questions about a rendered surface. So the design work here is
@@ -34,7 +34,7 @@ faithful, plus the shape of the gate that keeps it from regressing.
 ## User flow / IA
 
 N/A — no user-facing flow. The affected path is a consumer's install and build:
-`npm install @beckharrisdesign/mvds` resolves 54 packages instead of 385, then
+`npm install @beckharrisdesign/mvds` resolves 55 packages instead of 386, then
 `@import "@beckharrisdesign/mvds/styles.css"` resolves entirely within the
 package.
 
@@ -128,12 +128,20 @@ version, which makes the simpler mechanism the more reliable one. The provenance
 header records the package and version; the check reports a diff when the
 installed copy moves.
 
-### D5 — The ceiling is 54, with no headroom
+### D5 — The ceiling is 55, with no headroom
+
+> **Corrected during apply (2026-10-05).** This section first said 54, from a
+> probe that resolved `dependencies` plus `react`/`react-dom` but omitted the
+> `tailwindcss` peer. The spec's stated methodology is `dependencies` + **peers**,
+> under which the real figures are 386 → 55; `tailwindcss` contributes exactly
+> itself (one package, no dependencies) to both ends, so every delta and
+> percentage in this change is unaffected. The ceiling constant is 55.
+
 
 The exact measured post-change count. The next dependency addition fails
 `check:deps` and requires raising the ceiling in the same PR, which is the point:
 growth becomes a reviewable line in a diff rather than a silent accumulation.
-Headroom would reintroduce exactly the slack that let a 303-package CLI sit in
+Headroom would reintroduce exactly the slack that let a 302-package CLI sit in
 `dependencies` through a release.
 
 ### D6 — The bin-only rule is narrow on purpose

@@ -14,7 +14,7 @@ are kept out of `dependencies` by a check rather than by convention.
 - **Job:** keep the published graph small on purpose, and catch a regression in
   review instead of after a release.
 - **Done when:** `npm run check:deps` resolves the published tree, compares it to
-  an authored ceiling of 54, fails above it, and runs in CI beside the existing
+  an authored ceiling of 55, fails above it, and runs in CI beside the existing
   gates.
 - **Not doing:** bounding `devDependencies` (Storybook, Vitest, Playwright, and
   the `openspec` CLI are authoring tools and cost consumers nothing); auditing
@@ -44,7 +44,7 @@ resolved tree exceeds the authored ceiling.
 - **THEN** the seven component files import the six primitives MVDS actually uses
   as `@radix-ui/react-{label,radio-group,checkbox,switch,select,slot}` rather than
   the `radix-ui` umbrella, `tsup.config.ts` externals match, and the resolved tree
-  lands at the ceiling of 54
+  lands at the ceiling of 55
 
 #### Scenario: the budget runs with the other gates
 

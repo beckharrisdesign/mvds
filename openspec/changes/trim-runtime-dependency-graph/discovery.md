@@ -20,7 +20,7 @@ token, class, or state.
 
 This clears the gate's stated bar — *"if the change renders anything a user sees,
 it is not API-only."* Nothing a user sees is rendered differently; what changes is
-the shape of a consumer's `node_modules`, from 385 transitive packages to 54.
+the shape of a consumer's `node_modules`, from 386 transitive packages to 55.
 
 **Rubric check (why N/A rather than a thin eval).** The rubric resolves from the
 eleven `principles.config.mjs` records carrying an `evalLens` — the ten Nielsen

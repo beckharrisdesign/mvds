@@ -13,8 +13,8 @@
   to adopt.
 - **Job:** add MVDS to a project without inheriting a CLI toolchain they will
   never run.
-- **Done when:** the published package resolves **54 transitive packages instead
-  of 385**, `npm run check:deps` fails the build if that number climbs past an
+- **Done when:** the published package resolves **55 transitive packages instead
+  of 386**, `npm run check:deps` fails the build if that number climbs past an
   authored ceiling, and `styles.css` still renders identically in Storybook light
   and dark with every existing gate green.
 - **Not doing:** touching `devDependencies` (Storybook, Vitest, Playwright, and
@@ -33,11 +33,11 @@ packaging mistake that dominates everything else.
 
 | Configuration | Transitive packages |
 |---|---|
-| As published today | **385** |
-| Without `shadcn` | **83** |
-| Without `shadcn`, Radix scoped to what MVDS imports | **54** |
+| As published today | **386** |
+| Without `shadcn` | **84** |
+| Without `shadcn`, Radix scoped to what MVDS imports | **55** |
 
-`shadcn` accounts for **303 of 385 packages — 78% of the graph, 5.8 MB on
+`shadcn` accounts for **302 of 386 packages — 78% of the graph, 5.8 MB on
 disk.** It is a CLI, declared with `"bin"`, and AGENTS.md already invokes it the
 correct way: `npx shadcn@latest add <name>`, which fetches on demand and needs no
 dependency entry at all. It sits in `dependencies` for exactly one reason, a
@@ -50,12 +50,12 @@ src/index.css:16  @import "shadcn/tailwind.css";
 That file is **95 lines / 1.6 KB** of static CSS: two accordion keyframes, nine
 `@custom-variant` declarations, and one `no-scrollbar` utility. There is no build
 step and nothing dynamic. Every consumer of `styles.css` currently installs a
-303-package CLI toolchain to obtain it.
+302-package CLI toolchain to obtain it.
 
 The honest verdict, then, is split. **The graph as published is bad**, and a
 reviewer judging MVDS by its install is judging it fairly. **The system
-underneath is lean.** Strip the one mistake and 83 packages remain; of those, 61
-are Radix and the other 22 are `react`, `react-dom`, `scheduler`, `lucide-react`,
+underneath is lean.** Strip the one mistake and 84 packages remain; of those, 61
+are Radix and the other 23 are `react`, `react-dom`, `scheduler`, `lucide-react`,
 `clsx`, `cva`, `tailwind-merge`, `tw-animate-css`, the Inter font, and Radix's own
 internals (`@floating-ui/*`, `react-remove-scroll`, `aria-hidden`, `use-sidecar`
 and friends). Nothing in that set is unearned. MVDS's dependency discipline is
@@ -127,7 +127,7 @@ None. No component API, token, or rendered output changes.
 
 ## Impact
 
-- **Consumers:** install drops from 385 to 54 transitive packages. No code change
+- **Consumers:** install drops from 386 to 55 transitive packages. No code change
   on their side; `styles.css`, `tokens.css`, and the `themes/*` exports keep their
   current contracts. `tokens.css` is already unaffected, since its build strips
   external `@import`s.

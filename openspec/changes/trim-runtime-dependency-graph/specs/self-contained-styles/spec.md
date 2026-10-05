@@ -25,7 +25,7 @@ records its provenance and stays diffable against the source it came from.
 ### Requirement: Published styles resolve without a CLI package
 
 A consumer installing MVDS gets the variant layer from the package itself, not
-from a 303-package CLI pulled in to supply 1.6 KB of static CSS.
+from a 302-package CLI pulled in to supply 1.6 KB of static CSS.
 
 **Fails until:** `node -e "require('./package.json').dependencies.shadcn"` resolves
 to a version string, or `src/index.css` still contains a bare `shadcn/` specifier.

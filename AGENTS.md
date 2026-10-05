@@ -151,6 +151,7 @@ workflow needs on hand, including `npx openspec`.
 npm run build              # tsc + vite — must pass
 npm run check:contrast     # token-level WCAG AA on every pairing, light + dark — must pass
 npm run check:principles   # machine-enforced golden rules (color/margin/flex-grid/story coverage) — must pass
+npm run check:deps         # published dependency budget (tree size + no tooling-only deps) — must pass
 npm test                   # every story in headless Chromium + axe a11y, LIGHT + DARK — must pass
 ```
 
@@ -177,6 +178,21 @@ keystroke via the `principle-edit-guard` PostToolUse hook. The manifest is also 
 spine of the planned per-context principle cascade (`resolveManifest`,
 [`principles.resolve.mjs`](principles.resolve.mjs)) — principles will later vary by
 company/experiment/product, so encode rules as data, not as hardcoded checks.
+
+**The published dependency graph is budgeted.** `npm run check:deps` resolves
+`dependencies` + peers and fails above a ceiling authored in
+[`scripts/check-deps.mjs`](scripts/check-deps.mjs) (**55** today). It also fails any
+`dependencies` entry that declares a `bin` and is imported nowhere under `src/` —
+✅ **a CLI belongs in `devDependencies`, invoked with `npx`**, because every consumer
+installs what sits in `dependencies`. That rule exists because `shadcn` sat there to
+satisfy one `@import`, costing 302 packages (78% of the install) to ship ~1.6 KB of
+static CSS; vendoring it and scoping the `radix-ui` umbrella to the six primitives
+`src/` imports took the tree from 386 to 55. The ceiling has **no headroom on
+purpose** — raising it is a deliberate line edited in the same PR that adds the
+dependency, not a number that drifts. Vendored upstream CSS
+([`src/shadcn-variants.css`](src/shadcn-variants.css)) is byte-compared against the
+installed devDependency by the same check, so a stale copy is caught without a
+network fetch.
 
 **Isolate experiments.** Never bundle throwaway/experimental edits (a token you're
 trying out, a Chromatic probe) into a PR with real changes — put them on their own
