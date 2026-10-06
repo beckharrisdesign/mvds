@@ -59,8 +59,8 @@ has a home in the rendered taxonomy (none dropped, none uncategorized).
 #### Scenario: Every snapshot manifest has a place
 
 - **WHEN** the snapshot generator emits its full set of manifests
-- **THEN** each one renders inside a taxonomy group on the dashboard, with its
-  real counts, and no manifest is omitted or left ungrouped.
+- **THEN** each one renders inside one of the six elements on the dashboard,
+  with its real counts, and no manifest is omitted or left unplaced.
 
 ### Requirement: Each manifest declares its enforcement story
 
