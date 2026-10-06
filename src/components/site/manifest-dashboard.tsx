@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { Fragment, useState } from "react"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -89,10 +89,19 @@ function ElementCard({
           <p className="text-small text-muted-foreground text-pretty">
             {COPY[element.id]}
           </p>
+          {/* Each count+label is one unit: it may break at a separator, never
+              inside a pair. At 480 the unjoined string stranded "10" from
+              "spacing steps" and split "2 form / components" (openspec:
+              improve-manifests-ia 4.1). */}
           <p className="text-small">
-            {element.tally
-              .map((t) => `${t.value} ${t.label}`)
-              .join(" · ")}
+            {element.tally.map((t, i) => (
+              <Fragment key={t.label}>
+                {i > 0 && " · "}
+                <span className="whitespace-nowrap">
+                  {t.value} {t.label}
+                </span>
+              </Fragment>
+            ))}
           </p>
           {expanded && <ElementList element={element} />}
           <Inline gap={8}>

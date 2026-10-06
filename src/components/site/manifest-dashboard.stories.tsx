@@ -30,7 +30,7 @@ type Story = StoryObj<typeof meta>
  * card order (Principles first), and that no Badge renders in the section.
  */
 export const Collapsed: Story = {
-  play: async ({ canvas, canvasElement }) => {
+  play: async ({ args, canvas, canvasElement }) => {
     await expect(
       canvas.getByRole("heading", { name: "Elements of the MVDS" })
     ).toBeInTheDocument()
@@ -43,6 +43,30 @@ export const Collapsed: Story = {
     await expect(
       canvasElement.querySelectorAll('[data-slot="badge"]').length
     ).toBe(0)
+    // Each count+label is one unbreakable unit. A plain joined string let the
+    // browser split "10 / spacing steps" and "2 form / components" at 480
+    // (openspec: improve-manifests-ia 4.1) — a defect no eye catches twice.
+    const units = [
+      ...canvasElement.querySelectorAll<HTMLElement>("span.whitespace-nowrap"),
+    ]
+    // Counting the selected nodes alone would fail open: the selector IS the
+    // class under test, so stripping it from a subset drops those units out
+    // of the loop and the rest still pass. Pin the count to the snapshot so
+    // every generated unit has to be present.
+    const expected = args.snapshot.elements.reduce(
+      (n, element) => n + element.tally.length,
+      0
+    )
+    await expect(units.length).toBe(expected)
+    for (const unit of units) {
+      await expect(unit.textContent?.trim()).toMatch(/^\d+ \S/)
+      // getClientRects() yields one rect per inline fragment, so count the
+      // distinct line tops instead: >1 means the unit split across lines.
+      const lines = new Set(
+        [...unit.getClientRects()].map((r) => Math.round(r.top))
+      )
+      await expect(lines.size).toBe(1)
+    }
   },
 }
 
