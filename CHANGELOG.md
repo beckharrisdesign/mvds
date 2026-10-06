@@ -12,6 +12,102 @@ All notable changes to MVDS are recorded here. The format follows
 
 ## [Unreleased]
 
+The packaging release. Installing MVDS went from 386 transitive packages to 55,
+and the z-layer utilities started working for the first time. Behind that, the
+OpenSpec loop grew a discovery eval stage and the capability registry went from
+one promoted spec to fifteen — the repo now records what it knows about itself.
+
+### Migration from 0.4.0
+
+1. **The `z-*` utilities were inert and now emit.** `z-overlay`, `z-float`,
+   `z-modal`, `z-toast` and `z-chrome` were authored against a `--z-*`
+   custom-property prefix Tailwind v4 does not read, so no rule was ever
+   generated and every one of them computed `z-index: auto`. They now resolve
+   to 100 / 200 / 300 / 400 (chrome 10). **If you worked around the dead
+   utilities with your own z-index, re-check your stacking** — the class names
+   are unchanged, so the fix is silent at the call site.
+   ([#93](https://github.com/beckharrisdesign/mvds/pull/93))
+2. **Button's default hover is no longer pixel-identical.** The last
+   brand-family alpha in vendored `ui/` is replaced by a `color-mix` on
+   `--primary`. Alpha composites in sRGB, `color-mix` interpolates in oklch, so
+   light-mode hover moves `#454545` → `#3e3e3e`. Intentional: oklch is the
+   system's colour space.
+   ([#95](https://github.com/beckharrisdesign/mvds/pull/95))
+
+### Changed
+
+- **The published dependency graph is 86% smaller** — 386 transitive packages
+  → **55**. `shadcn` sat in runtime `dependencies` to satisfy one `@import`
+  supplying ~1.6 KB of static CSS, costing 302 packages — 78% of what every
+  consumer installed. That CSS is vendored at `src/shadcn-variants.css` and
+  `shadcn` is a devDependency, so `npx shadcn add` is unaffected; the seven
+  `ui/` files that imported the `radix-ui` umbrella now import the six
+  primitives they actually use. A new `check:deps` gate holds the line with a
+  ceiling of 55 and no headroom, rejects any `bin`-declaring runtime dependency
+  imported nowhere under `src/`, and byte-compares the vendored CSS against
+  upstream. ([#108](https://github.com/beckharrisdesign/mvds/pull/108))
+- **The stepping rule now names its exception.** Gradation steps govern
+  *authored surfaces*; interaction states derive from the variant's own rest
+  token. A step is an absolute position and a hover is a relative offset, so
+  forcing hovers onto steps is a brand-specific guess — proved by the contrast
+  gate, which caught terracotta/dark at 2.78:1 when the stepped version was
+  tried. Enforced as a narrowed pattern rather than per-line suppressions.
+  ([#95](https://github.com/beckharrisdesign/mvds/pull/95),
+  [#96](https://github.com/beckharrisdesign/mvds/pull/96))
+- **The capability registry went from 1 promoted spec to 15.** Every change
+  shipped through v0.4.0 had left its delta specs stranded in change folders;
+  those promoted, and the loop has stayed drained since. `openspec/changes/`
+  now holds only `archive/`.
+  ([#92](https://github.com/beckharrisdesign/mvds/pull/92),
+  [#104](https://github.com/beckharrisdesign/mvds/pull/104),
+  [#107](https://github.com/beckharrisdesign/mvds/pull/107),
+  [#109](https://github.com/beckharrisdesign/mvds/pull/109),
+  [#111](https://github.com/beckharrisdesign/mvds/pull/111))
+- **The site speaks the canonical framing** — the hero carries the founder's
+  copy verbatim with the proof line as a checklist, and the manifest dashboard
+  was rebuilt as "Elements of the MVDS": six peer cards in a declared order,
+  each stating what it is, what is checked, and by which gate.
+  ([#105](https://github.com/beckharrisdesign/mvds/pull/105),
+  [#106](https://github.com/beckharrisdesign/mvds/pull/106))
+
+### Added
+
+- **A discovery eval stage in the OpenSpec loop.** A change now captures and
+  judges the current surface (`0.0 As-is` → `0.5 Eval` → `0.6 Eval Summary`,
+  founder stop) *before* a proposal exists, and every proposal is judged
+  comparatively via a `1.5 Eval Delta` ledger. The rubric is manifest data —
+  principle records carrying an `evalLens`, all ten Nielsen heuristics — not a
+  hardcoded checklist. The first full live run caught a mailto dead end and
+  four typographic runts.
+  ([#98](https://github.com/beckharrisdesign/mvds/pull/98),
+  [#101](https://github.com/beckharrisdesign/mvds/pull/101))
+- **`/opsx-propose`, `/opsx-explore`, `/opsx-apply`, `/opsx-archive` as real
+  Claude Code commands**, with a per-phase model policy: apply is pinned to
+  sonnet (mechanical execution against an approved `tasks.md`), the judgment
+  phases inherit the founder's choice, and the two side-effectful phases are
+  founder-triggered only.
+  ([#99](https://github.com/beckharrisdesign/mvds/pull/99),
+  [#100](https://github.com/beckharrisdesign/mvds/pull/100))
+
+### Fixed
+
+- **The z-layer tokens land on the Tailwind v4 namespace** — see Migration.
+  Measured before: all four Layer levels computed `z-index: auto`. After:
+  100 / 200 / 300 / 400.
+  ([#93](https://github.com/beckharrisdesign/mvds/pull/93))
+- **The post-merge hook now recognises squash merges.** It only detected true
+  merge commits, so every squash-merged PR branch was skipped and stale
+  branches accumulated until hand-cleaned; it now proves a branch's work is on
+  main by `git cherry` patch-equivalence.
+  ([#94](https://github.com/beckharrisdesign/mvds/pull/94))
+- **Promoted specs carry the `## Purpose` section the validator requires.**
+  Every spec failed `openspec validate --specs`, which made `openspec archive`
+  abort and forced `--no-validate` — skipping validation of the delta being
+  promoted. ([#97](https://github.com/beckharrisdesign/mvds/pull/97))
+- **Count-and-label pairs no longer split across lines** in the site's element
+  tallies at narrow widths.
+  ([#110](https://github.com/beckharrisdesign/mvds/pull/110))
+
 ## [0.4.0] - 2026-08-23
 
 The theming release, plus the first-screen controls. Color modulation became
