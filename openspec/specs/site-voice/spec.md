@@ -32,7 +32,7 @@ The hero SHALL render the founder's headline, supporting copy, and CTA labels ve
 
 The proof of the claim is a scannable checklist, not a sentence — the elements of MVDS, each a checked item, matched below by the expressions row.
 
-**Fails until:** the proof renders as prose instead of a list.
+**Fails until:** the proof renders as a list with real list/listitem semantics, each of the six elements check-marked.
 
 The hero SHALL render the six MVDS elements as a list with real list semantics (list/listitem roles), each item check-marked, with the expressions buttons rendered as a matching row directly beneath.
 
@@ -45,7 +45,7 @@ The hero SHALL render the six MVDS elements as a list with real list semantics (
 
 The repo's front door and the site's front door say the same thing.
 
-**Fails until:** README still opens "An agent-first design system for early startup prototyping…".
+**Fails until:** README opens with the canonical framing — "An **opinionated design system that doesn’t drift**" and the anchored supporting copy — rather than the earlier "An agent-first design system for early startup prototyping…".
 
 The README opening paragraph SHALL carry the canonical framing (headline claim, supporting copy, proof list) and its descriptions of `npm run dev` / `App.tsx` SHALL match what they actually serve.
 
