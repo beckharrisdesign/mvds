@@ -43,6 +43,22 @@ export const Collapsed: Story = {
     await expect(
       canvasElement.querySelectorAll('[data-slot="badge"]').length
     ).toBe(0)
+    // Each count+label is one unbreakable unit. A plain joined string let the
+    // browser split "10 / spacing steps" and "2 form / components" at 480
+    // (openspec: improve-manifests-ia 4.1) — a defect no eye catches twice.
+    const units = [
+      ...canvasElement.querySelectorAll<HTMLElement>("span.whitespace-nowrap"),
+    ]
+    await expect(units.length).toBeGreaterThan(0)
+    for (const unit of units) {
+      await expect(unit.textContent?.trim()).toMatch(/^\d+ \S/)
+      // getClientRects() yields one rect per inline fragment, so count the
+      // distinct line tops instead: >1 means the unit split across lines.
+      const lines = new Set(
+        [...unit.getClientRects()].map((r) => Math.round(r.top))
+      )
+      await expect(lines.size).toBe(1)
+    }
   },
 }
 

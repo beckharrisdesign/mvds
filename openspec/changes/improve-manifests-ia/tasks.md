@@ -58,8 +58,29 @@
 
 ## 4. QA
 
-- [ ] 4.1 Manual walkthrough against §1 outcomes, light and dark, 1024 and
-      480 (no mid-unit count-line breaks, no stranded words in the founder
-      copy where CSS can prevent it).
+- [x] 4.1 Walkthrough against §1 outcomes, light and dark, 1024 and 480 —
+      driven in headless Chromium rather than handed over as a checklist,
+      collapsed and expanded in all four combinations. Evidence ledger:
+
+      - **§1.1 order** — `Principles → Token layer → Component library →
+        Figma library → Workflow schemas → Skills` in all 4 combinations.
+      - **§1.2 no orphans** — six cards, real counts; scales inside Token
+        layer, the three mirror files inside Figma library.
+      - **§1.3/1.4** — founder copy renders verbatim; Principles opens on
+        "industry standard accessibility and usability principles", Token
+        layer names the contrast check.
+      - **§1.5** — Principles disclosure lists the twenty titles; "All 20
+        with sources" resolves to `#principles`.
+      - **no badges** — 0 in every combination.
+      - **stranded words** — none; `text-wrap: pretty` holds on all six
+        copy blocks at both widths, both modes.
+      - **mid-unit count-line breaks** — FAILED at 480 on first run:
+        Token layer split `10 / spacing steps`, Component library split
+        `2 form / components`, Skills split `3 rule / files`. 1024 was
+        clean, so the joined tally string was breaking at any space.
+        Fixed by making each count+label an unbreakable unit (the line may
+        still break at a `·`). Re-run after the fix: 0 breaks in all four
+        combinations, and `Collapsed` now carries an assertion so the
+        regression cannot return unseen.
 - [x] 4.2 `npm run build` · `npm run check:contrast` ·
       `npm run check:principles` · `npm test` (light + dark) all pass.
