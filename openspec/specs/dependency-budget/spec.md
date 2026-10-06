@@ -30,8 +30,8 @@ The number of packages a consumer installs is written down in the repo and
 enforced, so growth is a decision someone makes rather than something that
 happens.
 
-**Fails until:** `npm run check:deps` does not exist, or it passes while the
-resolved tree exceeds the authored ceiling.
+**Fails until:** `npm run check:deps` resolves the published tree and exits
+non-zero when it exceeds the authored ceiling.
 
 #### Scenario: the check fails when the tree exceeds the ceiling
 
@@ -51,16 +51,18 @@ resolved tree exceeds the authored ceiling.
 #### Scenario: the budget runs with the other gates
 
 - **WHEN** CI runs on a pull request
-- **THEN** `check:deps` runs alongside `check:contrast`, `check:principles`, and
-  `check:upstream-drift`, and a breach blocks the PR the same way they do
+- **THEN** `check:deps` runs in the `build-and-test` job beside `check:contrast`,
+  `check:principles`, and `check:figma`, and a breach blocks the PR the same way
+  they do — unlike the separate `upstream-drift` job, which is advisory by design
+  and exits 0
 
 ### Requirement: Tooling-only packages cannot sit in dependencies
 
 The specific bug this change removes — a CLI in `dependencies` — is caught by a
 rule rather than left to review attention.
 
-**Fails until:** a package that declares `bin` and is imported nowhere under
-`src/` can be added to `dependencies` with every check passing.
+**Fails until:** `check:deps` rejects a package that declares `bin` and is
+imported nowhere under `src/`, naming `devDependencies` as its correct home.
 
 #### Scenario: a bin-only package in dependencies is rejected
 

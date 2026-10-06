@@ -29,8 +29,8 @@ As proposed (proposal.md, openspec change `trim-runtime-dependency-graph`, archi
 A consumer installing MVDS gets the variant layer from the package itself, not
 from a 302-package CLI pulled in to supply 1.6 KB of static CSS.
 
-**Fails until:** `node -e "require('./package.json').dependencies.shadcn"` resolves
-to a version string, or `src/index.css` still contains a bare `shadcn/` specifier.
+**Fails until:** `shadcn` is absent from `dependencies` in `package.json`, and
+`src/index.css` carries no bare `shadcn/` specifier.
 
 #### Scenario: shadcn leaves the runtime dependency set
 
@@ -50,8 +50,8 @@ to a version string, or `src/index.css` still contains a bare `shadcn/` specifie
 A reader can tell at a glance that the file is a copy, which upstream version it
 was taken from, and how to check whether that copy has gone stale.
 
-**Fails until:** the vendored file carries no provenance header, or nothing in the
-repo can report drift against upstream.
+**Fails until:** the vendored file carries a provenance header naming its upstream
+package and version, and `check:deps` reports drift against it.
 
 #### Scenario: provenance header names the source and version
 
@@ -65,7 +65,7 @@ repo can report drift against upstream.
 Removing the dependency is a packaging change, not a visual one. Nothing a
 consumer sees moves.
 
-**Fails until:** any existing gate that passed before the change fails after it.
+**Fails until:** every gate that passed before the change still passes after it.
 
 #### Scenario: every gate stays green across the swap
 
