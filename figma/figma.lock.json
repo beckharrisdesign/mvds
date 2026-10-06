@@ -1,8 +1,8 @@
 {
-  "$comment": "Machine-recorded Figma reality — node IDs written by the mvds-figma-component-sync skill after each run (manifests are the human-reviewed intent; this is the package-lock analog). componentSetId null means either not yet adopted/created (for multi-variant components) OR a deliberate single-component with no variant axes (Label/Textarea/Blockquote — check for a sibling componentId field). The sync's inspect phase resolves by name as a self-healing fallback and repairs this file if nodes were moved or renamed in Figma.",
+  "$comment": "Machine-recorded Figma reality — node IDs written by the mvds-figma-component-sync skill after each run (manifests are the human-reviewed intent; this is the package-lock analog). componentSetId null means either not yet adopted/created (for multi-variant components) OR a deliberate single-component with no variant axes (Label/Textarea/Blockquote — check for a sibling componentId field). The sync's inspect phase resolves by name as a self-healing fallback and repairs this file if nodes were moved or renamed in Figma. Top-level syncedAt/syncedFromCommit record the last code->Figma SYNC. They read 2026-07-29/8f791b1 until 2026-10-06 even though the 2026-08-23 token sync (PR #87) had already written gradationVariables and typography and shipped Input/Dropzone component sets - that sync updated its own sections but not this stamp or the components map, so the landing page reported the mirror ~14 commits further behind than it was. Corrected to the commit that sync ran from. Figma-side note: on 2026-10-06 the Foundations documentation board was repaired separately (the --primary-*/--secondary-* steps specimens still rendered 11 swatches bound to the deleted 50...950 variables, and the layer diagram still taught primary-600/primary-400); no variables changed.",
   "fileKey": "C20nU0mROzk3Zr0I9BELJF",
-  "syncedAt": "2026-07-29",
-  "syncedFromCommit": "8f791b1634e16e8c4ea9a135061084126dfcfa7c",
+  "syncedAt": "2026-08-23",
+  "syncedFromCommit": "9d5f5c328684c410f70c0a9fbece74cc408c537a",
   "pages": {
     "foundations": "0:1",
     "components": "95:4",
@@ -254,6 +254,24 @@
         "level=overlay": "403:34",
         "level=float": "403:36",
         "level=toast": "403:40"
+      }
+    },
+    "Input": {
+      "componentSetId": "690:25",
+      "pageId": "95:4",
+      "variants": {
+        "size=sm": "690:21",
+        "size=default": "690:19",
+        "size=lg": "690:23"
+      }
+    },
+    "Dropzone": {
+      "componentSetId": "690:35",
+      "pageId": "95:4",
+      "variants": {
+        "state=default": "690:26",
+        "state=dragging": "690:29",
+        "state=disabled": "690:32"
       }
     }
   },
