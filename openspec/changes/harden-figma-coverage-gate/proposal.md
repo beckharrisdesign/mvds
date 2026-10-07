@@ -14,11 +14,15 @@
   gate; the mirrorable scope and its exclusions are **data** carrying reasons,
   not paths hardcoded in the script; and Input and Dropzone are manifested, so
   the gate's count is derived from reality rather than from a list.
-- **Not doing:** manifests for the native auto-layout primitives (Stack, Inline,
-  Grid, GridItem, Container, Spacer stay native — they get explicit exclusion
-  records, not mirrors); mirroring `src/components/site/` (landing-page surface,
-  not DS surface); any Figma write or sync (one-way, and only when asked); the
-  lock-schema split of token vs component baselines (Copilot's option B on
+- **Not doing:** growing the mirror. Declared coverage goes from 17 to 19 and
+  stops there, and no component gains a variant. The native auto-layout
+  primitives (Stack, Inline, Grid, GridItem, Container, Spacer) **stay native**
+  on the existing rationale — Chrome/Section/Layer are visual surfaces so they
+  earn component corollaries, while pure-arrangement primitives would mirror as
+  empty frames; they get a one-line exclusion record, never a mirror. Also not
+  doing: `src/components/site/` (landing-page surface, not DS surface); any
+  Figma write or sync (one-way, and only when asked); the lock-schema split of
+  token vs component baselines (Copilot's option B on
   beckharrisdesign/mvds#113 — deferred there, still deferred).
 
 ## Why
