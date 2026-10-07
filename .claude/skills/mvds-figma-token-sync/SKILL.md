@@ -86,7 +86,10 @@ file's structure isn't re-discovered each time.
    `fontFamilyVariable { name, id, value }` + per style `{ id, fontFamily,
    fontStyle, bound }` (resolved values, even when variable-bound) — then commit
    on a `chore/figma-lock-…` branch and confirm `npm run check:figma` passes
-   with **zero** typography warnings.
+   with **zero** typography warnings. ❌ Never touch the **top-level**
+   `syncedAt`/`syncedFromCommit` — that stamp records the last *component* sync
+   and belongs to `mvds-figma-component-sync` (step 7). A token run that moved it
+   would claim a component baseline it never verified.
 
 ## Out of scope
 

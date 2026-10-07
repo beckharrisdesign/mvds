@@ -131,9 +131,11 @@ branch-review description. Nothing else changes.)
      `Tokens` collection's Dark mode; correct dark rendering proves bindings,
      not baked colors.
 7. **Record.** Update `figma/figma.lock.json` with every componentSetId +
-   variant node ID and `syncedAt`; commit it on a `chore/figma-lock-…` branch
-   per the standard PR workflow (plus any manifest corrections the run
-   surfaced).
+   variant node ID, and set the **top-level** `syncedAt`/`syncedFromCommit` —
+   this skill is the only owner of that stamp, so it must name the commit whose
+   components you just mirrored (`git rev-parse HEAD` of the revision you synced
+   from), not merely today's HEAD. Commit it on a `chore/figma-lock-…` branch per
+   the standard PR workflow (plus any manifest corrections the run surfaced).
 
 ## Out of scope
 
