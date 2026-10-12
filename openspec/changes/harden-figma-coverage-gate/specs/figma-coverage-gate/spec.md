@@ -86,17 +86,22 @@ mismatch, without inferring whether the component ought to be mirrored.
 What Figma actually holds and what the manifests declare are compared in both
 directions, so the mirror cannot hold a component nobody declared.
 
-**Fails until:** a component set present in `figma/figma.lock.json` with no
-manifest exits `check:figma` non-zero, and a manifest with no lock entry reports
-a warning while leaving the exit code clean.
+**Fails until:** **every** entry in `lock.components` with no manifest exits
+`check:figma` non-zero — whatever Figma node kind it names, a variant set
+(`componentSetId`) or a single component (`componentId` with a null
+`componentSetId`, as `Label`, `Textarea` and `Blockquote` are today) — and a
+manifest with no lock entry reports a warning while leaving the exit code clean.
 
-SHALL error on lock-without-manifest and warn on manifest-without-lock, the
-latter being a legitimate not-yet-synced state.
+SHALL iterate `lock.components` entry-wise and never key the check on
+`componentSetId`, so a singleton cannot fall outside reconciliation; error on
+lock-without-manifest, warn on manifest-without-lock, the latter being a
+legitimate not-yet-synced state.
 
 #### Scenario: The lock holds an undeclared component
 
-- **WHEN** `figma.lock.json` records a component set that no manifest declares
-- **THEN** the gate exits non-zero and names that component set
+- **WHEN** `figma.lock.json` records an entry no manifest declares — as a
+  variant set **or** as a single component with a null `componentSetId`
+- **THEN** the gate exits non-zero and names that entry in both cases
 
 ### Requirement: Input and Dropzone are mirrored
 

@@ -55,9 +55,12 @@ it.
   component file to a manifest via the existing `code.file` field, and errors on
   any file that is neither manifested nor carried by an explicit exclusion
   record. Three states, no fourth.
-- The gate gains a **lock reconciliation** pass: a component set recorded in
-  `figma.lock.json` with no manifest is an error (the mirror holds something
-  nobody declared); a manifest with no lock entry is a warning (legitimate
+- The gate gains a **lock reconciliation** pass over **every** entry in
+  `lock.components` — variant sets and single components alike (`Label`,
+  `Textarea` and `Blockquote` carry a `componentId` with a null
+  `componentSetId`, so keying the check on `componentSetId` would skip them).
+  An entry with no manifest is an error (the mirror holds something nobody
+  declared); a manifest with no lock entry is a warning (legitimate
   not-yet-synced state).
 - The mirrorable scope and the exclusions move into **data** alongside the
   manifests — include/exclude globs plus per-exclusion reasons, mirroring the
@@ -71,8 +74,8 @@ it.
 ### New Capabilities
 
 - `figma-coverage-gate`: every component in the mirrorable scope is either
-  mirrored or explicitly and reasonedly not, and the recorded Figma mirror
-  agrees with the declared manifests — enforced, not documented.
+  mirrored or excluded with a documented reason, and every entry the lock
+  records agrees with the declared manifests — enforced, not documented.
 
 ### Modified Capabilities
 
