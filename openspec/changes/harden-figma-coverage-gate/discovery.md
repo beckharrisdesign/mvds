@@ -7,7 +7,7 @@
 | Item | Value |
 | --- | --- |
 | Storybook story (eval target) | `Site/ElementsOfMvds` — **LiveSnapshot** ("the committed snapshot, exactly as the landing page ships it"). `Collapsed` / `Expanded` render fixture args and are not the eval target. |
-| Figma `0.0 As is` page | **Not created — narrow-scope exception requested, pending founder call.** Figma access confirmed (pro seat, admin on Beck Harris Design), so this is a proportionality question, not a capability one. See *Figma gate* below. |
+| Figma `0.0 As is` page | **Not created — exception taken, founder-delegated 2026-10-12.** Figma access and the HF file were both confirmed available, so this is a proportionality call, not a capability limit. See *Figma gate* below. |
 | Scope note | The `Figma library` card only: its tally (`components`, `declared variants`) and its `Components` list. This change alters no layout, type, color, spacing or component — the card's form is untouched and its numbers are generated from the manifests. |
 
 ### Figma gate
@@ -18,14 +18,23 @@ or alters UI. What this change alters, in rendered terms: `17 components → 19`
 
 The schema itself names the story as the eval target and the Figma page as the
 *visual record* ("richer signal, cheaper than walking Figma"). The eval below ran
-against the story and produced 14 findings, so the signal was real — but every
-finding is about labelling and semantics, which the markdown ledger carries in
-full. A `0.0 As is` / `0.5 Eval` pair whose only visual difference from today is
-`17` vs `19` adds no review signal this change can act on.
+against the story and produced 14 findings, so the gate's substance was served —
+but every finding is about labelling and semantics, which the markdown ledger
+carries in full. A `0.0 As is` / `0.5 Eval` pair whose only visual difference
+from today is `17` vs `19` adds no review signal this change can act on.
 
-**Recommendation:** record the exception here and carry the ledger into a separate
-dashboard-semantics change, where the Figma pair would earn its place against a
-real visual delta. **Founder call outstanding.**
+**Exception taken**, founder-delegated 2026-10-12, on these grounds:
+
+1. The eval ran against the schema's own named eval target (the story), not
+   skipped — only its Figma mirror is omitted.
+2. The rendered delta is generated numbers and two list entries. No layout,
+   type, color, spacing or component change; the card's form is untouched.
+3. The ledger is canonical in markdown either way, per the schema's own wording.
+
+**Not a precedent.** This holds only where the rendered delta is generated values
+with no form change. The ledger carries forward as the cached baseline for the
+separate dashboard-semantics change, where the Figma pair earns its place against
+a real visual delta — and F2 below is the reason that change should happen.
 
 ## Eval (0.5)
 
@@ -117,5 +126,5 @@ Measured, not asserted:
 
 ## Status
 
-ready for founder review — with one open call: the `Figma gate` exception
-(recommendation: accept) under **As-is (0.0)**.
+ready for founder review. The `Figma gate` exception is taken and recorded under
+**As-is (0.0)**; `0.6 Eval Summary` still needs founder approval before design.
