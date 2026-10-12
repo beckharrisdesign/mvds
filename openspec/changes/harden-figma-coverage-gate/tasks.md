@@ -25,8 +25,9 @@
 
 ## 2. Preview (Storybook)
 
-- [x] 2.1 `Site/ElementsOfMvds` renders the revised Figma card in all three
-      stories (`Collapsed`, `Expanded`, `LiveSnapshot`); `npm run storybook`.
+- [x] 2.1 `Site/ElementsOfMvds` renders the revised Figma card in all four
+      stories (`Collapsed`, `Narrow`, `Expanded`, `LiveSnapshot`);
+      `npm run storybook`. `Narrow` is added by 4.2 below.
 - [x] 2.2 The revised tally and description match `02.0 Propose:
       harden-figma-coverage-gate update` (`92:2`) at both L 1024 and S 480.
 
@@ -81,6 +82,6 @@
       confirm the wrap lands on a `·` and no unit splits mid-phrase.
 - [x] 4.3 `npm run check:figma` — 19 mirrored, 6 excluded, 25 classified, lock
       clean, zero warnings.
-- [x] 4.4 `npm test` — 79 stories, light **and** dark.
+- [x] 4.4 `npm test` — 80 stories (79 + `Narrow` from 4.2), light **and** dark.
 - [x] 4.5 `npm run build`, `check:principles`, `check:contrast`, `check:deps`.
 - [x] 4.6 `npx openspec validate --changes harden-figma-coverage-gate`.

@@ -284,8 +284,24 @@ function checkCoverage(errors, warns, manifests) {
   const manifested = new Map(manifests.map((m) => [m.code.file, m.name]))
   const excluded = new Map(notMirrored.map((r) => [r.file, r]))
 
-  // 1. Every candidate is mirrored or excluded. Three states, no fourth.
+  // 1. Every candidate is mirrored or excluded — and never both. Three states,
+  // no fourth. `||` alone would accept the overlap: a file that gained a
+  // manifest while keeping its `notMirrored` record passes, the tally reports
+  // mirrored + excluded > classified, and the staleness guard goes on policing
+  // an exclusion for a component that is now mirrored. Two records disagreeing
+  // in silence is the failure this gate exists to prevent, so reject the
+  // overlap before accepting either classification.
   for (const file of candidates) {
+    if (manifested.has(file) && excluded.has(file)) {
+      errors.push({
+        component: "coverage",
+        message:
+          `${file} is BOTH mirrored (manifest ${manifested.get(file)}) and listed in \`notMirrored\` — a file is one or the other, never both.\n` +
+          `      → if it is mirrored, delete its \`notMirrored\` record\n` +
+          `      → if it is deliberately native, remove its manifest from \`componentManifests\``,
+      })
+      continue
+    }
     if (manifested.has(file) || excluded.has(file)) continue
     errors.push({
       component: "coverage",
@@ -567,7 +583,10 @@ if (errors.length) {
   console.error("")
 }
 if (warns.length) {
-  console.error(`⚠ Binding lint warnings (${warns.length}):\n`)
+  // Neutral heading: `warns` carries binding, coverage, lock AND typography
+  // warnings. Each line is already tagged with its `[component]`, so the
+  // category survives without the heading claiming they are all bindings.
+  console.error(`⚠ Warnings (${warns.length}):\n`)
   for (const w of warns) console.error(`  [${w.component}] ${w.message}`)
   console.error("")
 }
