@@ -40,16 +40,20 @@ No IA change. The six-card order, the disclosure behaviour and the card anatomy
 unit on one card changes its wording; its position, type ramp, tokens and
 sibling units are identical.
 
-The authored change is one line —
-`scripts/generate-manifest-snapshot.mjs:371`:
+Two authored copy changes, both approved at the design checkpoint.
+
+**1. The tally label** — `scripts/generate-manifest-snapshot.mjs:371`:
 
 ```js
 { label: "components", value: componentManifests.length }
 ```
 
-becomes a label that states scope against a shared denominator. The data shape is
-unchanged, so `manifest-dashboard.tsx` is not touched and the tally's
-unbreakable-unit guard from beckharrisdesign/mvds#110 still applies.
+becomes a label that states scope against a shared denominator. The `{label,
+value}` shape is unchanged, so the tally's unbreakable-unit guard from
+beckharrisdesign/mvds#110 still applies.
+
+**2. The Figma card's description** — `src/components/site/manifest-dashboard.tsx`,
+the `figma` entry of `COPY`. See *Decisions* §5.
 
 ## Visual design / Figma
 
@@ -97,7 +101,7 @@ only. Run against the `02.0` surface. **Informational, never blocking.**
 | F1 visibility-of-system-status | unchanged | No freshness or run-outcome state on either card; `syncReports` still a bare page name. The new copy arguably makes the absence louder. |
 | **F2 consistency-and-standards** | **addressed** | Card 2's tally no longer counts "components" as a competing total; `of 25` ties it to Card 1's inventory. Residual: Card 2's *list heading* "Components" still spans all four of Card 1's groups. |
 | **F3 visibility-of-system-status** | **addressed** | `Input` present; the gap is now numerically marked (25 − 19 = 6). Residual: *which* six still requires diffing the lists by hand. |
-| **F4 match-system-and-real-world** | **regressed** | See *Risks* — this change surfaced a latent contradiction in existing card copy. |
+| **F4 match-system-and-real-world** | **regressed → fixed in scope** | The delta was right: the new tally contradicted the card's own copy. Founder approved folding the copy fix in — see *Decisions* §5. The replacement also removes a claim that contradicts AGENTS.md's one-way rule, so this closes more than the regression. |
 | F5 consistency-and-standards | unchanged | Two of Card 2's four figures still resolve to no list; `Collections` still has no tally. |
 | F6 recognition-rather-than-recall | unchanged | Card 2's list order is still neither alphabetical nor Card 1's grouping; `Input`/`Dropzone` append at the end. |
 | F7 consistency-and-standards | unchanged | `RadioGroup` vs `RadioGroupItem` still unmarked — and the card's own copy claims "conventions bind the shared names". |
@@ -114,7 +118,7 @@ only. Run against the `02.0` surface. **Informational, never blocking.**
 | # | Finding | Disposition here |
 | --- | --- | --- |
 | N1 | Description slot holds ~11 words on Card 1 against ~55 on Card 2 — same slot, same treatment, different behaviour. | Pre-existing, untouched. Belongs to the dashboard-semantics change. |
-| N2 | Card 2's copy ("Design and code always match") and its tally ("19 of 25 … mirrored") make opposite factual claims about the same thing. | **Caused to become legible by this change.** See *Risks*. |
+| N2 | Card 2's copy ("Design and code always match") and its tally ("19 of 25 … mirrored") make opposite factual claims about the same thing. | **Fixed in scope** — see *Decisions* §5. |
 | N3 | `01.0`'s `19 of 25 mirrored` named no object. | **Fixed in `02.0`** — the noun is restored while the denominator is kept. |
 
 Totals against `02.0`: 4 addressed, 1 regressed, 9 unchanged, 0 deliberately
@@ -126,9 +130,8 @@ preserved, 2 new carried forward, 1 new fixed in iteration.
    The ratio is what closes F2 — a bare count invites the backwards comparison,
    and `of 25` borrows Card 1's own arithmetic. The noun is what the delta's N3
    caught: `19 of 25` alone names no object. Keeping both costs four words.
-2. **Label only; no component change.** The `{label, value}` shape already renders
-   as `{value} {label}`, so the whole change lives in the generator and
-   `manifest-dashboard.tsx` is untouched.
+2. **The tally needs no component change.** The `{label, value}` shape already
+   renders as `{value} {label}`, so that half lives entirely in the generator.
 3. **Proposed frames are clones of the shipped `15.0` frames**, not rebuilt. A
    rebuild would hand-place values that are currently variable-bound and would
    make the comparison less trustworthy, not more.
@@ -138,24 +141,43 @@ preserved, 2 new carried forward, 1 new fixed in iteration.
    and stays native), so the gate makes no claim about what *ought* to be
    mirrored — only that the thing judged has not changed shape.
 
+5. **The Figma card's description is corrected in this change** (founder-approved
+   at the design checkpoint, widening `0.6`'s single-label scope by one
+   sentence). `src/components/site/manifest-dashboard.tsx`, `COPY.figma`:
+
+   > ~~The same tokens, components, variants, and text styles, available in
+   > Figma. **Design and code always match, so you can iterate in either and hand
+   > the result back in a language the code understands.** A spec declares…~~
+
+   becomes
+
+   > The same tokens, components, variants, and text styles, available in Figma.
+   > **The mirror is generated from code, one way and only on request, so every
+   > mirrored component matches its source.** A spec declares which components
+   > and variants appear, conventions bind the shared names, and a lock lets each
+   > sync update the file in place.
+
+   Two separate falsehoods go, not one. "Always match" is contradicted by the
+   six deliberately-native primitives — that is the F4/N2 regression this change
+   exposed. But "iterate in either and hand the result back" was already wrong
+   independent of this change: AGENTS.md holds that Figma is updated *"only when
+   explicitly asked — **never the other way**"*, so the sentence invited exactly
+   the contribution-on-the-wrong-side failure `0.5` F4 predicted. The replacement
+   keeps the mechanism gloss that the delta credited under F8 and F14.
+
 ## Risks / Trade-offs
 
-**F4 / N2 — this change makes an existing false claim legible.** Card 2's
-description says *"Design and code always match"*. That is already untrue — six
-components are deliberately native — but `17 components` did not contradict it on
-its face, whereas `19 of 25 components mirrored` states the mismatch plainly
-directly beneath it.
+**F4 / N2 — resolved in scope, not deferred.** Card 2's description claimed
+*"Design and code always match"* while the new tally states six do not. The
+founder approved folding the fix in rather than carrying the contradiction, and
+the replacement also removes a second claim — that you can "iterate in either and
+hand the result back" — which contradicted AGENTS.md's one-way rule before this
+change existed. See *Decisions* §5.
 
-The delta rates this a regression against the baseline, and it is not a false
-alarm: a reader now gets a confident claim and its refutation in the same card.
-
-**Recommendation: leave it to the dashboard-semantics change, and decide at this
-checkpoint.** The sentence is site voice governed by the `site-voice` capability,
-not by this one, and `0.6` deliberately scoped this change to a single label.
-Fixing it here means editing marketing copy inside a gate-hardening PR. If you
-would rather not ship the contradiction, the minimal edit is to replace *"Design
-and code always match"* with a claim the card can support — e.g. *"Every mirrored
-component matches its code"* — and I will fold it in before apply.
+**Scope widened by one sentence.** `0.6` scoped this change to a single label;
+it now also edits `COPY.figma`. Recorded here so the widening is visible rather
+than implicit. It remains bounded: two copy strings, no component, no new
+surface, no further findings taken on.
 
 **Longer label at 480px.** `19 of 25 components mirrored` is 10 characters longer
 than `17 components`. The beckharrisdesign/mvds#110 guard makes each count+label
