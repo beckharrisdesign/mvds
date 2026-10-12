@@ -303,6 +303,15 @@ const ruleFiles = readdirSync(join(ROOT, "rules"))
   .map((f) => f.replace(/\.mdc$/, ""))
   .sort()
 
+// The Component library card's whole inventory — the denominator the Figma
+// card's tally is stated against. Derived from the same four family lists the
+// card itself renders, so the two can never disagree.
+const componentInventoryTotal =
+  layoutComponents.length +
+  uiComponents.length +
+  blockComponents.length +
+  formComponents.length
+
 const declaredTotal = componentManifests.reduce(
   (n, m) => n + m.axes.reduce((v, a) => v * a.options.length, 1),
   0
@@ -347,6 +356,9 @@ const elements = [
     ],
     action: { label: "src/index.css", kind: "repo-file", path: "src/index.css" },
   },
+  // The Figma card's tally reads "N of <this> components mirrored", so the two
+  // cards share a denominator and can be compared without arithmetic.
+  // Derived, never hardcoded: if a family grows, both cards move together.
   {
     id: "components",
     name: "Component library",
@@ -368,7 +380,15 @@ const elements = [
     id: "figma",
     name: "Figma library",
     tally: [
-      { label: "components", value: componentManifests.length },
+      // "of N components mirrored", not a bare count. A bare "17 components"
+      // sat beside the Component library card's "10 ui components" and invited
+      // the reader to conclude Figma held MORE than code — the two cards were
+      // counting different sets under the same word. The denominator is that
+      // card's own inventory, so the figure now reads as a subset of it.
+      {
+        label: `of ${componentInventoryTotal} components mirrored`,
+        value: componentManifests.length,
+      },
       { label: "declared variants", value: declaredTotal },
       { label: "text styles", value: Object.keys(conventions.textStyles).length },
       { label: "pages", value: Object.keys(lock.pages ?? {}).length },

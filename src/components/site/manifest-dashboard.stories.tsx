@@ -71,6 +71,51 @@ export const Collapsed: Story = {
 }
 
 /**
+ * Narrow — the same unbreakable-unit guard at **480px**, the width the original
+ * defect appeared at.
+ *
+ * `Collapsed` carries the same assertion but renders at the headless browser's
+ * default width, where the tally has room and nothing wraps — so it could never
+ * have caught the defect it cites. The Figma card's label grew from
+ * "17 components" to "19 of 25 components mirrored" (openspec:
+ * harden-figma-coverage-gate 4.2), which is the kind of growth that puts a unit
+ * on a line boundary, so the narrow case now gets its own story.
+ *
+ * What this proves, precisely: removing `whitespace-nowrap` fails this story at
+ * 480 — verified, not assumed. It fails on the unit COUNT, because the selector
+ * is the class under test. The line assertion below cannot itself fire while the
+ * class is present (nowrap makes an intra-unit split impossible by
+ * construction); it guards the case where the no-wrap mechanism is swapped for
+ * a weaker one that still matches the selector. Both are kept — the count is the
+ * one with teeth, the line check is the backstop.
+ */
+export const Narrow: Story = {
+  decorators: [
+    (Story) => (
+      <div style={{ width: 480 }}>
+        <Story />
+      </div>
+    ),
+  ],
+  play: async ({ args, canvasElement }) => {
+    const units = [
+      ...canvasElement.querySelectorAll<HTMLElement>("span.whitespace-nowrap"),
+    ]
+    const expected = args.snapshot.elements.reduce(
+      (n, element) => n + element.tally.length,
+      0
+    )
+    await expect(units.length).toBe(expected)
+    for (const unit of units) {
+      const lines = new Set(
+        [...unit.getClientRects()].map((r) => Math.round(r.top))
+      )
+      await expect(lines.size).toBe(1)
+    }
+  },
+}
+
+/**
  * Expanded — the Principles disclosure open, listing all twenty principle
  * titles; the toggle mirrors to "Hide the list".
  */

@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-10-06T19:08:42+00:00",
-  "commit": "685f0b2",
+  "generatedAt": "2026-10-12T22:27:33+00:00",
+  "commit": "3f52443",
   "dirty": true,
   "lock": {
     "fileKey": "C20nU0mROzk3Zr0I9BELJF",
     "syncedAt": "2026-08-23",
     "syncedFromCommit": "4bbd49a83a26afc3d0e3d0ef09199a51f089e097",
-    "commitsBehind": 25
+    "commitsBehind": 28
   },
   "gates": [
     {
@@ -39,7 +39,7 @@
       "detail": "Declared component axes checked against their real code sources.",
       "command": "npm run check:figma",
       "verifiedAt": "build",
-      "result": "17 component manifest(s) match their code sources (axes + bindings).",
+      "result": "19 mirrored · 6 excluded · 25 classified match their code sources (axes + bindings).",
       "status": {
         "level": "success",
         "label": "passing"
@@ -658,12 +658,12 @@
       "name": "Figma library",
       "tally": [
         {
-          "label": "components",
-          "value": 17
+          "label": "of 25 components mirrored",
+          "value": 19
         },
         {
           "label": "declared variants",
-          "value": 137
+          "value": 143
         },
         {
           "label": "text styles",
@@ -690,11 +690,13 @@
             "Badge",
             "Card",
             "Checkbox",
+            "Input",
             "Label",
             "RadioGroupItem",
             "Select",
             "Switch",
             "Textarea",
+            "Dropzone",
             "Field",
             "Hero",
             "MediaFrame",
