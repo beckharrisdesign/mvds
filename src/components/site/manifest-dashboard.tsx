@@ -32,7 +32,7 @@ const COPY: Record<string, string> = {
     "Colors, type, spacing, and radius live in one CSS file, and every surface in the system reads from it.",
   components: "The primitives and components that consumers compose with.",
   figma:
-    "The same tokens, components, variants, and text styles, available in Figma. Design and code always match, so you can iterate in either and hand the result back in a language the code understands. A spec declares which components and variants appear, conventions bind the shared names, and a lock lets each sync update the file in place.",
+    "The same tokens, components, variants, and text styles, available in Figma. The mirror is generated from code, one way and only on request, so every mirrored component matches its source. A spec declares which components and variants appear, conventions bind the shared names, and a lock lets each sync update the file in place.",
   schemas:
     "Every change moves through proposal, specs, discovery, design, and tasks, with founder approval between each step. The default schema adds an eval gate: the surface is captured and judged against the principles before and after design. The loop is adapted from the Experiment Hub, which remains the archived reference.",
   skills:

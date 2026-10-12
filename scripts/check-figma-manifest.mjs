@@ -34,7 +34,7 @@
 // Exit codes: 0 = clean (or warn-only). 1 = errors. 2 = errors in --file mode
 // (surfaces to the agent via a PostToolUse hook, like check-principles).
 
-import { readFileSync } from "node:fs"
+import { readFileSync, readdirSync, statSync } from "node:fs"
 import { fileURLToPath, pathToFileURL } from "node:url"
 import { dirname, join, relative, sep } from "node:path"
 
@@ -202,6 +202,185 @@ function lintBindings(node, path, warns, errors, componentName) {
   }
 }
 
+// --- coverage: the census, not the declared list ---------------------------------
+// The guard used to enumerate `componentManifests` and validate what it found —
+// so it answered "are the declared manifests correct?" and never "is everything
+// that should be mirrored declared?". Enrollment was opt-in, which is how Input
+// and Dropzone reached both code and Figma while this printed "17 ✓".
+//
+// These three passes invert that. They are system-level (like the typography
+// gate) and run in full mode only; --file is the per-edit hook and stays scoped.
+
+function globToRegExp(glob) {
+  let out = ""
+  for (let i = 0; i < glob.length; i++) {
+    const c = glob[i]
+    if (c === "*") {
+      if (glob[i + 1] === "*") {
+        i++
+        if (glob[i + 1] === "/") i++
+        out += "(?:.*/)?"
+      } else out += "[^/]*"
+    } else if (c === "{") {
+      const end = glob.indexOf("}", i)
+      out += `(?:${glob.slice(i + 1, end).split(",").map((s) => s.trim()).join("|")})`
+      i = end
+    } else if (c === "?") out += "[^/]"
+    else out += c.replace(/[.+^${}()|[\]\\]/g, "\\$&")
+  }
+  return new RegExp(`^${out}$`)
+}
+
+function walkFiles(dir, acc = []) {
+  for (const name of readdirSync(join(ROOT, dir))) {
+    const rel = `${dir}/${name}`
+    if (statSync(join(ROOT, rel)).isDirectory()) walkFiles(rel, acc)
+    else acc.push(rel)
+  }
+  return acc
+}
+
+// The fingerprint: the component's destructured public prop names, sorted.
+// Every layout primitive declares them the same way — `function X({ a, b, ... })`
+// — so this is a stable, cheap signature. It is NOT a judgment about whether the
+// component should be mirrored; it only answers "has the thing you judged
+// changed shape since you judged it?"
+function propSignature(src, ctx) {
+  const m = src.match(/(?:export\s+)?function\s+[A-Z][A-Za-z0-9_]*\s*\(\s*\{/)
+  if (!m) throw new Error(`${ctx}: no destructured component signature found`)
+  const inner = sliceBalanced(src, src.indexOf("{", m.index + m[0].length - 1))
+  if (inner === null) throw new Error(`${ctx}: unbalanced props destructuring`)
+  const names = []
+  let depth = 0
+  for (const part of inner.split(/,(?![^{[]*[}\]])/)) {
+    const t = part.trim()
+    if (!t || t.startsWith("...")) continue
+    const name = t.match(/^([A-Za-z_$][\w$]*)/)?.[1]
+    if (name) names.push(name)
+  }
+  void depth
+  return [...new Set(names)].sort().join("|")
+}
+
+function checkCoverage(errors, warns, manifests) {
+  const { mirrorScope, notMirrored } = cfg
+  if (!mirrorScope || !notMirrored) {
+    errors.push({
+      component: "coverage",
+      message:
+        "figma/components.config.mjs must export `mirrorScope` and `notMirrored` — without them the guard cannot tell a missing manifest from a deliberate exclusion",
+    })
+    return
+  }
+
+  const includes = mirrorScope.include.map(globToRegExp)
+  const excludes = (mirrorScope.exclude ?? []).map(globToRegExp)
+  const roots = [...new Set(mirrorScope.include.map((g) => g.split("/").slice(0, 2).join("/")))]
+  const candidates = roots
+    .flatMap((r) => walkFiles(r))
+    .filter((f) => includes.some((re) => re.test(f)) && !excludes.some((re) => re.test(f)))
+    .sort()
+
+  const manifested = new Map(manifests.map((m) => [m.code.file, m.name]))
+  const excluded = new Map(notMirrored.map((r) => [r.file, r]))
+
+  // 1. Every candidate is mirrored or excluded — and never both. Three states,
+  // no fourth. `||` alone would accept the overlap: a file that gained a
+  // manifest while keeping its `notMirrored` record passes, the tally reports
+  // mirrored + excluded > classified, and the staleness guard goes on policing
+  // an exclusion for a component that is now mirrored. Two records disagreeing
+  // in silence is the failure this gate exists to prevent, so reject the
+  // overlap before accepting either classification.
+  for (const file of candidates) {
+    if (manifested.has(file) && excluded.has(file)) {
+      errors.push({
+        component: "coverage",
+        message:
+          `${file} is BOTH mirrored (manifest ${manifested.get(file)}) and listed in \`notMirrored\` — a file is one or the other, never both.\n` +
+          `      → if it is mirrored, delete its \`notMirrored\` record\n` +
+          `      → if it is deliberately native, remove its manifest from \`componentManifests\``,
+      })
+      continue
+    }
+    if (manifested.has(file) || excluded.has(file)) continue
+    errors.push({
+      component: "coverage",
+      message:
+        `${file} is neither mirrored nor excluded.\n` +
+        `      → author figma/components/<name>.figma.mjs and list it in figma/components.config.mjs\n` +
+        `      → or add a { file, reason, props } record to \`notMirrored\` if it is deliberately native`,
+    })
+  }
+
+  // 2. Exclusion records point at files that exist and are in scope.
+  for (const rec of notMirrored) {
+    if (!candidates.includes(rec.file)) {
+      errors.push({
+        component: "coverage",
+        message: `notMirrored record ${rec.file} is not a file in mirrorScope — delete the record or fix the path`,
+      })
+      continue
+    }
+    if (!rec.reason || !rec.reason.trim()) {
+      errors.push({ component: "coverage", message: `notMirrored ${rec.file} has no reason` })
+    }
+    // 3. The staleness guard: recompute the signature and compare.
+    let actual
+    try {
+      actual = propSignature(readFileSync(join(ROOT, rec.file), "utf8"), rec.file)
+    } catch (e) {
+      errors.push({ component: "coverage", message: e.message })
+      continue
+    }
+    if (actual !== rec.props) {
+      errors.push({
+        component: "coverage",
+        message:
+          `${rec.file} changed shape since it was judged not-mirrored — re-confirm the reason, then update \`props\`.\n` +
+          `      recorded:   ${rec.props}\n` +
+          `      recomputed: ${actual}\n` +
+          `      reason on record: "${rec.reason}"`,
+      })
+    }
+  }
+
+  return { classified: candidates.length, mirrored: manifested.size, excluded: excluded.size }
+}
+
+// --- lock reconciliation ----------------------------------------------------------
+// Both directions, over EVERY entry in lock.components regardless of Figma node
+// kind: 16 carry a componentSetId, but Label / Textarea / Blockquote are single
+// components (componentId, null componentSetId). Keying this check on
+// componentSetId would skip exactly those three — a fail-open hole inside the
+// check meant to close fail-open holes.
+function checkLockReconciliation(errors, warns, manifests) {
+  let lock
+  try {
+    lock = JSON.parse(readFileSync(join(ROOT, "figma/figma.lock.json"), "utf8"))
+  } catch (e) {
+    errors.push({ component: "lock", message: `figma/figma.lock.json unreadable: ${e.message}` })
+    return
+  }
+  const declared = new Set(manifests.map((m) => m.name))
+  for (const name of Object.keys(lock.components ?? {})) {
+    if (declared.has(name)) continue
+    const entry = lock.components[name]
+    const kind = entry.componentSetId ? "component set" : "single component"
+    errors.push({
+      component: "lock",
+      message: `${name} (${kind}) is recorded in figma.lock.json but no manifest declares it — the mirror holds something nobody declared`,
+    })
+  }
+  for (const m of manifests) {
+    if (!(m.name in (lock.components ?? {}))) {
+      warns.push({
+        component: "lock",
+        message: `${m.name} is manifested but absent from figma.lock.json — not yet synced (legitimate before the next component sync)`,
+      })
+    }
+  }
+}
+
 // --- typography gate (full mode only) -------------------------------------------
 // The font family is a token: code ↔ conventions.typography ↔ figma.lock.json.
 // CI has no Figma access, so the lock is the recorded Figma reality (written by
@@ -317,7 +496,8 @@ function checkTypography(errors, warns) {
 }
 
 // --- run --------------------------------------------------------------------------
-const manifests = (await import(pathToFileURL(join(ROOT, "figma/components.config.mjs")))).default
+const cfg = await import(pathToFileURL(join(ROOT, "figma/components.config.mjs")))
+const manifests = cfg.default
 const checked = singleRel
   ? manifests.filter((m) => m.code.file === singleRel)
   : manifests
@@ -380,10 +560,18 @@ for (const m of checked) {
 // full mode only (the --file path is the per-edit PostToolUse hook; keep it
 // fast and scoped). T5 is the exception: it lives in lintBindings above and
 // runs per-manifest in both modes.
-if (!singleRel) checkTypography(errors, warns)
+let coverage = null
+if (!singleRel) {
+  coverage = checkCoverage(errors, warns, manifests)
+  checkLockReconciliation(errors, warns, manifests)
+  checkTypography(errors, warns)
+}
 
 // --- report -------------------------------------------------------------------------
-const scope = singleRel ?? `${checked.length} component manifest(s)`
+const scope = singleRel
+  ?? (coverage
+    ? `${coverage.mirrored} mirrored \u00b7 ${coverage.excluded} excluded \u00b7 ${coverage.classified} classified`
+    : `${checked.length} component manifest(s)`)
 if (!errors.length && !warns.length) {
   console.log(`✓ ${scope} match their code sources (axes + bindings).`)
   process.exit(0)
@@ -395,7 +583,10 @@ if (errors.length) {
   console.error("")
 }
 if (warns.length) {
-  console.error(`⚠ Binding lint warnings (${warns.length}):\n`)
+  // Neutral heading: `warns` carries binding, coverage, lock AND typography
+  // warnings. Each line is already tagged with its `[component]`, so the
+  // category survives without the heading claiming they are all bindings.
+  console.error(`⚠ Warnings (${warns.length}):\n`)
   for (const w of warns) console.error(`  [${w.component}] ${w.message}`)
   console.error("")
 }
