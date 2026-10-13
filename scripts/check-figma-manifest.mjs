@@ -34,10 +34,18 @@
 //     resolves to — the two are the same string while --font-heading aliases
 //     --font-sans, so resolved-value comparison alone cannot see a rebinding.
 //
+// Sync-stamp gate (S1–S6, full mode only): holds figma.lock.json's `tokenSync`
+// and `componentSync` provenance blocks to being true — shape, a `result` from a
+// fixed vocabulary, zero unresolved mismatches, a non-future ISO date, a full
+// 40-char SHA, and componentSync agreeing with the top-level syncedAt it
+// documents. Commit RESOLVABILITY is checked only when the clone has history;
+// CI's is depth-1, so asking there would fail for environmental reasons.
+//
 // Exit codes: 0 = clean (or warn-only). 1 = errors. 2 = errors in --file mode
 // (surfaces to the agent via a PostToolUse hook, like check-principles).
 
 import { readFileSync, readdirSync, statSync } from "node:fs"
+import { execFileSync } from "node:child_process"
 import { fileURLToPath, pathToFileURL } from "node:url"
 import { dirname, join, relative, sep } from "node:path"
 
@@ -362,7 +370,7 @@ function checkLockReconciliation(errors, warns, manifests) {
     lock = JSON.parse(readFileSync(join(ROOT, "figma/figma.lock.json"), "utf8"))
   } catch (e) {
     errors.push({ component: "lock", message: `figma/figma.lock.json unreadable: ${e.message}` })
-    return
+    return null
   }
   const declared = new Set(manifests.map((m) => m.name))
   for (const name of Object.keys(lock.components ?? {})) {
@@ -381,6 +389,145 @@ function checkLockReconciliation(errors, warns, manifests) {
         message: `${m.name} is manifested but absent from figma.lock.json — not yet synced (legitimate before the next component sync)`,
       })
     }
+  }
+  return lock
+}
+
+// --- sync-stamp gate (full mode only) ---------------------------------------------
+// The two sync skills each write a provenance block into figma.lock.json —
+// `tokenSync` and `componentSync`. Until now NOTHING checked them: they were
+// records whose only job is to be true, with no gate holding them to it, which is
+// this repo's signature defect (#115's fail-open coverage, #121's walk-vs-check
+// count, the font binding that resolved to the same string either way). A stamp
+// nobody verifies decays into the thing it was written to prevent.
+//
+// CI runs on a DEPTH-1 clone (ci.yml's checkout sets no fetch-depth), so the
+// commit a stamp names is normally absent here. SHA *shape* is therefore a hard
+// error — a pure string check, identical everywhere — while *resolvability* is
+// attempted only when the repo has the history to answer, and skipped silently
+// otherwise. A gate that fails in CI for environmental reasons is worse than none.
+const SYNC_RESULTS = new Set(["no-op", "written"])
+
+function checkSyncStamps(errors, warns, lock) {
+  // Resolvability is only meaningful with history. `--is-shallow-repository`
+  // prints "true" on CI's depth-1 clone; anything else (or a git failure) means
+  // do not ask.
+  let canResolve = false
+  try {
+    canResolve =
+      execFileSync("git", ["rev-parse", "--is-shallow-repository"], {
+        cwd: ROOT,
+        encoding: "utf8",
+        stdio: ["ignore", "pipe", "ignore"],
+      }).trim() === "false"
+  } catch {
+    canResolve = false
+  }
+
+  const today = new Date().toISOString().slice(0, 10)
+
+  for (const [key, shaField] of [
+    ["tokenSync", "verifiedFromCommit"],
+    ["componentSync", null], // documents the top-level syncedFromCommit
+  ]) {
+    const b = lock[key]
+    // S1 — the block exists at all. Absent is a bootstrap state (a fresh lock,
+    // or one predating these blocks), so warn rather than fail: the same
+    // treatment T6 gives a missing typography block.
+    if (!b) {
+      warns.push({
+        component: "sync-stamp",
+        message: `S1: figma.lock.json has no \`${key}\` block — that sync has never recorded what it verified; run the matching sync skill (until then its provenance is unverified)`,
+      })
+      continue
+    }
+
+    // S2 — shape and vocabulary. `result` is an enum so it cannot drift into
+    // free text that reads fine and means nothing.
+    if (!SYNC_RESULTS.has(b.result)) {
+      errors.push({
+        component: "sync-stamp",
+        message: `S2: ${key}.result is ${JSON.stringify(b.result)}, not one of ${[...SYNC_RESULTS].join("/")} — the outcome must be a known value, not prose`,
+      })
+    }
+    const mism = b.checked?.mismatches
+    if (typeof mism !== "number") {
+      errors.push({
+        component: "sync-stamp",
+        message: `S2: ${key}.checked.mismatches is missing or not a number — a stamp must say how much disagreed, even when the answer is zero`,
+      })
+    } else if (mism !== 0) {
+      // S3 — a recorded sync that found drift and left it is a record of a known
+      // problem, parked. Either fix the drift or do not claim the sync ran.
+      errors.push({
+        component: "sync-stamp",
+        message: `S3: ${key}.checked.mismatches is ${mism}, not 0 — a stamp recording unresolved drift is a known problem left in place; re-run the sync and fix what it found`,
+      })
+    }
+
+    // S4 — the date is a real ISO day and not in the future. The shape regex
+    // alone is not enough: "2026-13-45" is digit-shaped, so it passed the
+    // pattern and then string-compared later than today, reporting a nonsense
+    // date as "in the future". Round-trip through Date so only real calendar
+    // days get that far.
+    // NB: Date.toISOString() THROWS RangeError on an Invalid Date, so the
+    // getTime() check has to come first — reaching for the round-trip directly
+    // killed the gate with a stack trace instead of reporting the bad value.
+    const dateShaped = /^\d{4}-\d{2}-\d{2}$/.test(b.verifiedAt ?? "")
+    const parsed = dateShaped ? new Date(`${b.verifiedAt}T00:00:00Z`) : null
+    const realDate =
+      parsed !== null &&
+      !Number.isNaN(parsed.getTime()) &&
+      parsed.toISOString().slice(0, 10) === b.verifiedAt
+    if (!realDate) {
+      errors.push({
+        component: "sync-stamp",
+        message: `S4: ${key}.verifiedAt is ${JSON.stringify(b.verifiedAt)}, not a real ISO YYYY-MM-DD date`,
+      })
+    } else if (b.verifiedAt > today) {
+      errors.push({
+        component: "sync-stamp",
+        message: `S4: ${key}.verifiedAt is ${b.verifiedAt}, which is in the future (today is ${today}) — a stamp cannot describe a run that has not happened`,
+      })
+    }
+
+    // S5 — the commit it names. componentSync explains the top-level stamp, so
+    // that is the SHA it is held to; tokenSync carries its own.
+    const sha = shaField ? b[shaField] : lock.syncedFromCommit
+    const label = shaField ? `${key}.${shaField}` : "syncedFromCommit"
+    if (!/^[0-9a-f]{40}$/i.test(sha ?? "")) {
+      errors.push({
+        component: "sync-stamp",
+        message: `S5: ${label} is ${JSON.stringify(sha)}, not a full 40-character SHA — an abbreviated or missing commit cannot be verified later`,
+      })
+    } else if (canResolve) {
+      let exists = true
+      try {
+        execFileSync("git", ["cat-file", "-e", `${sha}^{commit}`], {
+          cwd: ROOT,
+          stdio: "ignore",
+        })
+      } catch {
+        exists = false
+      }
+      if (!exists) {
+        errors.push({
+          component: "sync-stamp",
+          message: `S5: ${label} names ${sha.slice(0, 7)}, which is not a commit in this repository — the stamp points at nothing (same shape as the #124 mapping that named a token that no longer existed)`,
+        })
+      }
+    }
+  }
+
+  // S6 — componentSync and the top-level stamp describe ONE event, so they must
+  // agree. Divergence is exactly the #85 failure the lock's own $comment
+  // records: the Figma push happened, the stamp moved, and the map did not.
+  const cs = lock.componentSync
+  if (cs && /^\d{4}-\d{2}-\d{2}$/.test(cs.verifiedAt ?? "") && cs.verifiedAt !== lock.syncedAt) {
+    errors.push({
+      component: "sync-stamp",
+      message: `S6: componentSync.verifiedAt (${cs.verifiedAt}) disagrees with the top-level syncedAt (${lock.syncedAt}) — they record the same run, so one was moved without the other`,
+    })
   }
 }
 
@@ -620,14 +767,15 @@ for (const m of checked) {
   lintBindings(m.perOption, "perOption", warns, errors, m.name)
 }
 
-// The system-level typography checks (T1–T4, T6–T7) are not per-component —
+// The system-level typography (T1–T4, T6–T8) and sync-stamp (S1–S6) checks are not per-component —
 // full mode only (the --file path is the per-edit PostToolUse hook; keep it
 // fast and scoped). T5 is the exception: it lives in lintBindings above and
 // runs per-manifest in both modes.
 let coverage = null
 if (!singleRel) {
   coverage = checkCoverage(errors, warns, manifests)
-  checkLockReconciliation(errors, warns, manifests)
+  const lock = checkLockReconciliation(errors, warns, manifests)
+  if (lock) checkSyncStamps(errors, warns, lock)
   checkTypography(errors, warns)
 }
 

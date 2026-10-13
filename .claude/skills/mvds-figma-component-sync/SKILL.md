@@ -159,13 +159,16 @@ branch-review description. Nothing else changes.)
    and set the **top-level** `syncedAt`/`syncedFromCommit` — the stamp moves
    even when the run was a no-op, because the point of re-stamping is that the
    mirror is *verified* current at that commit; it also takes the generated
-   snapshot's `commitsBehind` to 0 **at the stamped revision only** — the
-   generator measures `syncedFromCommit..HEAD`, so any later commit (your own
-   follow-ups, the merge commit) puts it back above zero, and it can never read 0
-   in a merged state. Do not promise a durable zero. That field is also computed
-   and typed but rendered nowhere — the only lock value the landing page shows is
-   `syncedAt`, in `src/components/site/figma-mirror.tsx`, so expect the re-stamp
-   to produce two Chromatic diffs for `FigmaMirror/Default` in light + dark —
+   stamp the **only** freshness signal there is: `commitsBehind` was deleted from
+   the generator and the snapshot types, because it was rendered nowhere and could
+   not be stated truthfully in a checked-in file (0 held only *at* the stamped
+   commit, so every later commit put it above zero). Do not reintroduce it, and do
+   not promise a durable zero. `check:figma`'s **S1–S6** hold this stamp to being
+   true — shape, a `result` from a fixed vocabulary, zero unresolved mismatches, a
+   real non-future date, a full 40-char SHA, and `componentSync.verifiedAt`
+   agreeing with `syncedAt`. The landing page shows `syncedAt` (in
+   `src/components/site/figma-mirror.tsx`), so expect the re-stamp to produce two
+   Chromatic diffs for `FigmaMirror/Default` in light + dark —
    this skill is the only owner of that stamp, so it must name the commit whose
    components you just mirrored (`git rev-parse HEAD` of the revision you synced
    from), not merely today's HEAD. Commit it on a `chore/figma-lock-…` branch per
