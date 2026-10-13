@@ -4,7 +4,7 @@
   "syncedAt": "2026-08-23",
   "syncedFromCommit": "4bbd49a83a26afc3d0e3d0ef09199a51f089e097",
   "tokenSync": {
-    "$comment": "Provenance for the TOKEN layer, owned by the mvds-figma-token-sync skill — deliberately separate from the top-level syncedAt/syncedFromCommit above, which record the last COMPONENT sync and which this skill never touches. Before this block each token run left only prose inside the block it happened to touch, so completeness varied: gradationVariables carried a date AND a commit, spatialVariables a date only, radiusRamp and derivedVariables neither, and typography's own comment had no date at all (only its nested fontHeadingVariable mentioned one). That prose is kept as narrative; this is the one structured record. `checked` counts what the run actually COMPARED, not what happens to exist in the file — the distinction that mattered in #121, where a gate reported the size of its walk instead of the size of its check and the number drifted with local build state. A `no-op` result is a real outcome, not a skipped run: it means every compared token already agreed, so nothing was written to Figma.",
+    "$comment": "Provenance for the TOKEN layer, owned by the mvds-figma-token-sync skill — deliberately separate from the top-level syncedAt/syncedFromCommit above, which record the last COMPONENT sync and which this skill never touches. Before this block each token run left only prose inside the block it happened to touch, so completeness varied: gradationVariables carried a date AND a commit, spatialVariables a date only, radiusRamp and derivedVariables neither, and typography's own comment had no date at all (only its nested fontHeadingVariable mentioned one). That prose is kept as narrative; this is the one structured record. `checked` counts what the run actually COMPARED, not what happens to exist in the file — the distinction that mattered in #121, where a gate reported the size of its walk instead of the size of its check and the number drifted with local build state. A `no-op` result is a real outcome, not a skipped run: it means every compared token already agreed, so nothing was written to Figma. This run wrote nothing to Figma but DID correct the contract: reading each style's bound variable (not just its resolved family) showed conventions.mjs and the token-sync skill still saying every Type/* style binds font-sans, which a faithful sync would have enforced by rebinding the five heading steps off font-heading. Both now carry fontTokenByStep, and check:figma T8 compares the binding by name.",
     "verifiedAt": "2026-10-13",
     "verifiedFromCommit": "64d95c9d756fe8f17bb93afdc3dfd87303853b7d",
     "result": "no-op",
@@ -13,7 +13,8 @@
       "floatVariables": 38,
       "fontFamilyVariables": 2,
       "textStyles": 9,
-      "mismatches": 0
+      "mismatches": 0,
+      "fontFamilyBindings": 9
     },
     "method": "src/index.css parsed for :root (light) + .dark (dark) token values, oklch converted via scripts/color.mjs, then compared against a read-only dump of every local variable and text style in the Figma file. Colors compared at Figma's 4-decimal storage precision, alpha included. Text styles compared on family, weight-derived style name, line-height, letter-spacing, and both the fontFamily and fontSize variable bindings.",
     "notMirrored": "Elevation (--elevation-sm/md/lg) and motion (--duration-*, --ease-*) are authored in code and intentionally absent from Figma — neither conventions.mjs nor this lock file declares a target for them."
@@ -291,7 +292,7 @@
     }
   },
   "typography": {
-    "$comment": "Recorded text-style fonts as of the token sync stamped in the top-level `tokenSync` block (resolved values, even when variable-bound) — checked by check:figma T6/T7. fontFamily is bound to a STRING variable per step — Display and Heading 1-4 to `Typography/font-heading`, Body Large/Body/Small/Caption to `Typography/font-sans` (both resolve to Inter today, which is why the split was easy to miss); fontStyle is set directly per ramp step.",
+    "$comment": "Recorded text-style fonts as of the token sync stamped in the top-level `tokenSync` block (resolved values, even when variable-bound) — checked by check:figma T6/T7. `boundVariable` names WHICH STRING variable each step's fontFamily is bound to — the field T8 compares against conventions.typography.fontTokenByStep, added 2026-10-13 because recording only `bound: true` left the heading/body split unverifiable. fontFamily is bound to a STRING variable per step — Display and Heading 1-4 to `Typography/font-heading`, Body Large/Body/Small/Caption to `Typography/font-sans` (both resolve to Inter today, which is why the split was easy to miss); fontStyle is set directly per ramp step.",
     "fontFamilyVariable": {
       "name": "Typography/font-sans",
       "id": "VariableID:153:2",
@@ -303,6 +304,8 @@
         "fontFamily": "Inter",
         "fontStyle": "Semi Bold",
         "bound": true,
+        "boundVariable": "Typography/font-heading",
+        "boundVariableId": "VariableID:635:49",
         "fontSize": 48,
         "sizeVariable": {
           "name": "Typography/text-display-size",
@@ -314,6 +317,8 @@
         "fontFamily": "Inter",
         "fontStyle": "Semi Bold",
         "bound": true,
+        "boundVariable": "Typography/font-heading",
+        "boundVariableId": "VariableID:635:49",
         "fontSize": 36,
         "sizeVariable": {
           "name": "Typography/text-h1-size",
@@ -325,6 +330,8 @@
         "fontFamily": "Inter",
         "fontStyle": "Semi Bold",
         "bound": true,
+        "boundVariable": "Typography/font-heading",
+        "boundVariableId": "VariableID:635:49",
         "fontSize": 30,
         "sizeVariable": {
           "name": "Typography/text-h2-size",
@@ -336,6 +343,8 @@
         "fontFamily": "Inter",
         "fontStyle": "Semi Bold",
         "bound": true,
+        "boundVariable": "Typography/font-heading",
+        "boundVariableId": "VariableID:635:49",
         "fontSize": 24,
         "sizeVariable": {
           "name": "Typography/text-h3-size",
@@ -347,6 +356,8 @@
         "fontFamily": "Inter",
         "fontStyle": "Semi Bold",
         "bound": true,
+        "boundVariable": "Typography/font-heading",
+        "boundVariableId": "VariableID:635:49",
         "fontSize": 20,
         "sizeVariable": {
           "name": "Typography/text-h4-size",
@@ -358,6 +369,8 @@
         "fontFamily": "Inter",
         "fontStyle": "Regular",
         "bound": true,
+        "boundVariable": "Typography/font-sans",
+        "boundVariableId": "VariableID:153:2",
         "fontSize": 18,
         "sizeVariable": {
           "name": "Typography/text-body-lg-size",
@@ -369,6 +382,8 @@
         "fontFamily": "Inter",
         "fontStyle": "Regular",
         "bound": true,
+        "boundVariable": "Typography/font-sans",
+        "boundVariableId": "VariableID:153:2",
         "fontSize": 16,
         "sizeVariable": {
           "name": "Typography/text-body-size",
@@ -380,6 +395,8 @@
         "fontFamily": "Inter",
         "fontStyle": "Regular",
         "bound": true,
+        "boundVariable": "Typography/font-sans",
+        "boundVariableId": "VariableID:153:2",
         "fontSize": 14,
         "sizeVariable": {
           "name": "Typography/text-small-size",
@@ -391,6 +408,8 @@
         "fontFamily": "Inter",
         "fontStyle": "Medium",
         "bound": true,
+        "boundVariable": "Typography/font-sans",
+        "boundVariableId": "VariableID:153:2",
         "fontSize": 12,
         "sizeVariable": {
           "name": "Typography/text-caption-size",

@@ -22,10 +22,21 @@ file's structure isn't re-discovered each time.
   `fontName` comes from `figma/conventions.mjs` → `typography` (family
   `fontFamily.figma`, style from `weightToFigmaStyle` keyed by the ramp step's
   `--font-weight` in `src/index.css`).
-- **Font token:** a `Typography/font-sans` STRING variable (scope `["FONT_FAMILY"]`) in the
-  Tokens collection — same value in **both** modes (font doesn't vary by mode) —
-  bound to every `Type/*` style's `fontFamily`. The family is a token: a rebrand
-  is a one-variable change.
+- **Font tokens (TWO of them):** `Typography/font-sans` **and**
+  `Typography/font-heading`, both STRING variables (scope `["FONT_FAMILY"]`) in the
+  Tokens collection, each the same value in **both** modes (font doesn't vary by
+  mode). ❌ **Do NOT bind every `Type/*` style to `font-sans`.** Each ramp step
+  binds exactly one of the two, per `conventions.typography.fontTokenByStep`:
+  Display + Heading 1–4 → `font-heading`, Body Large / Body / Small / Caption →
+  `font-sans`. The family is a token: a rebrand is a one- or two-variable change.
+
+  > **Why this is spelled out.** This file said "bound to every `Type/*` style" and
+  > named only `font-sans` until 2026-10-13, while Figma had carried both variables
+  > since 2026-08-23. A sync that followed the old wording would have rebound all
+  > nine styles to `font-sans` and **passed every gate**, because `--font-heading`
+  > aliases `--font-sans` so both resolve to `Inter`. It would have surfaced only
+  > once a brand gave headings their own face. `check:figma` **T8** now compares the
+  > bound variable by name, so that mistake fails the build instead of shipping.
 
 ## Conventions (match exactly — don't impose new ones)
 
@@ -65,17 +76,23 @@ file's structure isn't re-discovered each time.
    `createVariable(name, collection, "COLOR")` → set `scopes` →
    `setValueForMode("2:0", lightRgb)` and `setValueForMode("2:1", darkRgb)`.
    Return all created variable IDs.
-6. **Typography** (the font family is a gated token — `check:figma` T6/T7):
-   a. Inspect: dump every `Type/*` style's `fontName` and diff against
+6. **Typography** (the font family is a gated token — `check:figma` T6/T7/T8):
+   a. Inspect: dump every `Type/*` style's `fontName` **and its `fontFamily`
+      bound-variable id** (`style.boundVariables.fontFamily`), then diff against
       `conventions.typography` — this is where live hand-drift in Figma is
-      caught (the code↔manifest side is already gated in CI).
-   b. Ensure the `Typography/font-sans` STRING variable exists in Tokens (scope
-      `["FONT_FAMILY"]`), value `fontFamily.figma` in **both** modes.
+      caught (the code↔manifest side is already gated in CI). Dump the binding,
+      not just the family: the two font variables resolve to the same string
+      today, so `fontName` alone cannot tell them apart.
+   b. Ensure **both** STRING variables exist in Tokens (scope `["FONT_FAMILY"]`),
+      same value in both modes — `Typography/font-sans` at `fontFamily.figma` and
+      `Typography/font-heading` at `fontHeading.figma`.
    c. `await figma.loadFontAsync(...)` for every face in `weightToFigmaStyle`
-      (family `fontFamily.figma`), then per style: set `fontName` per the map
-      and bind `fontFamily` to the variable (`setBoundVariable`). **Probe one
-      style first**; if binding fails, leave `fontName` direct and record
-      `bound: false` — values still match, CI compares resolved strings.
+      (both families, if they ever differ), then per style: set `fontName` per the
+      map and bind `fontFamily` to **the variable that step's `fontTokenByStep`
+      entry names** — `font-heading` for Display + Heading 1–4, `font-sans` for the
+      rest. ❌ Never bind all nine to one variable. **Probe one style first**; if
+      binding fails, leave `fontName` direct and record `bound: false` — values
+      still match, and T8 downgrades to a warning when `boundVariable` is absent.
    d. **Override sweep:** component text nodes with manifest `fontWeight`
       overrides (e.g. Button Label, Medium) hold node-level `fontName` and do
       NOT follow style retargets — set them to the mapped face explicitly.
@@ -84,7 +101,10 @@ file's structure isn't re-discovered each time.
    like dark `sidebar-border`; hued tokens like dark `sidebar-primary`).
 8. **Record**: write the `typography` block into `figma/figma.lock.json` —
    `fontFamilyVariable { name, id, value }` + per style `{ id, fontFamily,
-   fontStyle, bound }` (resolved values, even when variable-bound) — then commit
+   fontStyle, bound, boundVariable, boundVariableId }` (resolved values, even when
+   variable-bound; `boundVariable` is the Figma variable NAME that step's
+   `fontFamily` binds — T8 compares it against `fontTokenByStep`, so omitting it
+   leaves the heading/body split unverified) — then commit
    on a `chore/figma-lock-…` branch and confirm `npm run check:figma` passes
    with **zero** typography warnings. ❌ Never touch the **top-level**
    `syncedAt`/`syncedFromCommit` — that stamp records the last *component* sync
