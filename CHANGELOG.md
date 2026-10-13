@@ -12,10 +12,17 @@ All notable changes to MVDS are recorded here. The format follows
 
 ## [Unreleased]
 
+Nothing yet.
+
+## [0.5.0] - 2026-10-13
+
 The packaging release. Installing MVDS went from 386 transitive packages to 55,
 and the z-layer utilities started working for the first time. Behind that, the
 OpenSpec loop grew a discovery eval stage and the capability registry went from
 one promoted spec to fifteen — the repo now records what it knows about itself.
+The Figma mirror stopped being able to drift quietly: its coverage gate now
+answers "is everything that should be mirrored declared?" rather than only "are
+the declared manifests correct?".
 
 ### Migration from 0.4.0
 
@@ -69,6 +76,19 @@ one promoted spec to fifteen — the repo now records what it knows about itself
   each stating what it is, what is checked, and by which gate.
   ([#105](https://github.com/beckharrisdesign/mvds/pull/105),
   [#106](https://github.com/beckharrisdesign/mvds/pull/106))
+- **`check:figma` fails closed on coverage.** It enumerated the declared
+  manifests and validated what it found, so it answered *"are the declared
+  manifests correct?"* and never *"is everything that should be mirrored
+  declared?"* — enrollment was opt-in. `Input` and `Dropzone` reached both code
+  and Figma while the gate reported `17 component manifest(s) match` against a
+  lock recording 19. Coverage is now derived from the component filesystem via a
+  `mirrorScope` glob: every file is mirrored, or carried by a `notMirrored`
+  record with a reason and a prop-signature fingerprint, and never both — three
+  states, no fourth. A staleness guard recomputes each exclusion's fingerprint,
+  and lock reconciliation walks `figma.lock.json` entry-wise so single
+  components with a null `componentSetId` are covered too. Reports
+  `19 mirrored · 6 excluded · 25 classified`.
+  ([#115](https://github.com/beckharrisdesign/mvds/pull/115))
 
 ### Added
 
@@ -107,6 +127,15 @@ one promoted spec to fifteen — the repo now records what it knows about itself
 - **Count-and-label pairs no longer split across lines** in the site's element
   tallies at narrow widths.
   ([#110](https://github.com/beckharrisdesign/mvds/pull/110))
+- **The Figma lock's sync stamp tells the truth.** `syncedAt`/`syncedFromCommit`
+  read `2026-07-29` / `8f791b1` although the `Input` and `Dropzone` component
+  sets had been pushed on 2026-08-23 — that run updated Figma but neither the
+  stamp nor the `components` map, so the landing page reported the mirror ~14
+  commits further behind than it was. Restamped to `4bbd49a`, the commit whose
+  `Input`/`Dropzone` those sets mirror, with both now recorded in the lock. The
+  stamp's ownership is written down: the component-sync skill sets it, the
+  token-sync skill deliberately never touches it.
+  ([#113](https://github.com/beckharrisdesign/mvds/pull/113))
 
 ## [0.4.0] - 2026-08-23
 
@@ -492,7 +521,8 @@ verification gates.
   `background`.
   ([#9](https://github.com/beckharrisdesign/mvds/pull/9))
 
-[Unreleased]: https://github.com/beckharrisdesign/mvds/compare/v0.4.0...main
+[Unreleased]: https://github.com/beckharrisdesign/mvds/compare/v0.5.0...main
+[0.5.0]: https://github.com/beckharrisdesign/mvds/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/beckharrisdesign/mvds/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/beckharrisdesign/mvds/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/beckharrisdesign/mvds/compare/v0.1.0...v0.2.0
