@@ -75,6 +75,20 @@ branch-review description. Nothing else changes.)
      `perOption` deltas, name each child `variant=…, size=…, state=…`, then
      `figma.combineAsVariants(nodes, page)`. Set the property order to match
      the manifest's axis order.
+   - **Option order inside an axis is NOT yours to set — don't try.** The axis
+     order above (which property comes first) is settable; the order of a
+     VARIANT property's *values* is not. `componentPropertyDefinitions` is
+     `readonly` and `editComponentProperty` takes no value order (it rejects
+     `defaultValue` for VARIANT properties outright). It is also **not derived
+     from child order** — verified 2026-10-13: Button's children sit in a
+     scrambled canvas order while its reported `variantOptions` stays tidy. So
+     reordering children to chase the picker would change which variant a
+     designer gets when dragging the set from Assets and leave the picker
+     unchanged: strictly worse. Figma's picker order is fixed when the options
+     are created, and changing it afterwards is a founder action in the
+     properties panel. Report the difference, never "fix" it. (Three axes sit
+     this way today: Button `variant`, Button `size`, Input `size` — every
+     option present and correctly named, sequence only.)
    - **Existing set:** `clone()` a sibling and `appendChild` for new variants;
      rename for renames; re-bind only what the diff flagged.
    - **Bindings:** colors via paint literals — `{ type: "SOLID", color:
@@ -102,8 +116,14 @@ branch-review description. Nothing else changes.)
    - **Nested instances** (Card → Button): look up the donor variant via the
      lock (or the set's child by variant name) and `createInstance()` into the
      declared child slot.
-5. **Sync Report.** A dated frame on a `Sync Reports` page in MVDS Core AND the
-   same content as markdown in chat: repo commit SHA, per-component
+5. **Sync Report.** **A run that wrote nothing to Figma gets NO report frame.**
+   The frame exists so the founder can review it and paste it as the
+   **Publish library** version description — with zero writes there is nothing
+   to publish, and a frame implying otherwise invites a pointless publish and
+   leaves a floater to manage. Record the verification in the lock's
+   `componentSync` block instead (and say so in chat). Otherwise: a dated frame
+   on a `Sync Reports` page in MVDS Core AND the same content as markdown in
+   chat: repo commit SHA, per-component
    added/renamed/rebound/removed/raw-fallback lists. Tell the founder explicitly:
    review, then **Publish library** with this text as the version description.
    **One standalone frame per change — NEVER append to an existing report.** The
@@ -131,7 +151,13 @@ branch-review description. Nothing else changes.)
      `Tokens` collection's Dark mode; correct dark rendering proves bindings,
      not baked colors.
 7. **Record.** Update `figma/figma.lock.json` with every componentSetId +
-   variant node ID, and set the **top-level** `syncedAt`/`syncedFromCommit` —
+   variant node ID, write the `componentSync` block (what the run compared, the
+   result, and anything found-but-unfixable — the component counterpart to
+   `tokenSync`, whose `checked` counts the COMPARISON, not the file's contents),
+   and set the **top-level** `syncedAt`/`syncedFromCommit` — the stamp moves
+   even when the run was a no-op, because the point of re-stamping is that the
+   mirror is *verified* current at that commit; that is what takes the landing
+   page's `commitsBehind` to 0 —
    this skill is the only owner of that stamp, so it must name the commit whose
    components you just mirrored (`git rev-parse HEAD` of the revision you synced
    from), not merely today's HEAD. Commit it on a `chore/figma-lock-…` branch per

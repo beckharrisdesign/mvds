@@ -11,7 +11,24 @@ export default {
   page: "Components",
   code: { file: "src/components/ui/button.tsx" },
 
-  // Option ORDER here = property-value order in the Figma variant picker.
+  // Option ORDER here mirrors the cva definition order in button.tsx, which
+  // `npm run check:figma` enforces exactly (it compares with JSON.stringify and
+  // has a dedicated "order differs" message, so the sequence is load-bearing on
+  // the code <-> manifest side).
+  //
+  // It does NOT reach Figma's variant picker, though this comment claimed it did
+  // until 2026-10-13. Figma's picker order lives in the component set's VARIANT
+  // property definition, and the Plugin API cannot write it:
+  // componentPropertyDefinitions is readonly, and editComponentProperty takes no
+  // value order (it rejects defaultValue for VARIANT properties outright). Nor is
+  // it derived from child order -- Button's children sit in a scrambled order on
+  // the canvas while its reported variantOptions stays tidy, which kills the
+  // obvious workaround: reordering children would change which variant a designer
+  // gets when dragging the set from Assets and still leave the picker alone.
+  //
+  // So Figma currently shows variant as default,secondary,outline,... and size as
+  // default,sm,lg,... -- every option present and correctly named, sequence only.
+  // Changing it is a founder action in Figma's properties panel, not a sync step.
   axes: [
     {
       name: "variant",
