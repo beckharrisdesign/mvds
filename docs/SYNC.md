@@ -92,6 +92,10 @@ library-publish flow as its branch-and-merge analog:
 
 1. The sync updates component sets **in place** (instances downstream keep working)
    and writes a **Sync Report** — a dated frame in MVDS Core plus matching markdown.
+   **A run that wrote nothing gets no report frame:** the frame's purpose is to be
+   reviewed and pasted as the publish description, and with zero writes there is
+   nothing to publish. Such a run records its verification in the lock's
+   `componentSync` block instead.
 2. The sync **never publishes.** The founder reviews the report and clicks
    **Publish library**, pasting the report as the version description — that click
    is the merge approval. An unpublished sync is an open PR, not a landed change.

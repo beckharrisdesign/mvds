@@ -9,6 +9,11 @@
 //
 // Adopts the existing Figma set `690:25` by name — never rebuilt (rebuilding
 // breaks every downstream instance).
+//
+// Figma's picker shows this axis as default,sm,lg rather than the code order
+// sm,default,lg below. All three options exist and are correctly named; only the
+// sequence differs, and the Plugin API cannot set it — see the long note in
+// button.figma.mjs, which hits the same limit on two axes.
 
 export default {
   name: "Input",
