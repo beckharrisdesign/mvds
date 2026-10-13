@@ -10,7 +10,7 @@
   "homepage": "https://github.com/beckharrisdesign/mvds#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/beckharrisdesign/mvds"
+    "url": "git+https://github.com/beckharrisdesign/mvds.git"
   },
   "bugs": {
     "url": "https://github.com/beckharrisdesign/mvds/issues"
