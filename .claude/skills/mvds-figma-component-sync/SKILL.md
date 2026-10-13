@@ -40,7 +40,9 @@ property bound to the token variables — never baked-in values.
 Figma branching needs Org/Enterprise; on Pro the equivalent is the library
 publish flow. The sync therefore:
 1. updates component sets **in place** (instances downstream survive),
-2. writes a **Sync Report** (see below) describing every change,
+2. writes a **Sync Report** (see below) describing every change — **unless the
+   run wrote nothing**, in which case there is no report and nothing to publish
+   (step 5 has the reasoning),
 3. **never publishes** — the founder reviews the report and clicks
    **Publish library** in Figma, pasting the report as the version description.
    Consuming files then accept the update per-file via Figma's standard
@@ -157,10 +159,13 @@ branch-review description. Nothing else changes.)
    and set the **top-level** `syncedAt`/`syncedFromCommit` — the stamp moves
    even when the run was a no-op, because the point of re-stamping is that the
    mirror is *verified* current at that commit; it also takes the generated
-   snapshot's `commitsBehind` to 0 (that field is computed and typed but
-   rendered nowhere — the only lock value the landing page shows is `syncedAt`,
-   in `src/components/site/figma-mirror.tsx`, so expect the re-stamp to produce
-   two Chromatic diffs for `FigmaMirror/Default` in light + dark) —
+   snapshot's `commitsBehind` to 0 **at the stamped revision only** — the
+   generator measures `syncedFromCommit..HEAD`, so any later commit (your own
+   follow-ups, the merge commit) puts it back above zero, and it can never read 0
+   in a merged state. Do not promise a durable zero. That field is also computed
+   and typed but rendered nowhere — the only lock value the landing page shows is
+   `syncedAt`, in `src/components/site/figma-mirror.tsx`, so expect the re-stamp
+   to produce two Chromatic diffs for `FigmaMirror/Default` in light + dark —
    this skill is the only owner of that stamp, so it must name the commit whose
    components you just mirrored (`git rev-parse HEAD` of the revision you synced
    from), not merely today's HEAD. Commit it on a `chore/figma-lock-…` branch per
