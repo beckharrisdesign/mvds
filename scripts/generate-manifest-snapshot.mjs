@@ -69,13 +69,15 @@ const dirty = (git("status --porcelain") ?? "")
   .split("\n")
   .filter((l) => l && !l.includes("src/generated/manifest-snapshot.json"))
   .length > 0
-// Lock values are repo-controlled, but they reach a shell string — accept only
-// a hex SHA before interpolating.
-const syncedSha = /^[0-9a-f]{4,40}$/i.test(lock.syncedFromCommit ?? "")
-  ? lock.syncedFromCommit
-  : null
-const behind = syncedSha ? git(`rev-list --count ${syncedSha}..HEAD`) : null
-const commitsBehind = behind === null ? null : Number(behind)
+// No `commitsBehind` here, deliberately. It was computed as
+// syncedFromCommit..HEAD and emitted into this snapshot, but NOTHING ever
+// rendered it — the only lock value the site shows is `syncedAt`
+// (src/components/site/figma-mirror.tsx). Worse, the number could not be stated
+// truthfully in a checked-in file: it reads 0 only AT the stamped commit, so any
+// later commit — including every merge commit — put it above zero, and it cost
+// two wrong claims about the landing page before anyone noticed it was dead.
+// Freshness is the stamp (`syncedAt` / `syncedFromCommit`), which check:figma now
+// holds to being true (S1-S6). A distance that is nobody's output is not a metric.
 
 // --- token-layer counts (cheap regex over src/index.css) ------------------------
 const colorUtilities = [...css.matchAll(/^\s*--color-[\w-]+:/gm)].length
@@ -445,7 +447,6 @@ const snapshot = {
     fileKey: lock.fileKey,
     syncedAt: lock.syncedAt,
     syncedFromCommit: lock.syncedFromCommit,
-    commitsBehind,
   },
   gates,
   principles: principleRecords,

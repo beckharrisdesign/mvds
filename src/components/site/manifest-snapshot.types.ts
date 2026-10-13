@@ -86,7 +86,6 @@ export interface ManifestSnapshot {
     fileKey: string
     syncedAt: string
     syncedFromCommit: string
-    commitsBehind: number | null
   }
   gates: Gate[]
   principles: PrincipleRecord[]
