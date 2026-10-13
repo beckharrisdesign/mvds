@@ -29,7 +29,10 @@
 //   conventions.typography ↔ figma.lock.json — the lock records each Type/*
 //     style's resolved font at last sync; a mismatch is an error (T7). A lock
 //     with no typography block is a bootstrap WARNING (T6) until the first
-//     font-aware token sync records reality.
+//     font-aware token sync records reality. T8 compares WHICH font variable
+//     each step binds (font-sans vs font-heading) rather than the family it
+//     resolves to — the two are the same string while --font-heading aliases
+//     --font-sans, so resolved-value comparison alone cannot see a rebinding.
 //
 // Exit codes: 0 = clean (or warn-only). 1 = errors. 2 = errors in --file mode
 // (surfaces to the agent via a PostToolUse hook, like check-principles).
@@ -406,10 +409,27 @@ function checkTypography(errors, warns) {
       message: `T2: src/index.css --font-sans is ${codeFamily ? `'${codeFamily}'` : "missing/unquoted"} but conventions.typography declares '${f.code}' — change both together (then re-run the token sync)`,
     })
   }
-  if (!/--font-heading:\s*var\(--font-sans\)/.test(indexCss)) {
+  // --font-heading is modelled as its own token (conventions.typography.fontHeading),
+  // so it no longer aliasing font-sans is a SUPPORTED move, not a warning — that is
+  // the point of themeable-typography. What must hold is that the record keeps up:
+  // once the alias breaks, the two Figma variables carry different families and the
+  // declared `figma` value for the heading face has to say so.
+  const headingAliases = /--font-heading:\s*var\(--font-sans\)/.test(indexCss)
+  const h = t.fontHeading
+  if (!h?.figmaVariable) {
+    errors.push({
+      component: "typography",
+      message: `T2: conventions.typography has no fontHeading record — the ramp binds two font variables (see fontTokenByStep), so both must be declared`,
+    })
+  } else if (headingAliases && h.figma !== f.figma) {
+    errors.push({
+      component: "typography",
+      message: `T2: --font-heading still aliases var(--font-sans) so both faces resolve to '${f.figma}', but conventions declares the heading face as '${h.figma}' — fix the record or break the alias in src/index.css`,
+    })
+  } else if (!headingAliases && h.aliasOf) {
     warns.push({
       component: "typography",
-      message: `--font-heading no longer aliases var(--font-sans) — the typography record assumes one family; extend conventions.typography if a second family is now real`,
+      message: `--font-heading no longer aliases var(--font-sans), but conventions.typography.fontHeading still records aliasOf: '${h.aliasOf}' — drop aliasOf and set its own \`figma\` family, then re-run the token sync`,
     })
   }
 
@@ -489,7 +509,51 @@ function checkTypography(errors, warns) {
     if (entry.bound === false) {
       warns.push({
         component: "typography",
-        message: `"${styleName}" fontFamily is set directly, not bound to the font-sans variable (bind failed at last sync) — rebinding is cosmetic, values still match`,
+        message: `"${styleName}" fontFamily is set directly, not bound to a font variable (bind failed at last sync) — rebinding is cosmetic, values still match`,
+      })
+    }
+  }
+
+  // T8 — WHICH font variable each step binds.
+  //
+  // T7 above compares the RESOLVED family, and that is not enough: --font-heading
+  // aliases --font-sans today, so both variables read "Inter" and a sync that
+  // rebound every style to font-sans would pass every check while quietly
+  // destroying the heading/body split. It would surface only once a brand gave the
+  // heading face its own family — as headings rendering in the body font, with a
+  // green gate. So compare the binding itself, by name, not the value it happens
+  // to resolve to.
+  const varByToken = { [f.token]: f.figmaVariable, [h?.token]: h?.figmaVariable }
+  for (const [util, styleName] of Object.entries(conventions.textStyles)) {
+    const wantToken = t.fontTokenByStep?.[util]
+    if (!wantToken) {
+      errors.push({
+        component: "typography",
+        message: `T8: conventions.typography.fontTokenByStep has no entry for ramp step ${util} — every step must declare which font token it binds`,
+      })
+      continue
+    }
+    const wantVar = varByToken[wantToken]
+    if (!wantVar) {
+      errors.push({
+        component: "typography",
+        message: `T8: ramp step ${util} declares font token '${wantToken}', which matches no declared font record (${Object.keys(varByToken).filter(Boolean).join("/")})`,
+      })
+      continue
+    }
+    const entry = lock.typography.textStyles?.[styleName]
+    if (!entry) continue // already reported by T7
+    if (!entry.boundVariable) {
+      warns.push({
+        component: "typography",
+        message: `T8: lock records no boundVariable for "${styleName}" — which font variable it binds is unverified; re-run the token sync`,
+      })
+      continue
+    }
+    if (entry.boundVariable !== wantVar) {
+      errors.push({
+        component: "typography",
+        message: `T8: "${styleName}" is bound to ${entry.boundVariable} in Figma but ramp step ${util} declares '${wantToken}' (${wantVar}) — the two faces resolve to the same family today, so this will NOT show up as a wrong font until the heading face diverges; re-run the token sync or fix fontTokenByStep`,
       })
     }
   }

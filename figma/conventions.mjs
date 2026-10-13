@@ -79,11 +79,23 @@ export const conventions = {
   // (the --font-sans family, the @fontsource import + dependency, every ramp
   // weight mappable) and this record ↔ figma.lock.json's recorded reality.
   //
-  // In Figma the family lives as a STRING variable (`Typography/font-sans`,
-  // FONT_FAMILY scope, Tokens collection, same value in both modes) bound to every Type/*
-  // style's fontFamily — a rebrand is a one-variable change. Per-style weight
-  // (fontStyle) is set directly from weightToFigmaStyle; it varies per ramp
-  // step, so it is not variable-bound.
+  // In Figma the families live as STRING variables (FONT_FAMILY scope, Tokens
+  // collection, same value in both modes), and there are TWO of them, because
+  // the ramp has two faces: `Typography/font-sans` and `Typography/font-heading`.
+  // Each ramp step binds exactly one of them — see fontTokenByStep. A rebrand is
+  // a one- or two-variable change. Per-style weight (fontStyle) is set directly
+  // from weightToFigmaStyle; it varies per ramp step, so it is not
+  // variable-bound.
+  //
+  // This record said "bound to every Type/* style" until 2026-10-13, naming only
+  // font-sans — but Figma had carried both variables since the 2026-08-23 token
+  // sync, with Display + Heading 1-4 on font-heading. The contract was the stale
+  // side, and it was the DESTRUCTIVE kind: a sync following it would have rebound
+  // all nine styles to font-sans, and because T7 compared only the resolved
+  // family ("Inter" either way) nothing would have failed. The damage would have
+  // surfaced only once --font-heading pointed at a different face, as headings
+  // silently rendering in the body font. Hence fontTokenByStep below, and the
+  // per-style boundVariable the gate now checks (T8).
   //
   // GOTCHA: Inter's Figma style names contain a SPACE ("Semi Bold", not
   // "SemiBold" — Geist is the opposite). loadFontAsync fails loudly on the
@@ -96,6 +108,35 @@ export const conventions = {
       figma: "Inter", // Figma family name (static styles)
       figmaVariable: "Typography/font-sans", // STRING variable, FONT_FAMILY scope, Tokens
     },
+
+    // The HEADING face — the ramp's second font token. `--font-heading` aliases
+    // `--font-sans` in src/index.css today, so both resolve to Inter; the whole
+    // point of the themeable-typography change is that a brand can repoint the
+    // heading face alone. Modelled separately so that override is a supported
+    // move rather than a silent divergence from Figma.
+    fontHeading: {
+      token: "font-heading", // --font-heading in :root
+      aliasOf: "font-sans", // today; a brand may give it its own family
+      figma: "Inter", // resolved Figma family while the alias holds
+      figmaVariable: "Typography/font-heading", // STRING variable, FONT_FAMILY scope, Tokens
+    },
+
+    // Which font token each ramp step takes its family from — the binding
+    // contract a token sync executes and the gate verifies (T8). Keyed by the
+    // code utility, the same key as conventions.textStyles, so step → Figma
+    // style → lock entry resolves without a second name list to keep in step.
+    fontTokenByStep: {
+      "text-display": "font-heading",
+      "text-h1": "font-heading",
+      "text-h2": "font-heading",
+      "text-h3": "font-heading",
+      "text-h4": "font-heading",
+      "text-body-lg": "font-sans",
+      "text-body": "font-sans",
+      "text-small": "font-sans",
+      "text-caption": "font-sans",
+    },
+
     // code font-weight → Figma font style (the ramp uses exactly these three).
     weightToFigmaStyle: { 400: "Regular", 500: "Medium", 600: "Semi Bold" },
   },
