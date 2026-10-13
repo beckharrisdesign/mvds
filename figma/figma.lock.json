@@ -1,8 +1,23 @@
 {
-  "$comment": "Machine-recorded Figma reality — node IDs written by the mvds-figma-component-sync skill after each run (manifests are the human-reviewed intent; this is the package-lock analog). componentSetId null means either not yet adopted/created (for multi-variant components) OR a deliberate single-component with no variant axes (Label/Textarea/Blockquote — check for a sibling componentId field). The sync's inspect phase resolves by name as a self-healing fallback and repairs this file if nodes were moved or renamed in Figma. Top-level syncedAt/syncedFromCommit record the last COMPONENT sync - the mvds-figma-component-sync skill owns them (step 7) and the token-sync skill deliberately does not touch them, so they describe the code revision the component mirror reflects, not the most recent sync of any kind. They read 2026-07-29/8f791b1 until 2026-10-06 even though the Input and Dropzone component sets had been pushed on 2026-08-23 - that run updated Figma but neither this stamp nor the components map, so the landing page reported the mirror ~14 commits further behind than it was. Corrected to 4bbd49a, the commit whose Input/Dropzone those sets mirror (#85); the gradationVariables/typography blocks carry their own provenance and are unaffected. Figma-side note: on 2026-10-06 the Foundations documentation board was repaired separately (the --primary-*/--secondary-* steps specimens still rendered 11 swatches bound to the deleted 50...950 variables, and the layer diagram still taught primary-600/primary-400); no variables changed.",
+  "$comment": "Machine-recorded Figma reality — node IDs written by the mvds-figma-component-sync skill after each run (manifests are the human-reviewed intent; this is the package-lock analog). componentSetId null means either not yet adopted/created (for multi-variant components) OR a deliberate single-component with no variant axes (Label/Textarea/Blockquote — check for a sibling componentId field). The sync's inspect phase resolves by name as a self-healing fallback and repairs this file if nodes were moved or renamed in Figma. Top-level syncedAt/syncedFromCommit record the last COMPONENT sync - the mvds-figma-component-sync skill owns them (step 7) and the token-sync skill deliberately does not touch them, so they describe the code revision the component mirror reflects, not the most recent sync of any kind. They read 2026-07-29/8f791b1 until 2026-10-06 even though the Input and Dropzone component sets had been pushed on 2026-08-23 - that run updated Figma but neither this stamp nor the components map, so the landing page reported the mirror ~14 commits further behind than it was. Corrected to 4bbd49a, the commit whose Input/Dropzone those sets mirror (#85); the gradationVariables/typography blocks carry their own provenance and are unaffected (and since 2026-10-13 the `tokenSync` block below holds the one structured token-layer stamp). Figma-side note: on 2026-10-06 the Foundations documentation board was repaired separately (the --primary-*/--secondary-* steps specimens still rendered 11 swatches bound to the deleted 50...950 variables, and the layer diagram still taught primary-600/primary-400); no variables changed.",
   "fileKey": "C20nU0mROzk3Zr0I9BELJF",
   "syncedAt": "2026-08-23",
   "syncedFromCommit": "4bbd49a83a26afc3d0e3d0ef09199a51f089e097",
+  "tokenSync": {
+    "$comment": "Provenance for the TOKEN layer, owned by the mvds-figma-token-sync skill — deliberately separate from the top-level syncedAt/syncedFromCommit above, which record the last COMPONENT sync and which this skill never touches. Before this block each token run left only prose inside the block it happened to touch, so completeness varied: gradationVariables carried a date AND a commit, spatialVariables a date only, radiusRamp and derivedVariables neither, and typography's own comment had no date at all (only its nested fontHeadingVariable mentioned one). That prose is kept as narrative; this is the one structured record. `checked` counts what the run actually COMPARED, not what happens to exist in the file — the distinction that mattered in #121, where a gate reported the size of its walk instead of the size of its check and the number drifted with local build state. A `no-op` result is a real outcome, not a skipped run: it means every compared token already agreed, so nothing was written to Figma.",
+    "verifiedAt": "2026-10-13",
+    "verifiedFromCommit": "64d95c9d756fe8f17bb93afdc3dfd87303853b7d",
+    "result": "no-op",
+    "checked": {
+      "colorVariables": 44,
+      "floatVariables": 38,
+      "fontFamilyVariables": 2,
+      "textStyles": 9,
+      "mismatches": 0
+    },
+    "method": "src/index.css parsed for :root (light) + .dark (dark) token values, oklch converted via scripts/color.mjs, then compared against a read-only dump of every local variable and text style in the Figma file. Colors compared at Figma's 4-decimal storage precision, alpha included. Text styles compared on family, weight-derived style name, line-height, letter-spacing, and both the fontFamily and fontSize variable bindings.",
+    "notMirrored": "Elevation (--elevation-sm/md/lg) and motion (--duration-*, --ease-*) are authored in code and intentionally absent from Figma — neither conventions.mjs nor this lock file declares a target for them."
+  },
   "pages": {
     "foundations": "0:1",
     "components": "95:4",
@@ -276,7 +291,7 @@
     }
   },
   "typography": {
-    "$comment": "Recorded text-style fonts at last sync (resolved values, even when variable-bound) — checked by check:figma T6/T7. fontFamily is bound to the font-sans STRING variable; fontStyle is set directly per ramp step.",
+    "$comment": "Recorded text-style fonts as of the token sync stamped in the top-level `tokenSync` block (resolved values, even when variable-bound) — checked by check:figma T6/T7. fontFamily is bound to a STRING variable per step — Display and Heading 1-4 to `Typography/font-heading`, Body Large/Body/Small/Caption to `Typography/font-sans` (both resolve to Inter today, which is why the split was easy to miss); fontStyle is set directly per ramp step.",
     "fontFamilyVariable": {
       "name": "Typography/font-sans",
       "id": "VariableID:153:2",
