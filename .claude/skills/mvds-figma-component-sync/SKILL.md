@@ -156,8 +156,11 @@ branch-review description. Nothing else changes.)
    `tokenSync`, whose `checked` counts the COMPARISON, not the file's contents),
    and set the **top-level** `syncedAt`/`syncedFromCommit` — the stamp moves
    even when the run was a no-op, because the point of re-stamping is that the
-   mirror is *verified* current at that commit; that is what takes the landing
-   page's `commitsBehind` to 0 —
+   mirror is *verified* current at that commit; it also takes the generated
+   snapshot's `commitsBehind` to 0 (that field is computed and typed but
+   rendered nowhere — the only lock value the landing page shows is `syncedAt`,
+   in `src/components/site/figma-mirror.tsx`, so expect the re-stamp to produce
+   two Chromatic diffs for `FigmaMirror/Default` in light + dark) —
    this skill is the only owner of that stamp, so it must name the commit whose
    components you just mirrored (`git rev-parse HEAD` of the revision you synced
    from), not merely today's HEAD. Commit it on a `chore/figma-lock-…` branch per
