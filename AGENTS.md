@@ -235,8 +235,12 @@ from the experiment-hub rules — keep the two in sync.)
    test the PR implements.
 4. ✅ **Watch for Copilot review comments/suggestions.** Surface every one to the
    founder for approval first — ❌ never act on them unilaterally — then wait for
-   Copilot to resolve them. When resolving, ✅ **reply on each review thread**
-   (with the fix commit SHA) — ❌ not a standalone PR comment. Evaluate each on its merits against *these* house rules,
+   Copilot to resolve them. For every finding, ✅ **reply on its review thread**
+   (with the fix commit SHA) **and mark that thread resolved in the same pass** —
+   the two go together whatever the outcome: fixed, declined with a reason, or
+   already true. ❌ Never leave a replied-to thread open — a PR showing open
+   threads that are actually settled hides the ones that aren't.
+   ❌ Not a standalone PR comment. Evaluate each on its merits against *these* house rules,
    not generic-library defaults (see the pre-1.0 note above — Copilot will suggest
    compat shims and pristine-shadcn habits that this repo rejects).
 5. ✅ **Verify what Copilot actually landed — don't trust a "Done" comment.** The
