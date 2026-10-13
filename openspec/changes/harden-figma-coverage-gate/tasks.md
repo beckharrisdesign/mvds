@@ -2,25 +2,27 @@
 
 ## 1. User outcomes (from spec scenarios)
 
-> Left unticked for the founder's acceptance pass per the schema. Each was
-> evidenced headlessly during 4.1 — the failure modes were introduced and the
-> gate's output captured — but ticking §1 is hers, not mine.
+> Accepted by the founder on 2026-10-13, after beckharrisdesign/mvds#115 merged
+> as `076ecad` ("ticked them all — archive it"). The ticks did not reach the
+> repo — recorded here on her instruction, transcribing her decision, not
+> substituting a judgment of mine. Each outcome was evidenced headlessly during
+> 4.1: the failure modes were introduced and the gate's output captured.
 
-- [ ] 1.1 **Walk the mirrorable scope** — `npm run check:figma` reports a
+- [x] 1.1 **Walk the mirrorable scope** — `npm run check:figma` reports a
       classified count equal to the component files found under the mirrorable
       scope (25 today: `ui/`, `forms/`, `blocks/`, `layout/`, stories excluded by
       glob), not the length of `componentManifests`.
-- [ ] 1.2 **A new component lands unclassified** — adding a component file with
+- [x] 1.2 **A new component lands unclassified** — adding a component file with
       neither a manifest nor an exclusion record exits non-zero, names the file,
       and prints both ways to resolve it.
-- [ ] 1.3 **An excluded component changes shape** — editing an excluded
+- [x] 1.3 **An excluded component changes shape** — editing an excluded
       component's public props exits non-zero, names the component, and shows
       the recorded fingerprint against the recomputed one.
-- [ ] 1.4 **The lock holds an undeclared component** — an entry in
+- [x] 1.4 **The lock holds an undeclared component** — an entry in
       `lock.components` that no manifest declares exits non-zero and is named,
       whether it is a variant set **or** a single component with a null
       `componentSetId`.
-- [ ] 1.5 **Declared coverage matches the lock** — the gate reports 19 mirrored
+- [x] 1.5 **Declared coverage matches the lock** — the gate reports 19 mirrored
       and 6 excluded, 25 classified, with the lock reconciliation clean.
 
 ## 2. Preview (Storybook)
