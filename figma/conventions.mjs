@@ -118,12 +118,20 @@ export const conventions = {
   // Chrome dimension tokens (--chrome-top-height etc.) are FLOAT variables in
   // the Scales collection, Sizing/ group, scoped WIDTH_HEIGHT — Chrome variant
   // heights/widths bind them, so a rebrand's structural proportions flow to
-  // Figma. Z-layer tokens (--z-chrome … --z-toast) also live as Sizing/z-*
-  // FLOAT variables but are DOCUMENTATION-ONLY: Figma cannot express stacking
-  // (layer order does), so they carry empty scopes ([]) and bind to nothing.
+  // Figma. Z-layer tokens (--z-index-chrome … --z-index-toast) also live as
+  // Sizing/z-* FLOAT variables but are DOCUMENTATION-ONLY: Figma cannot express
+  // stacking (layer order does), so they carry empty scopes ([]) and bind to
+  // nothing.
+  //
+  // The two sides are deliberately ASYMMETRIC, so don't "tidy" them into
+  // matching: Tailwind v4 only generates a `z-<name>` utility from the
+  // `--z-index-*` prefix, so code must carry it (#93 — the tokens were authored
+  // without it and every z-utility silently resolved to `z-index: auto`). Figma
+  // has no utility generator, so its variables stay the shorter `Sizing/z-*`
+  // the designer reads. Source renamed, target unchanged.
   spatial: {
     chrome: "chrome-{edge}-{dim} → Sizing/chrome-{edge}-{dim} (Scales, WIDTH_HEIGHT)",
-    zLayers: "z-{level} → Sizing/z-{level} (Scales, scopes [] — doc-only)",
+    zLayers: "z-index-{level} → Sizing/z-{level} (Scales, scopes [] — doc-only)",
   },
 
   // ---- Layer naming -----------------------------------------------------------

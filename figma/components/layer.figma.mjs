@@ -3,12 +3,12 @@
 // (keyof, not cva/prop-union → manual). Keep options in step by hand.
 //
 // Layer is pure stacking vocabulary: code differs per level ONLY by z-index
-// (--z-overlay … --z-toast), which Figma cannot express (stacking = layer
-// order). The variants are therefore visually identical, transparent frames —
-// their value in a mockup is the NAMED level, so a design says "this sits at
-// modal" the same way code does. The frame itself is a viewport stand-in for
-// `fixed inset-0`; it deliberately has NO fill (code Layer owns no background
-// — a scrim is content you put inside it).
+// (--z-index-overlay … --z-index-toast), which Figma cannot express (stacking
+// = layer order). The variants are therefore visually identical, transparent
+// frames — their value in a mockup is the NAMED level, so a design says "this
+// sits at modal" the same way code does. The frame itself is a viewport
+// stand-in for `fixed inset-0`; it deliberately has NO fill (code Layer owns
+// no background — a scrim is content you put inside it).
 
 export default {
   name: "Layer",
