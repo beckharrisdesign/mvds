@@ -177,7 +177,20 @@ for (const p of active) {
 // --- report ------------------------------------------------------------------
 const errors = findings.filter((f) => f.severity === "error")
 const warns = findings.filter((f) => f.severity === "warn")
-const scope = singleFile ? ALL_FILES[0] : `${ALL_FILES.length} files`
+// Report what was CHECKED, not what was walked. `ALL_FILES` is the raw walk of
+// src/ + examples/, so it also picks up whatever happens to sit in those roots —
+// gitignored build artifacts included. No principle examines them: every scope
+// is extension-filtered to {ts,tsx}, so `filesFor` drops them before any check
+// runs. Reporting the walk count therefore claimed coverage of files nothing
+// looked at, and worse, the number moved with local state: `verify:consumer`
+// leaves examples/starter/package-lock.json and tsconfig.tsbuildinfo behind, and
+// the count silently went 87 -> 89 — a figure the generated snapshot records and
+// the landing page displays. Count the union of what the active principles
+// actually examine, so the claim is true and reproducible from a clean checkout.
+const checkedFiles = singleFile
+  ? ALL_FILES
+  : [...new Set(active.flatMap(filesFor))]
+const scope = singleFile ? ALL_FILES[0] : `${checkedFiles.length} files`
 
 const guidingNote = guiding.length
   ? ` (+${guiding.length} guiding, by judgment)`
