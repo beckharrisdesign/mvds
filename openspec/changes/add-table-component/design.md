@@ -75,13 +75,13 @@ a single edit.
 | --- | --- |
 | Primary file URL | <https://www.figma.com/design/CqgZ5tesr6qApnKiAadhVb> — HF scratch file "MVDS explore: add-table-component" |
 | As-is page / frame | `0.0 As is` → `0.0 As is — Intro/Design principles (Storybook, light)` (`3:26`, 1200×917) |
-| Proposed page | `03.0 Propose: add-table-component update` — **the current iteration: the component itself, light and dark, on MVDS Core.** `02.0` (anatomy, compositions, data states, the real surface, 480px, in-context samples) and `01.0` are retained untouched per `rules/figma.mdc` ("one page per step; never overwrite a prior page"). See the correction note below. |
-| Proposed frames | **`03.0`:** `Table: component (light)` (`46:48`) · `Table: component (dark)` (`46:422`, the same board under the Tokens collection's Dark mode) · `Tokens the Table uses` (`46:342`). **`02.0`:** `Table: parts + anatomy` (`17:2`) · `Table: compositions` (`18:2`) · `Table: the five data states` (`20:5`) · `Intro/Design principles as Table (L 1024+)` (`23:2`) · `Table: the empty state (0 rows)` (`27:2`) · `Narrow width S=480px (the decision)` (`23:101`) · `Table in context: samples` (`39:4`) |
+| Proposed page | `04.0 Propose: add-table-component update` — **the current iteration: `03.0` with the founder's three answers applied** (first-letter-capital headers on `Type/Caption`, `--table-surface` as the one new token, `border` for the scroll edge). `03.0` (the component on Core, light and dark, first cut), `02.0` (anatomy, compositions, data states, the real surface, 480px, in-context samples) and `01.0` are retained untouched per `rules/figma.mdc` ("one page per step; never overwrite a prior page"). See the correction note below. |
+| Proposed frames | **`04.0`:** `Table: component (light)` (`48:15`) · `Table: component (dark)` (`48:243`, the same board under the Tokens collection's Dark mode) · `Tokens the Table uses` (`48:159`). **`03.0`:** `46:48` · `46:422` · `46:342`. **`02.0`:** `Table: parts + anatomy` (`17:2`) · `Table: compositions` (`18:2`) · `Table: the five data states` (`20:5`) · `Intro/Design principles as Table (L 1024+)` (`23:2`) · `Table: the empty state (0 rows)` (`27:2`) · `Narrow width S=480px (the decision)` (`23:101`) · `Table in context: samples` (`39:4`) |
 | Libraries / version | MVDS Core (`C20nU0mROzk3Zr0I9BELJF`), bound **by key** via `importVariableByKeyAsync` / `importStyleByKeyAsync` / `importComponentSetByKeyAsync`. On `03.0`: **Tokens** (`Color/*`, `Typography/text-small-size`, `Typography/font-sans`) and **Scales** (`Spacing/space-4·8·16·32·40`) variables on every fill, stroke, inset and gap; `Type/Heading 2·4`, `Type/Body`, `Type/Small` text styles; the **Core `Badge` component set** (`925f5b9b…`) as instances. Read back from the file after the build: 0 unbound solid fills, 0 unbound paddings or gaps, 0 text nodes without a style or a bound size. `02.0` bound colours and two text styles only — its insets were literal numbers and its badges hand-drawn. |
 | Delta page | `01.5 Eval Delta` — pinned duplicates of all six propose frames plus `01.5 Eval Delta — disposition ledger` (`31:599`) |
 | Samples | `02.0 Propose — Table in context: samples` (`39:4`) — billing history, team & access, a component API reference, and a plan comparison. Sample data is invented and flagged as such on the board; only the principles board renders the live manifest. |
 | Breakpoints | S · 480px (`23:101`) / L · 1024px (`23:2`, and all specimen boards at 1200) — BHD Content Types |
-| Status | iterating — `03.0` built 2026-10-15 on founder direction ("show me the component first, in light and dark mode … in the typography and spacing scales we've defined already. If we need tokens for tables, I need to know about them"); awaiting founder review. See **Tokens** below. |
+| Status | iterating — `03.0` built 2026-10-15 on founder direction ("show me the component first, in light and dark mode … in the typography and spacing scales we've defined already. If we need tokens for tables, I need to know about them"); `04.0` applies the founder's answers to the three token questions (same day). Awaiting the founder's gate call on `04.0`. See **Tokens** below. |
 
 **What the three new boards carry.** `17:2` renders the seven parts twice: once
 assembled into a working specimen with the parts annotated in place, and once
@@ -192,10 +192,14 @@ delta:** `hover:bg-muted` applies to `tbody` rows **only**. Header cells do use
 the failing pairing — the first draft prevented that with a sentence on a card,
 which is prevention by prose, not by construction.
 
-**D7 · The scroll region shows that it scrolls.** CSS-only scroll shadows
-(`background-attachment: local` gradients in `--background`), which appear only
-when there is more content in that direction and vanish at the ends. No JS, and
-no permanent affordance on a table that fits.
+**D7 · The scroll region shows that it scrolls.** CSS-only scroll edges
+(`background-attachment: local` cover gradients in `--table-surface`, over an
+edge gradient in **`--border`** fading to transparent), which appear only when
+there is more content in that direction and vanish at the ends. No JS, and no
+permanent affordance on a table that fits. **Settled 2026-10-15 (founder:
+"ok"):** the edge colour is `border` — the token that already means "edge",
+decorative-side and therefore outside the AA pairings, and already a white
+alpha in dark mode so it reads the same in both. No new token.
 
 **D8 · Empty means zero rows.** `TableEmpty` takes its title and line from the
 consumer — MVDS ships no copy naming a mechanism that can drift. Loading and
@@ -235,6 +239,35 @@ for free (an inline-level box aligns to the line's baseline); the `03.0` board
 draws it explicitly as a 26px line-box frame so the mock shows the rule rather
 than approximates it. The shipped story for the identity row measures it.
 
+**D14 · `--table-surface` is the one new token.** A sticky `<thead>` needs an
+opaque background, and the surface a table sits on is not always `background`:
+inside a `Card` it is `card`, which equals `background` in light mode and
+differs in dark (`0.205` vs `0.145`), so a header painted `background` would
+show a seam as rows scroll under it. **Founder, 2026-10-15: "ok lets add
+it."** The token is a scoped custom property: `:root { --table-surface:
+var(--background) }`, and `Card` sets `--table-surface: var(--card)` on its
+root. `TableHeader` is `bg-[var(--table-surface)]`; D7's cover gradient uses
+the same value. It has a reader (`TableHeader`) and one writer per surface,
+which is the shape scoped theming already uses in this repo. `check:contrast`
+covers it through the pairings it aliases — `foreground` and
+`muted-foreground` on `background` and on `card` are already gated — so no new
+pairing is added, and that is stated here rather than assumed. The Figma
+mirror is `Color/table-surface` aliasing `Color/background`, created on the
+next **requested** token sync; the `04.0` board keeps `<thead>` bound to
+`Color/background`, which is what the token resolves to there, rather than
+hand-painting a variable Core does not carry yet.
+
+**D15 · Header labels take a first-letter capital, on `Type/Caption`.**
+**Founder, 2026-10-15: "headers should follow the title case precedent of
+MVDS."** The precedent in code is a first-letter capital — *Design principles*,
+*Get started*, *Email notifications*, *Card title* — so the columns read *ID ·
+What it says · Enforcement · Source*. The as-is index had lowercase headers, and
+the mocks copied the drift. The same look at the as-is surface settled the open
+weight question: its headers were `text-caption font-medium`, and Caption is the
+ramp's label step with weight 500 authored into it. `TableHead` therefore uses
+`text-caption text-muted-foreground` and nothing else — no hand-set weight, no
+new text style, and the `03.0` spec line `text-small · semibold` is superseded.
+
 **D12 · The principles index renders four columns, not five.** The first draft
 carried both the principle `title` and its `description`, which restate one
 record twice, doubled every row height, and halved how many of the 24 records
@@ -256,18 +289,19 @@ stay.
 ## Tokens
 
 Founder direction, 2026-10-15: *"if we need tokens for tables, I need to know
-about them."* This is the census, read back from the `03.0` boards after the
-build, not from the plan. **Every token the component uses exists in MVDS Core
-today. No new token is proposed. Three questions are open, each the founder's
-call, and one of them could become a token.**
+about them."* This is the census, read back from the `04.0` boards after the
+build, not from the plan. **One new token: `--table-surface` (D14). Everything
+else exists in MVDS Core today.** The three questions `03.0` left open were
+answered by the founder the same day; the answers are D14, D15 and D7.
 
 | Token | Bound where | Status |
 | --- | --- | --- |
-| `Color/background` | Table surface · `TableHeader` (sticky, opaque) | exists |
+| **`--table-surface`** | `TableHeader` sticky surface · D7 cover gradient. `:root` → `var(--background)`, `Card` → `var(--card)` | **NEW — D14.** Figma: `Color/table-surface` aliasing `background`, on the next requested token sync |
+| `Color/background` | Table surface · the default value of `--table-surface` | exists |
 | `Color/foreground` | `TableCell` text · `TableEmpty` title | exists |
 | `Color/muted-foreground` | `TableCaption` · `TableHead` · `TableEmpty` line | exists |
 | `Color/muted` | `tbody` `TableRow` `:hover` | exists |
-| `Color/border` | `TableRow` 1px bottom rule | exists |
+| `Color/border` | `TableRow` 1px bottom rule · scroll-edge fade (D7) | exists |
 | `Badge` `variant=muted` / `outline` | enforcement column (D11) | exists, component |
 | `Spacing/space-8` | `TableHead` + `TableCell` padding-y | exists |
 | `Spacing/space-16` | `TableHead` + `TableCell` padding-x · `TableCaption` padding | exists |
@@ -275,37 +309,22 @@ call, and one of them could become a token.**
 | `Spacing/space-4` | `TableEmpty` gap, title to line | exists |
 | `Type/Body` | `TableCell` · `TableEmpty` title | exists |
 | `Type/Small` | `TableCaption` · `TableEmpty` line | exists |
-| `Typography/text-small-size` + `font-sans` | `TableHead`, weight set by hand (open 1) | exists |
-| `Type/Caption` | via the `Badge` instance | exists |
+| `Type/Caption` | `TableHead` (D15) · via the `Badge` instance | exists |
 | 1lh of `text-body` (25.6px) | the line box inline content centres on (D13) | derived from the ramp, not a token |
 
-**Open questions — founder's call.** Recorded here and on the `46:342` board.
+**The three questions, as answered.**
 
-1. **`TableHead` is `text-small font-semibold`, and Core has no Semi Bold Small
-   text style.** The mock binds the size and family variables and sets the
-   weight by hand. Either add a `Type/Small Semibold` style to Core (a text
-   style, not a token; it would ride the next token sync), or accept
-   weight-by-hand as the rule for table headers. *Recommendation: accept
-   weight-by-hand. `font-semibold` on a ramp step is how Button and Card
-   headings already work in code; a dedicated style would be the first
-   weight-only style in Core and would need a sync rule of its own.*
-2. **The sticky header needs an opaque surface, and the surface is not always
-   `background`.** On `03.0` it is `Color/background`. A table inside a `Card`
-   sits on `Color/card`, which equals `background` in light mode and differs in
-   dark (`0.205` vs `0.145`), so a sticky header would show a seam as the body
-   scrolls under it. Either **(a)** Table is constrained to `background`
-   surfaces and the story says so, or **(b)** a scoped custom property
-   `--table-surface`, defaulting to `var(--background)` and set to
-   `var(--card)` by `Card`, is **the one new token this component would need**.
-   *Recommendation: (b). It is a declaration with a reader (`TableHeader`),
-   one line in `Card`, and it is how scoped theming already works in this
-   repo; (a) is a constraint nothing enforces.*
-3. **The scroll-edge affordance (D7) needs a colour to fade from.** Proposed:
-   `Color/border` fading to transparent — an edge, drawn in the token that
-   already means "edge" — so no new token. The alternative is a dedicated
-   `--scroll-edge` token. *Recommendation: `border`. It is on the AA-exempt
-   decorative side already, and it reads identically in both modes because
-   dark `border` is already a white alpha.*
+1. **Header weight.** Asked as "add a `Type/Small Semibold` style, or set the
+   weight by hand?" The founder answered the casing instead — *"headers should
+   follow the title case precedent of MVDS"* — and the precedent check settled
+   both: the as-is index's headers were already `text-caption font-medium`, so
+   `TableHead` moves to `Type/Caption` and the weight question has no remainder.
+   **D15.**
+2. **Sticky-header surface.** *"ok lets add it."* `--table-surface`, scoped,
+   defaulting to `background`, set to `card` by `Card`. **D14.** The one new
+   token.
+3. **Scroll-edge colour.** *"ok."* `Color/border` fading to transparent. **D7.**
+   No new token.
 
 ## Eval Delta (1.5)
 
@@ -402,4 +421,4 @@ data and correctness bugs a Table does not fix, and they want their own change.
 
 ## Status
 
-iterating — `03.0` built for founder review; three token questions open
+iterating — `04.0` carries the founder's three answers (D7 · D14 · D15); awaiting the gate call on `04.0`
