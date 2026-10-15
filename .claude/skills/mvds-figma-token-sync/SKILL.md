@@ -48,11 +48,16 @@ file's structure isn't re-discovered each time.
   - Font family token → `Typography/font-sans`
   - Radius tokens → `Sizing/radius`, `Sizing/radius-sm`, `Sizing/radius-md`,
     `Sizing/radius-lg`, `Sizing/radius-xl`
-    - **Confirm the first one on this run.** `figma.lock.json` records only the
-      four derived steps; no entry has ever named a base `Sizing/radius`, and CI
-      cannot look. Either record it in the lock and add it to
-      `conventions.radius.members`, or delete it from this list — don't leave a
-      fifth variable asserted in one place and absent from the other.
+    - **Five, and the base is one of them** — settled 2026-10-15 by a read-only
+      `getLocalVariablesAsync` query after this list and `figma.lock.json`
+      disagreed for four months. All five are CORNER_RADIUS-scoped in Tokens with
+      Light and Dark equal: `Sizing/radius` = **`VariableID:2:21`** (10), then
+      `235:2`/`235:3`/`235:4`/`235:5` (6/8/10/14). The base's ID is from the
+      ORIGINAL token batch, not the 2026-06-17 grouping that produced the derived
+      four — which is why a lock block named for the *derived* variables had
+      nowhere to put it. `conventions.radius` now maps all five (the base being
+      the member with no suffix) and `check:figma` censuses both sides, so this
+      list and the lock cannot drift apart again without a failing gate.
   - Spacing tokens (Scales collection) → `Spacing/space-4` … `Spacing/space-96`
   - Breakpoint tokens (Scales collection) → `Sizing/breakpoint-sm` … `Sizing/breakpoint-2xl`
 - Color variable **scopes:** `["ALL_FILLS", "STROKE_COLOR"]`.

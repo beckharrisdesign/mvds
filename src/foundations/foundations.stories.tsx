@@ -137,10 +137,13 @@ export const TypeVoice: Story = {
 }
 
 /* ---------------- Radius ---------------- */
-const RADII: { name: string; cls: string; px: number }[] = [
+// `base` marks which rung IS --radius. The prose named the base dimension but
+// nothing showed WHERE it sits on the ramp, so a reader could not tell that
+// rebasing --radius pivots the ladder around lg.
+const RADII: { name: string; cls: string; px: number; base?: boolean }[] = [
   { name: "sm", cls: "rounded-sm", px: 6 },
   { name: "md", cls: "rounded-md", px: 8 },
-  { name: "lg", cls: "rounded-lg", px: 10 },
+  { name: "lg", cls: "rounded-lg", px: 10, base: true },
   { name: "xl", cls: "rounded-xl", px: 14 },
 ]
 
@@ -148,16 +151,19 @@ export const Radius: Story = {
   render: () => (
     <div className="flex flex-col gap-2">
       <p className="text-muted-foreground text-small">
-        One base dimension (<code>--radius</code>, 10px) drives the whole ramp — a
-        dimension, not spacing, so it is exempt from the 8-grid. Steps past{" "}
-        <code>xl</code> were pruned as unused.
+        One base dimension (<code>--radius</code>, 10px) drives the whole ramp —
+        it sits on <code>lg</code>, and the others are <code>calc()</code>
+        multiples of it. A dimension, not spacing, so it is exempt from the
+        8-grid. Steps past <code>xl</code> were pruned as unused.
       </p>
       <div className="flex gap-4">
-        {RADII.map(({ name, cls, px }) => (
+        {RADII.map(({ name, cls, px, base }) => (
           <div key={name} className="flex flex-col items-center gap-1">
             <div className={`bg-muted border-border size-16 border ${cls}`} />
             <code className="text-caption">{name}</code>
-            <span className="text-muted-foreground text-caption">{px}px</span>
+            <span className="text-muted-foreground text-caption">
+              {px}px{base ? " · base" : ""}
+            </span>
           </div>
         ))}
       </div>

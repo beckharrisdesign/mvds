@@ -19,7 +19,7 @@
 // it stays prose.
 //
 // The rest are MAPPINGS over a CLOSED set — the four chrome dimensions, the five
-// z-layers, the five tint variables, the four radius steps. Those used to be prose
+// z-layers, the five tint variables, the five radius steps. Those used to be prose
 // too, written as template strings like
 //
 //   zLayers: "z-{level} → Sizing/z-{level} (Scales, scopes [] — doc-only)"
@@ -199,39 +199,52 @@ export const conventions = {
   },
 
   // ---- Radius ----------------------------------------------------------------
-  // MAPPING — closed set. The ramp derives from `--radius` (0.625rem = 10px at a
-  // 16px root): `--radius-lg` IS the base, the others are calc() multiples, and
-  // all four exist in Figma as CORNER_RADIUS-scoped variables under Sizing/.
-  // Radius is a dimension, not spacing — it is exempt from the 8-grid.
+  // MAPPING — closed set, FIVE members. Radius is a dimension, not spacing, so it
+  // is exempt from the 8-grid.
   //
-  // This record claimed the opposite until 2026-10-15: that "only the BASE radius
-  // exists as a variable (`Sizing/radius`)" and the rest synced as raw px. The
-  // lock has recorded four Sizing/radius-{sm,md,lg,xl} variables since 2026-06-17
-  // and records no `Sizing/radius` at all — a target resolving to nothing, which
-  // is what prompted making these mappings resolvable in the first place. The px
-  // map also carried rounded-2xl/3xl/4xl at 18/22/26, which no code defines and
-  // nothing uses; deleted rather than deprecated (pre-1.0, see AGENTS.md).
+  // The BASE is the member with no suffix, so `members` carries the SUFFIX each
+  // step adds: "" IS `--radius` → `Sizing/radius`, "-sm" is `--radius-sm` →
+  // `Sizing/radius-sm`. One family rather than two records, because that is what
+  // it is — `--radius-lg` resolves to `var(--radius)`, so the base and the ramp
+  // are one ladder with the base standing on the lg rung, and the other three are
+  // calc() multiples of it.
   //
-  // OPEN, for the next token sync to settle: the mvds-figma-token-sync skill
-  // still lists a FIFTH radius variable, a base `Sizing/radius`. CI cannot see
-  // Figma, so M2 can only say the lock does not record that name — not that the
-  // variable is absent from the file. Whoever runs the next token sync should
-  // either record it here as a member (with its own source token) or drop the
-  // claim from the skill. Until then the four derived steps are what is mapped.
+  // Settled 2026-10-15, having been wrong in BOTH directions first. Until #129
+  // this record claimed "only the BASE radius exists as a variable
+  // (`Sizing/radius`)" with the rest syncing as raw px — the inverse of the truth,
+  // and a target the lock recorded nothing for. #129 mapped the four derived steps
+  // and left the base an OPEN QUESTION, because CI cannot see Figma: M2 could only
+  // say the lock held no such name, never that the file held no such variable.
+  //
+  // A read-only `getLocalVariablesAsync` query (NOT a sync — nothing was written)
+  // answered it. `Sizing/radius` exists: CORNER_RADIUS-scoped, 10 in both modes,
+  // `VariableID:2:21`. The ID is also the explanation for the whole mess — the base
+  // comes from the ORIGINAL token batch (2:x) while the derived four come from the
+  // 2026-06-17 grouping (235:2-5), so a lock block named for the DERIVED variables
+  // had nowhere to put the one that is not derived, and it fell through for four
+  // months. Guessing from the sequence would have written 235:1, and been wrong.
+  //
+  // This was never cosmetic. `button.figma.mjs` and `select.figma.mjs` bind
+  // cornerRadius to `{ var: "radius" }`, which a sync resolves to `Sizing/radius` —
+  // and lintBindings only ever checked the CODE side of a `{ var }`, so the Figma
+  // target of those three bindings went unverified. That is M7's job now.
   //
   // `px` is the raw-value fallback a sync writes where a binding is not possible.
-  // M6 recomputes each one from src/index.css, so a rebased --radius fails here
-  // instead of shipping a Figma ramp at the old proportions.
+  // M6 recomputes each one from src/index.css — the base from its rem value, the
+  // rest from their calc() multiples — so a rebased --radius fails here instead of
+  // shipping a Figma ramp at the old proportions. (The px map also carried
+  // rounded-2xl/3xl/4xl at 18/22/26 until #129, which no code defines and nothing
+  // uses; deleted rather than deprecated, per AGENTS.md.)
   radius: {
-    source: { kind: "css-var", pattern: "--radius-{name}" }, // utility: rounded-{name}
+    source: { kind: "css-var", pattern: "--radius{name}" }, // utility: rounded{name}
     target: {
       kind: "figma-variable",
-      pattern: "Sizing/radius-{name}",
+      pattern: "Sizing/radius{name}",
       collection: "Tokens",
       scopes: ["CORNER_RADIUS"],
     },
-    members: ["sm", "md", "lg", "xl"],
-    px: { sm: 6, md: 8, lg: 10, xl: 14 },
+    members: ["", "-sm", "-md", "-lg", "-xl"],
+    px: { "": 10, "-sm": 6, "-md": 8, "-lg": 10, "-xl": 14 },
   },
 
   // ---- Spatial tokens — chrome dimensions & z-layers --------------------------
