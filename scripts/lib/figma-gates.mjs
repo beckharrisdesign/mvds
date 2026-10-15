@@ -380,7 +380,11 @@ function compilePattern(pattern) {
     prefix,
     suffix,
     expand: (name) => prefix + name + suffix,
-    discover: new RegExp(`^${escapeRe(prefix)}([A-Za-z0-9_-]+)${escapeRe(suffix)}$`),
+    // `*`, not `+`: a family's BASE is the member with no suffix, so its member
+    // name is the empty string (radius: "" → `--radius` → `Sizing/radius`). With
+    // `+` the census silently skipped it — M1/M2 still resolved the declared
+    // member, but M3/M4 could never report it missing, which is half a check.
+    discover: new RegExp(`^${escapeRe(prefix)}([A-Za-z0-9_-]*)${escapeRe(suffix)}$`),
   }
 }
 
@@ -545,6 +549,14 @@ function checkPxFallback(errors, warns, path, record, indexCss) {
     else {
       const mul = /^calc\(\s*var\(--radius\)\s*\*\s*([\d.]+)\s*\)$/.exec(expr)
       if (mul) computed = basePx * Number(mul[1])
+      // The BASE itself is authored as a rem length, not as a multiple of
+      // anything — it is what the multiples are multiples OF. Converting it is
+      // still a real check: it holds the declared px to the rem actually in the
+      // token layer, so a rebase to 0.5rem fails instead of reading as 10px.
+      else {
+        const rem = /^([\d.]+)rem$/.exec(expr)
+        if (rem) computed = Number(rem[1]) * 16
+      }
     }
     if (computed === null) {
       warns.push({
@@ -560,4 +572,76 @@ function checkPxFallback(errors, warns, path, record, indexCss) {
       })
     }
   }
+}
+
+// --- M7: a manifest binding's FIGMA target ----------------------------------------
+// `lintBindings` in check-figma-manifest.mjs resolves a manifest's `{ var: "x" }`
+// against src/index.css and stops there. So the CODE side of every binding has
+// been checked for months and the FIGMA side never was — half a check, which is
+// this repo's defect class C.
+//
+// It had a live instance. button.figma.mjs and select.figma.mjs bind cornerRadius
+// to `{ var: "radius" }`; a sync resolves that to `Sizing/radius`; and until
+// 2026-10-15 figma.lock.json recorded no such name while conventions.mjs mapped
+// `rounded-lg` to it. Three bindings pointing at a variable nothing claimed, with
+// a green gate. (The variable did exist — the lock was the stale side — but
+// nothing here could tell those two cases apart, which is the point.)
+//
+// Only tokens inside a declared MAPPING are checked, and that restraint is
+// deliberate rather than lazy:
+//   · `{ var: "space-24" }` → the Spacing/ collection, which the lock does not
+//     record at all (see the note on conventions.spacing) — claiming it would
+//     fail the gate for what we have not written down, not for what is wrong;
+//   · `{ var: "muted-foreground" }` → colour, which is a RULE over an open set,
+//     not a mapping, so there is no finite target list to resolve against.
+// A token in neither category is simply not this check's business.
+export function checkManifestBindingTargets(errors, warns, { conventions, lock, manifests }) {
+  const figmaVars = lockVariableNames(lock)
+  const cssMappings = conventionMappings(conventions).filter(
+    (m) => m.record.source.kind === "css-var"
+  )
+
+  for (const manifest of manifests) {
+    for (const [token, path] of collectVarBindings(manifest)) {
+      for (const { path: mapPath, record } of cssMappings) {
+        const src = compilePattern(record.source.pattern)
+        const tgt = compilePattern(record.target.pattern)
+        if (!src || !tgt) continue // M0 already reported this record
+        const m = src.discover.exec(`--${token}`)
+        if (!m) continue // not this family's token
+        const member = m[1]
+        if (!record.members.includes(member)) {
+          errors.push({
+            component: manifest.name,
+            message: `M7: ${path} binds { var: "${token}" }, which belongs to the ${mapPath} family but is not one of its members (${record.members.map((x) => JSON.stringify(x)).join(", ")}) — add the member or fix the binding`,
+          })
+          break
+        }
+        const want = tgt.expand(member)
+        if (!figmaVars.has(want)) {
+          errors.push({
+            component: manifest.name,
+            message: `M7: ${path} binds { var: "${token}" }, which a sync resolves to ${want} — a name figma.lock.json does not record, so the binding points at nothing verifiable; re-run the matching sync or fix ${mapPath}`,
+          })
+        }
+        break // first matching family wins; patterns are disjoint by construction
+      }
+    }
+  }
+}
+
+/** Every `{ var: "<token>" }` in a manifest, as [token, path] pairs. */
+function collectVarBindings(manifest) {
+  const out = []
+  const walk = (node, path) => {
+    if (Array.isArray(node)) return node.forEach((v, i) => walk(v, `${path}[${i}]`))
+    if (!node || typeof node !== "object") return
+    for (const [k, v] of Object.entries(node)) {
+      if (k === "var" && typeof v === "string") out.push([v, path])
+      else walk(v, path ? `${path}.${k}` : k)
+    }
+  }
+  walk(manifest.base, "base")
+  walk(manifest.perOption, "perOption")
+  return out
 }

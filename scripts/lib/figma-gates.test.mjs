@@ -18,9 +18,11 @@ import { describe, expect, it } from "vitest"
 
 import {
   checkConventionMappings,
+  checkManifestBindingTargets,
   checkSyncStamps,
   checkTypography,
   conventionMappings,
+  lockVariableNames,
 } from "./figma-gates.mjs"
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..", "..")
@@ -291,7 +293,7 @@ describe("checkConventionMappings", () => {
     // never held — M0 catches that particular one first (no {name} to expand),
     // so use the templated form here.
     const c = conv()
-    c.radius.target.pattern = "Sizing/corner-{name}"
+    c.radius.target.pattern = "Sizing/corner{name}"
     expect(mappings({ conventions: c }).errorText).toMatch(/M2.*Sizing\/corner-sm/s)
   })
 
@@ -341,5 +343,89 @@ describe("checkConventionMappings", () => {
     const c = conv()
     c.radius.px["2xl"] = 18 // the phantom step this record used to carry
     expect(mappings({ conventions: c }).errorText).toMatch(/M6.*2xl/s)
+  })
+})
+
+// ---------------------------------------------------------------------------
+// The radius family — base + ramp, and the binding targets that depend on it
+// ---------------------------------------------------------------------------
+
+const manifests = (await import("../../figma/components.config.mjs")).default
+
+const bindingTargets = (over = {}) =>
+  collect((errors, warns) =>
+    checkManifestBindingTargets(errors, warns, {
+      conventions,
+      lock: realLock,
+      manifests,
+      ...over,
+    })
+  )
+
+describe("the radius family covers its base", () => {
+  it("maps five members, the base being the one with no suffix", () => {
+    expect(conventions.radius.members).toEqual(["", "-sm", "-md", "-lg", "-xl"])
+    expect(realLock.radiusRamp["Sizing/radius"]).toBe("VariableID:2:21")
+  })
+
+  it("M1/M2: resolves --radius and Sizing/radius, not just the suffixed steps", () => {
+    expect(mappings().errors).toEqual([])
+    expect(lockVariableNames(realLock)).toContain("Sizing/radius")
+  })
+
+  it("M3: the census can now see an UNSUFFIXED token — it could not with `+`", () => {
+    // The whole reason compilePattern's discover uses `*`: with `+`, `--radius`
+    // matched nothing, so dropping the base from `members` was undetectable.
+    const c = conv()
+    c.radius.members = ["-sm", "-md", "-lg", "-xl"]
+    expect(mappings({ conventions: c }).errorText).toMatch(/M3.*--radius\b/s)
+  })
+
+  it("M4: and the same for the variable recorded in the lock", () => {
+    const c = conv()
+    c.radius.members = ["-sm", "-md", "-lg", "-xl"]
+    expect(mappings({ conventions: c }).errorText).toMatch(/M4.*Sizing\/radius\b/s)
+  })
+
+  it("M6: verifies the base from its rem value, not as a multiple of itself", () => {
+    const indexCss = realCss.replace("--radius: 0.625rem", "--radius: 0.5rem")
+    const { errorText } = mappings({ indexCss })
+    expect(errorText).toMatch(/M6.*radius\.px\[""\].*10px/s)
+    expect(errorText).toContain("computes to 8px")
+  })
+})
+
+describe("checkManifestBindingTargets", () => {
+  it("passes against the repo as it stands", () => {
+    expect(bindingTargets().errors).toEqual([])
+  })
+
+  it("M7: catches the exact state main was in until 2026-10-15", () => {
+    // Button and Select bind cornerRadius to { var: "radius" }. lintBindings
+    // resolved that against src/index.css and stopped, so for four months three
+    // bindings pointed at a Figma variable the lock recorded nothing for.
+    const lock = structuredClone(realLock)
+    delete lock.radiusRamp["Sizing/radius"]
+    const { errors, errorText } = bindingTargets({ lock })
+    expect(errors).toHaveLength(3)
+    expect(errors.map((e) => e.component).sort()).toEqual(["Button", "Select", "Select"])
+    expect(errorText).toContain("Sizing/radius")
+  })
+
+  it("M7: catches a binding whose token is not a member of its own family", () => {
+    const c = conv()
+    c.radius.members = ["-sm", "-md", "-lg", "-xl"]
+    expect(bindingTargets({ conventions: c }).errorText).toMatch(/M7.*not one of its members/s)
+  })
+
+  it("M7: leaves spacing and colour bindings alone, on purpose", () => {
+    // Every manifest binds { var: "space-N" } and colour tokens. Spacing/ is not
+    // recorded in the lock at all and colour is a RULE over an open set, so
+    // claiming either would fail the gate for what is unwritten, not what is wrong.
+    const tokens = manifests.flatMap((m) =>
+      JSON.stringify(m).match(/"var":"([^"]+)"/g) ?? []
+    )
+    expect(tokens.some((t) => t.includes("space-"))).toBe(true)
+    expect(bindingTargets().errors).toEqual([])
   })
 })

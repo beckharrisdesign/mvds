@@ -39,7 +39,10 @@
 // which are `{ source, target, members }` records. Every mapping is expanded and
 // resolved in BOTH directions — each member's CSS custom property against
 // src/index.css, each member's Figma variable against figma.lock.json — plus a
-// census each way so neither side can gain a member alone. M0 FAILS a record
+// census each way so neither side can gain a member alone, and M7 holds every
+// manifest `{ var }` binding whose token belongs to a mapping to a target the lock
+// actually records — lintBindings only ever checked such a binding's CODE side.
+// M0 FAILS a record
 // this gate does not understand rather than skipping it: a mapping nobody checks
 // is #124, where a prose mapping named `z-{level}` tokens that had been renamed
 // `--z-index-*` and no code ever read the sentence.
@@ -68,7 +71,8 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..")
 
 // The system-level checks live in scripts/lib so they can be called from a test
 // with crafted inputs instead of by mutating the repo and reading an exit code.
-const { checkConventionMappings, checkSyncStamps, checkTypography } = await import(
+const { checkConventionMappings, checkManifestBindingTargets, checkSyncStamps, checkTypography } =
+  await import(
   pathToFileURL(join(ROOT, "scripts/lib/figma-gates.mjs"))
 )
 
@@ -535,6 +539,7 @@ if (!singleRel) {
   if (lock) {
     checkSyncStamps(errors, warns, lock, syncStampEnv())
     checkConventionMappings(errors, warns, { conventions, indexCss, lock, sources: srcSources() })
+    checkManifestBindingTargets(errors, warns, { conventions, lock, manifests })
   }
 }
 

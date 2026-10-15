@@ -442,7 +442,8 @@
     }
   },
   "radiusRamp": {
-    "$comment": "Derived radius variables in Tokens collection — computed from --radius (0.625rem base, ~10px at 16px root). Scoped CORNER_RADIUS only; same value in both modes. Names use Sizing/ group prefix (grouped 2026-06-17).",
+    "$comment": "The radius family in the Tokens collection — the BASE plus the four derived steps, all scoped CORNER_RADIUS only, same value in both modes. Names use the Sizing/ group prefix (grouped 2026-06-17). The derived four are computed from --radius (0.625rem, 10px at a 16px root). `Sizing/radius` was MISSING from this block until 2026-10-15 and its absence had teeth: three component manifests bind cornerRadius to { var: \"radius\" }, which a sync resolves to this variable, and the mvds-figma-token-sync skill listed five radius variables while conventions.mjs mapped `rounded-lg` to a `Sizing/radius` nothing recorded. The cause is visible in the IDs — the base is 2:21, from the original token batch, while the derived four are 235:2-5 from the 2026-06-17 grouping that created this block; a block named for the DERIVED variables had no slot for the one that is not derived. Verified live on 2026-10-15 by a read-only getLocalVariablesAsync query (not a sync — nothing was written): five variables, all CORNER_RADIUS, Light and Dark equal, values 10/6/8/10/14 against code 10/6/8/10/14. check:figma now censuses the whole family both ways (M1-M4) and holds every manifest { var } binding to a recorded target (M7). NB the base ID was NOT 235:1, which is what guessing from the sequence would have written.",
+    "Sizing/radius": "VariableID:2:21",
     "Sizing/radius-sm": "VariableID:235:2",
     "Sizing/radius-md": "VariableID:235:3",
     "Sizing/radius-lg": "VariableID:235:4",
