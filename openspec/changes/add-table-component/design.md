@@ -30,12 +30,19 @@ the same way `Input`, `Select`, `Switch` and `Dropzone` are.
 
 **Non-Goals:**
 
-- Data-grid behaviour: sorting, filtering, pagination, row selection, column
-  resizing, virtualisation, sticky **columns**.
+- Sort / filter / paginate / select **controls** — deferred to
+  `add-table-controls` (founder direction, 2026-10-15: *"we can't just ignore
+  pagination or sorting and filtering."*). The boundary was drawn in the wrong
+  place: state and logic stay out permanently, but the controls, their ARIA and
+  their states belong to the system. See that change's proposal.
+- Data-grid internals, permanently: virtualisation, column resizing or
+  reordering, sticky **columns**, server sync.
 - A responsive table→cards collapse.
 - Any new runtime dependency (`check:deps` is 54/55, no headroom on purpose).
-- Loading and error states — see **D8**; they are the consumer's, said out loud
-  rather than conflated with empty.
+- Loading and error states — see **D8**. Flagged as time-limited: the moment
+  `add-table-controls` ships a sort or page control, the pending state stops
+  being someone else's problem, and `TableEmpty` has to split into *no records*
+  vs *no matches*. D8 holds for this change only.
 - Any landing-page layout change.
 
 ## User flow / IA
@@ -68,10 +75,11 @@ a single edit.
 | --- | --- |
 | Primary file URL | <https://www.figma.com/design/CqgZ5tesr6qApnKiAadhVb> — HF scratch file "MVDS explore: add-table-component" |
 | As-is page / frame | `0.0 As is` → `0.0 As is — Intro/Design principles (Storybook, light)` (`3:26`, 1200×917) |
-| Proposed page | `01.0 Propose: add-table-component` |
-| Proposed frames | `01.0 Propose — Table: parts + anatomy` (`17:2`) · `01.0 Propose — Table: compositions` (`18:2`) · `01.0 Propose — Table: the five data states` (`20:5`) · `01.0 Propose — Intro/Design principles as Table (L 1024+)` (`23:2`) · `01.0 Propose — Table: the empty state (0 rows)` (`27:2`) · `01.0 Propose — Narrow width S=480px (the decision)` (`23:101`) |
+| Proposed page | `02.0 Propose: add-table-component update` — the current iteration. **`01.0` is retained untouched** per `rules/figma.mdc` ("one page per step; never overwrite a prior page"). See the correction note below. |
+| Proposed frames | `02.0 Propose — Table: parts + anatomy` (`17:2`) · `Table: compositions` (`18:2`) · `Table: the five data states` (`20:5`) · `Intro/Design principles as Table (L 1024+)` (`23:2`) · `Table: the empty state (0 rows)` (`27:2`) · `Narrow width S=480px (the decision)` (`23:101`) · `Table in context: samples` (`39:4`) |
 | Libraries / version | MVDS Core (`C20nU0mROzk3Zr0I9BELJF`) — `Color/*` and `Typography/*` variables imported **by key** via `importVariableByKeyAsync`; `Type/Heading 1·2`, `Type/Body`, `Type/Small`, `Type/Caption` text styles imported by key. No hand-mirrored hex. |
 | Delta page | `01.5 Eval Delta` — pinned duplicates of all six propose frames plus `01.5 Eval Delta — disposition ledger` (`31:599`) |
+| Samples | `02.0 Propose — Table in context: samples` (`39:4`) — billing history, team & access, a component API reference, and a plan comparison. Sample data is invented and flagged as such on the board; only the principles board renders the live manifest. |
 | Breakpoints | S · 480px (`23:101`) / L · 1024px (`23:2`, and all specimen boards at 1200) — BHD Content Types |
 | Status | draft — at the design gate, awaiting founder review |
 
@@ -92,6 +100,16 @@ shipped table will align better than the mock, not worse — but the mock is not
 evidence about real column behaviour, and nothing downstream should read it as
 such. Column behaviour is settled by the stories in `20:5`'s shipped form, not
 by these frames.
+
+**Page-naming correction (founder direction, 2026-10-15):** *"these proposal
+turns should be iterating on page name."* Correct — `rules/figma.mdc` says one
+page per step, never overwrite a prior page, and the delta-fix pass edited
+`01.0` in place instead. Three frames on it were deleted and rebuilt rather than
+superseded, so their original state is **not recoverable** from the file; what
+`01.0` looked like before the delta survives only in the `01.5 Eval Delta`
+page's pinned duplicates and in the geometry quoted in the Eval Delta section
+below. The current iteration is `02.0`, a note recording this sits on `01.0`,
+and each further iteration gets its own numbered page.
 
 No Code Connect row: MVDS does not use Code Connect (`AGENTS.md`).
 

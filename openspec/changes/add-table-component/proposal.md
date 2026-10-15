@@ -46,11 +46,25 @@
      the last step and happens on the founder's explicit go-ahead (`docs/SYNC.md`),
      not automatically with the code.
 - **Not doing:**
-  - **No data-grid behaviour** — no sorting, filtering, pagination, row selection,
-    column resizing, virtualisation or sticky columns. This is the boundary that
-    keeps the change finishable: MVDS is a presentation layer, and that behaviour
-    belongs to the consuming app, which can reach for a headless library. (Hence
-    the capability is `table`, not `data-table` — see Capabilities.)
+  - **No sort / filter / paginate / select CONTROLS in this change** — they move to
+    `add-table-controls`, the next change. **Corrected on founder direction
+    (2026-10-15): "we can't just ignore pagination or sorting and filtering."**
+    The original wording here was wrong, not merely narrow. It conflated two
+    different things and discarded both:
+    - **State and logic** — comparators, filter predicates, page math, URL sync,
+      server round-trips. App-specific, genuinely not MVDS's. **Still excluded,
+      permanently.**
+    - **Controls, ARIA and states** — what a sortable header looks like *and
+      announces* (`aria-sort`), how a page range is phrased, how "no matches"
+      differs from "no records", where a selection count lives. Every consumer
+      that reinvents this gets the ARIA wrong, which is exactly the argument for
+      the system owning it. **Deferred to the next change, not excluded.**
+
+    The seam: **MVDS renders state and emits intent; the consumer owns the data.**
+  - **No data-grid internals, ever** — virtualisation, column resizing or
+    reordering, sticky columns, server sync. A headless library does state; MVDS
+    does presentation. (The capability is `table`, not `data-table` — see
+    Capabilities.)
   - **No new runtime dependency.** `check:deps` sits at 54/55 with no headroom on
     purpose. If the component cannot be built from what is already installed, that
     is a stop-and-ask, not a ceiling bump.
