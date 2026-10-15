@@ -8,6 +8,9 @@
 > up a parallel build. Account for dynamic content that will have more rows or
 > columns or fields than you think."
 
+> "yes to a landing page surface -- its a component and should be represented like
+> the others"
+
 ## Outcomes
 
 - **Who:** Agents and people generating UI from MVDS, and consumers of the package
@@ -25,24 +28,33 @@
   3. The story enumerates the five states `scale-to-the-data` names as deliberate
      cases: **empty · one row · many rows · a value longer than any sample · one
      more column than the design showed.**
-  4. It is declared in `figma/components.config.mjs` and manifested in
+  4. **The landing page uses it.** `principles-index.tsx` currently hand-rolls a
+     table out of `Grid` (see Why); it renders real rows through `Table` instead.
+     The Component library inventory picks `Table` up on its own — that list is a
+     filesystem walk (`familyComponents` in the snapshot generator) — so the
+     inventory is not the work here; using the component is.
+  5. It is declared in `figma/components.config.mjs` and manifested in
      `figma/components/table.figma.mjs`, so `check:figma`'s census counts it rather
      than leaving it unclassified.
-  5. The full Figma cycle is on the record: `0.0 As is`, `0.5 Eval`,
+  6. The full Figma cycle is on the record: `0.0 As is`, `0.5 Eval`,
      `01.0 Propose:`, `01.5 Eval Delta`. Pushing the component set into MVDS Core is
      the last step and happens on the founder's explicit go-ahead (`docs/SYNC.md`),
      not automatically with the code.
 - **Not doing:**
-  - **No data-grid behaviour.** No sorting, filtering, pagination, row selection,
-    column resizing, virtualisation or sticky columns. MVDS is a presentation layer;
-    that behaviour belongs to the consuming app, which can reach for a headless
-    library. This is the boundary that keeps the change finishable.
+  - **No data-grid behaviour** — no sorting, filtering, pagination, row selection,
+    column resizing, virtualisation or sticky columns. This is the boundary that
+    keeps the change finishable: MVDS is a presentation layer, and that behaviour
+    belongs to the consuming app, which can reach for a headless library. (Hence
+    the capability is `table`, not `data-table` — see Capabilities.)
   - **No new runtime dependency.** `check:deps` sits at 54/55 with no headroom on
     purpose. If the component cannot be built from what is already installed, that
     is a stop-and-ask, not a ceiling bump.
   - **No responsive table→cards collapse.** Reshaping a table for narrow viewports
-    is its own design decision; it is not smuggled in here.
-  - **No landing-page surface** for the new component beyond its Storybook story.
+    is its own design decision; it is not smuggled in here. (It is, however, the
+    live question for `principles-index` at `base` — see Impact.)
+  - **No audit of every other list on the landing page.** `principles-index` is
+    converted because it is a table pretending not to be one. `VerificationPanel`,
+    `ElementsOfMvds` and the rest are out of scope even where they look table-ish.
 
 ## Why
 
@@ -54,24 +66,46 @@ absence authored that bug as surely as the code did.
 #129 turned the lesson into two rules: `no-fixed-content-dimensions` (enforced) and
 `scale-to-the-data` (judgment). A table is the sharpest possible test of both,
 because it is where every state arrives at once — empty, single, many, long, and
-wide all live in one component. Shipping those principles without shipping the
-component they were written about leaves the rules enforced and the gap open.
+wide all live in one component.
 
-Going through the full Figma cycle is the second half of the ask. A table is also
-the component most likely to be *designed* badly rather than coded badly: column
-rhythm, header weight, alignment of numerals, row separation, and what the empty
-state actually says are design calls, not implementation details. Running the eval
-and eval-delta pages against the rubric is how those calls get made on the record
-rather than in passing.
+**And we have the same bug at home.** `src/components/site/principles-index.tsx`
+renders the principles as a five-column `Grid` with a header row of `<span>`s and
+one `<Grid>` per row, separated by borders. It is a table in everything but
+structure:
+
+- **No table semantics.** No `<table>`, `<thead>`, `<th>`, `<tr>` or `<td>`, so a
+  screen reader gets a stack of text with no header-to-cell association and no
+  table navigation.
+- **Uniform columns, not content-driven ones.** `cols={{ base: 1, lg: 5 }}` gives
+  every column an identical fraction, so the long `description (manifest)` prose
+  gets exactly the width of the `enforcement` Badge. It is the mirror image of the
+  hardcoded-width bug — the width is not pinned in pixels, it is pinned to a ratio
+  that ignores the content.
+- **It breaks at `base`.** Collapsing to one column stacks the five header labels
+  and then stacks each row's five values, so the header/value association is gone
+  at exactly the width where you most need it.
+
+That surface now renders **24 principles**, and it is the page where MVDS displays
+`no-fixed-content-dimensions` and `scale-to-the-data` to the world. Converting it is
+the landing-page representation the founder asked for and the system's own
+dogfooding in the same move.
+
+Going through the full Figma cycle is the second half of the ask. A table is the
+component most likely to be *designed* badly rather than coded badly: column
+rhythm, header weight, numeral alignment, row separation, and what the empty state
+actually says are design calls, not implementation details. The eval and eval-delta
+pages are how those get made on the record rather than in passing.
 
 ## What changes
 
 - `src/components/ui/table.tsx` — added via `npx shadcn@latest add table`, then
-  tuned to the 8-grid per AGENTS.md (shadcn ships off-grid padding; heights and
-  insets come from the 8-grid set). Column sizing comes from the table layout and
-  intrinsic keywords, never a declared width.
+  tuned to the 8-grid per AGENTS.md (shadcn ships off-grid padding; insets come
+  from the 8-grid set). Column sizing comes from table layout and intrinsic
+  keywords, never a declared width.
 - `src/components/ui/table.stories.tsx` — every variant and state, light **and**
   dark, plus the five data states above as named stories.
+- `src/components/site/principles-index.tsx` — the hand-rolled `Grid` table becomes
+  a real `Table`.
 - `figma/components/table.figma.mjs` and a `figma/components.config.mjs` entry —
   axes extracted from whatever the code actually exposes, so `check:figma` compares
   a declared mirror against a real source.
@@ -82,27 +116,44 @@ rather than in passing.
 
 ### New Capabilities
 
-- `data-table`: presenting tabular data with content-driven column sizing and
-  explicit empty / single / many / long / wide states.
+- `table`: presenting tabular data with content-driven column sizing and explicit
+  empty / single / many / long / wide states.
+
+  **Named `table`, not `data-table`, deliberately.** "Data table" is a term of art
+  for the thing the Not-doing list excludes — shadcn's own *Data Table* page is
+  TanStack Table with sorting, filtering and pagination. Calling the capability
+  `data-table` would contradict the scope in the same document and would invite a
+  future reader to build exactly what this change rules out. It also matches the
+  existing component capabilities in `openspec/specs/`, which are bare singular
+  names: `input`, `dropzone`.
 
 ### Modified Capabilities
 
-None.
+- `manifest-ia` — the principles index changes its rendering, not its content.
+  Confirm at specs whether this is a real spec delta or just an implementation
+  detail of a capability whose requirements are unchanged.
 
 ## Impact
 
 - **The gates will force the bookkeeping, which is the point.** A new file under
   `src/components/ui/` trips `check:principles`' story-coverage rule until the story
   exists, and `check:figma`'s coverage census until the component is classified in
-  `components.config.mjs`. Neither is a chore to route around.
+  `components.config.mjs`.
 - **`no-fixed-content-dimensions` applies to this PR's own diff.** If the component
   needs a suppression to pass, the design is wrong, not the rule.
-- **Chromatic will need new baselines** for every new story.
-- **Open input needed at discovery (0.0 As-is):** there is no existing MVDS table to
-  evaluate, so the as-is surface has to come from somewhere. The candidates are the
-  hand-rolled table from the parallel build (which the founder has and this session
-  does not) or stock shadcn `Table` as an untuned baseline. Worth settling before
-  discovery runs, because it decides what the 0.5 Eval findings are *about*.
+- **Converting `principles-index` changes a shipped surface.** Expect Chromatic
+  baselines for its stories, and the a11y gate now runs over real table semantics —
+  which should be an improvement, but it is a change to a page that is currently
+  green.
+- **The narrow-width question gets real.** Today the index collapses to one column
+  at `base`. A `<table>` does not collapse by itself, and table→cards is explicitly
+  out of scope — so design must say what the index does at S (480px): horizontal
+  scroll within the table, a reduced column set, or something else. **This is the
+  main open design decision and belongs in the 01.0 Propose frames.**
+- **Open input needed at discovery (0.0 As-is):** there is now a real MVDS surface
+  to evaluate — `principles-index` as it ships today. That is the stronger baseline
+  and removes the earlier open question. The parallel build's hand-rolled table is
+  still welcome as a second reference if the founder has it to hand.
 
 ## Optional links
 
