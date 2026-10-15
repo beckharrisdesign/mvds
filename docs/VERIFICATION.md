@@ -111,6 +111,19 @@ library so the registry never gets a stale build. After it’s out, CI keeps
 exercising the documented install against what’s actually on npm — so we notice
 when the two-step “install and wire CSS” path stops working for a real app.
 
+Preview deploys are skipped when a push changes nothing the site is built from.
+The OpenSpec loop commits once per artifact, and almost all of those commits are
+markdown under `openspec/changes/`, which `npm run build:site` never reads.
+`vercel.json` runs [`scripts/vercel-ignore.mjs`](../scripts/vercel-ignore.mjs)
+first: it diffs `VERCEL_GIT_PREVIOUS_SHA` (the last commit that actually deployed
+on the branch, so skipped pushes accumulate) against `HEAD` and skips only if no
+changed file is in `BUILD_INPUTS` in
+[`scripts/lib/vercel-ignore.mjs`](../scripts/lib/vercel-ignore.mjs), a list that
+names the build step reading each path and is tested against the build scripts.
+Anything uncertain builds: no previous deploy (a branch’s first push), or a ref
+the clone can’t diff. The preview and the landing page’s commit stamp can lag a
+markdown-only push; that is the intended cost.
+
 The Figma Core file stays a one-way mirror, updated when someone asks, not on
 every commit. The share check only proves the public URL still opens.
 
