@@ -28,15 +28,16 @@
   3. The story enumerates the five states `scale-to-the-data` names as deliberate
      cases: **empty · one row · many rows · a value longer than any sample · one
      more column than the design showed.**
-  4. **The landing page gains a Table surface.** The Component library inventory
-     picks `Table` up on its own — that list is a filesystem walk
-     (`familyComponents` in the snapshot generator) — so the inventory is not the
-     work; a surface that actually renders a `Table` is. **Which content it renders
-     is a design-gate decision, not settled here** (see Impact).
+  4. **The landing page represents it like every other component.** The Component
+     library inventory is a filesystem walk (`familyComponents` in the snapshot
+     generator), so `Table` appears in the list and the tally the moment the file
+     lands — the same representation `Input`, `Select`, `Switch` and `Dropzone`
+     get, none of which the landing page renders either. No landing-page layout
+     changes.
   5. **The Storybook principles index stops hand-rolling a table.**
      `principles-index.tsx` builds one out of a five-column `Grid` (see Why) and
-     renders real rows through `Table` instead. This is a Storybook surface, not
-     the landing page — the two are separate deliverables.
+     renders real rows through `Table` instead — the component used on real data,
+     replacing a hand-rolled table. This is a Storybook surface.
   6. It is declared in `figma/components.config.mjs` and manifested in
      `figma/components/table.figma.mjs`, so `check:figma`'s census counts it rather
      than leaving it unclassified.
@@ -56,10 +57,10 @@
   - **No responsive table→cards collapse.** Reshaping a table for narrow viewports
     is its own design decision; it is not smuggled in here. (It is, however, the
     live question for `principles-index` at `base` — see Impact.)
-  - **No wholesale conversion of the landing page's card grids.**
-    `VerificationPanel` and `PrinciplesPanel` render cards on purpose and read well
-    at six and twenty-four items respectively. At most ONE landing-page surface
-    becomes a Table, chosen at the design gate; the rest stay cards.
+  - **No landing-page layout changes at all.** `VerificationPanel` and
+    `PrinciplesPanel` render cards on purpose. This change proposes a COMPONENT,
+    not a page redesign — the landing page's representation of it is the inventory
+    entry, exactly as for every other component it does not render.
 
 ## Why
 
@@ -94,15 +95,20 @@ That surface now renders **24 principles**, and it is where MVDS displays
 `no-fixed-content-dimensions` and `scale-to-the-data` to a reader. Converting it is
 the system eating its own cooking.
 
-**Correction, recorded rather than quietly fixed (2026-10-15):** an earlier draft of
-this proposal claimed principles-index was ON the landing page and that converting
-it satisfied the founder's "landing page surface" ask. It does not — `PrinciplesIndex`
-is imported nowhere but its own story. The mistake was reading `src/components/site/`
-as "the landing page" without opening `App.tsx`, which renders only SiteHero,
-PrinciplesPanel, VerificationPanel, PackageDocs, FigmaMirror and ElementsOfMvds. Both
-landing-page list sections are deliberate CARD grids, not tables in disguise. So the
-landing-page surface is a real open question (Impact), and the principles-index
-conversion is a separate Storybook deliverable that stands on its own merits.
+**Two corrections, recorded rather than quietly fixed (2026-10-15).**
+
+*First:* an earlier draft claimed principles-index was ON the landing page. It is
+not — `PrinciplesIndex` is imported nowhere but its own story. The mistake was
+reading `src/components/site/` as "the landing page" without opening `App.tsx`.
+
+*Second, and the one that matters:* having found that, this proposal then went
+looking for landing-page content to convert and nominated `VerificationPanel`'s
+gates. Founder: **"we're proposing a new component, not proposing the landing page
+layout."** Correct — that was scope drift. Most MVDS components (`Input`, `Select`,
+`Switch`, `Dropzone`) never appear on the landing page; they are represented by the
+generated Component library inventory, and so is this one, for free. The design
+gate's job here is the COMPONENT: its parts, its states, and its narrow-width
+behaviour.
 
 Going through the full Figma cycle is the second half of the ask. A table is the
 component most likely to be *designed* badly rather than coded badly: column
@@ -159,14 +165,6 @@ pages are how those get made on the record rather than in passing.
   baselines for its stories, and the a11y gate now runs over real table semantics —
   which should be an improvement, but it is a change to a page that is currently
   green.
-- **OPEN: which landing-page content becomes a Table.** The page has no
-  mis-rendered tabular content to rescue, so this is an additive design decision
-  rather than a fix. The strongest candidate is **`VerificationPanel`'s gates** —
-  a fixed column set (gate · command · when it runs · result) with one row per
-  gate, which is a table's exact shape even though cards work at six items. The
-  alternative is a new section whose only job is to show the component, which is
-  weaker: the landing page is a working page, not a gallery. **This belongs in the
-  `01.0 Propose` frames so it is decided by eye, not by argument.**
 - **The narrow-width question gets real.** Today the index collapses to one column
   at `base`. A `<table>` does not collapse by itself, and table→cards is explicitly
   out of scope — so design must say what the index does at S (480px): horizontal

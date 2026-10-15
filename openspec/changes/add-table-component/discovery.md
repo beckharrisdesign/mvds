@@ -8,7 +8,7 @@
 | --- | --- |
 | Storybook story (eval target) | `Intro/Design principles — Default` (24 live rows) and `Site/VerificationPanel — Live` (5 live gates) |
 | Figma `0.0 As is` page | <https://www.figma.com/design/CqgZ5tesr6qApnKiAadhVb> — HF file "MVDS explore: add-table-component". Frames: `0.0 As is — Intro/Design principles (Storybook, light)` (1200×917) and `0.0 As is — Site/VerificationPanel (landing page, light)` (1200×519). Every fill and stroke is bound to an MVDS Core variable **imported by key** (10 colour variables, 5 text styles) — no hand-mirrored hex, per `rules/figma.mdc`. |
-| Scope note | Two surfaces, for two different reasons. `PrinciplesIndex` is a **Storybook** surface that hand-rolls a table out of a five-column `Grid` — the thing this change replaces. `VerificationPanel` is the **landing-page** surface and the leading candidate for the landing-page Table requirement; it is captured as-is so the design gate can judge cards-vs-table on evidence rather than argument. |
+| Scope note | **Only `PrinciplesIndex` is in scope** — a Storybook surface that hand-rolls a table out of a five-column `Grid`, which is what this change's component replaces. `VerificationPanel` was *also* captured and evaluated here, and that was scope drift: founder, mid-discovery — **"we're proposing a new component, not proposing the landing page layout."** Its capture and findings are kept because they are real and several were verified against source, but **this change does not touch it**. They are carried below as input to a separate change. |
 
 **What the as-is capture shows at a glance.** In the principles frame, the
 `description (manifest)` column and the `enforcement` column receive an identical
@@ -87,10 +87,10 @@ markdown above stays canonical.
   (F15 asks for a visible grouping, which is an improvement, not a reversal).
 - **The `nn##-` display id** alongside the stable machine id — the id column's
   real job is being copied into `// mvds-allow <id>`, so the machine id stays.
-- **Cards for the gates are not obviously wrong.** At five gates they read well. A
-  table has to be *better* at the design gate, not merely different — F11's
-  three-vocabularies repetition is the strongest argument that a row would be
-  tighter, and that is a judgement for the `01.0 Propose` frames.
+- **Cards stay cards.** `VerificationPanel` and `PrinciplesPanel` render cards on
+  purpose and are out of scope entirely — the landing page represents this
+  component through the generated inventory, as it does for every component it
+  does not render.
 - **Restraint.** Neither surface is decorated. The amber on
   `aesthetic-and-minimalist-design` is about repetition, not ornament.
 
@@ -103,9 +103,10 @@ markdown above stays canonical.
   `mvds-allow`** — a suppression here would concede the point.
 - No new runtime dependency (`check:deps` is 54/55).
 
-**Out of scope here, and the founder should see it anyway.** Six findings are
-correctness and honesty bugs that a Table does not fix and must not be smuggled
-into a component PR:
+**Out of scope, and the founder should see it anyway.** Seven findings belong to
+`VerificationPanel`, which this change does not touch at all. They are correctness
+and honesty bugs that a Table would not fix and that must not be smuggled into a
+component PR:
 
 - **F1, F2, F21** — the panel titled *"Verified, not asserted"* asserts. It reports
   **5/5 green** while two of those gates never ran, narrates a commit from a

@@ -101,8 +101,10 @@ The system uses the component it ships, so the table is exercised by real data
 rather than only by fixtures.
 
 **Fails until:** `src/components/site/principles-index.tsx` renders its rows through
-`Table` and contains no per-row `Grid`, and one landing-page surface (chosen at the
-design gate) renders a `Table`; both pass the light and dark a11y gates.
+`Table` and contains no per-row `Grid`, and passes the light and dark a11y gates.
+(The landing page represents the component through the generated Component library
+inventory, as it does for every component it does not render — no page layout
+changes.)
 
 #### Scenario: The principles index renders 24 principles through Table
 
@@ -113,8 +115,8 @@ design gate) renders a `Table`; both pass the light and dark a11y gates.
   story" are don't-breaks here), and the long `description` column no longer shares
   an identical width fraction with a Badge
 
-#### Scenario: A landing-page surface renders a Table
+#### Scenario: The component appears in the landing page's inventory
 
-- **WHEN** a visitor reaches the landing-page surface chosen at the design gate
-- **THEN** that surface renders tabular content through `Table`, and the other
-  card-based sections are unchanged
+- **WHEN** the manifest snapshot is regenerated after `table.tsx` lands
+- **THEN** `Table` appears in the Component library element's UI list and its tally
+  increments, with no hand-maintained list to update and no page layout changed
