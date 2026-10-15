@@ -1,0 +1,210 @@
+name: Deploy Site
+
+# Vercel's own Git auto-deploy is turned off (`git.deploymentEnabled: false` in
+# vercel.json) so behind-the-scenes changes never create a deployment — even a
+# skipped one counts toward the Hobby daily deployment limit. This workflow is
+# the only thing that deploys the site (`npm run build:site` → `dist-site`), and
+# only when something the site is built from changes. Adapted from
+# experiment-hub's deploy-hub.yml.
+#
+# Preview on pull requests, production on push to main.
+#
+# Draft gate (MVDS's own addition): the hub filters by path only. Here a PR also
+# has to be READY FOR REVIEW before it gets a preview, because the PR stays a
+# draft while the work is iterated and "ready" is the signal for a test deploy.
+# Pushes to a ready PR redeploy; pushes to a draft do not.
+#
+# Required repo secrets (Settings → Secrets and variables → Actions):
+#   VERCEL_TOKEN       — a token from https://vercel.com/account/tokens
+#   VERCEL_ORG_ID      — team_UhPjDkhxW0b4JX399pdc4iYs
+#   VERCEL_PROJECT_ID  — prj_eo3CjqK3eJTd41bcfWicvQNs7ZPC (mvds)
+# Until all three are set, this workflow no-ops (green) instead of failing.
+
+on:
+  push:
+    branches: [main]
+    # Order matters: a later pattern overrides an earlier one. Start from
+    # everything, drop what the site is not built from, then re-include this file.
+    #
+    # NOT dropped, on purpose: figma/** (scripts/generate-manifest-snapshot.mjs
+    # reads figma.lock.json, conventions.mjs, components.config.mjs and exports/),
+    # src/, scripts/, public/, examples/ (check:principles scans it) and
+    # .storybook/.
+    #
+    # Dropped, though the snapshot does read them: openspec/schemas, rules/,
+    # skills/ and .claude/skills only feed inventory counts on the landing page,
+    # which refresh on the next app-code deploy. That staleness is the trade for
+    # not deploying on every OpenSpec commit, the same call the hub makes.
+    paths:
+      - '**'
+      - '!openspec/**'
+      - '!docs/**'
+      - '!rules/**'
+      - '!skills/**'
+      - '!.claude/**'
+      - '!.cursor/**'
+      - '!.github/**'
+      - '!*.md'
+      - '.github/workflows/deploy-site.yml'
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened, ready_for_review]
+    paths:
+      - '**'
+      - '!openspec/**'
+      - '!docs/**'
+      - '!rules/**'
+      - '!skills/**'
+      - '!.claude/**'
+      - '!.cursor/**'
+      - '!.github/**'
+      - '!*.md'
+      - '.github/workflows/deploy-site.yml'
+  # Manual trigger — needed when only env vars changed (no code push to deploy
+  # them) since Vercel git auto-deploy is off. Dispatch on main deploys production.
+  workflow_dispatch:
+
+env:
+  # Project/org IDs are not secret; the token is. Kept in secrets for convenience.
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+  VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+
+# The deploy step creates/edits the sticky preview comment via the issue-comments
+# API, which needs pull-requests write; keep everything else read-only.
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: deploy-site-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: Deploy site
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    # Only the repo owner's events may use the Vercel token — PRs from other
+    # contributors get no deploy. Draft PRs get no preview (see header).
+    if: >-
+      (github.event_name != 'pull_request' || github.event.pull_request.draft == false)
+      && (github.event_name == 'push' || github.actor == github.repository_owner)
+    steps:
+      - name: Check for required Vercel secrets
+        id: guard
+        run: |
+          if [ -z "$VERCEL_TOKEN" ] || [ -z "$VERCEL_ORG_ID" ] || [ -z "$VERCEL_PROJECT_ID" ]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "Missing one or more Vercel secrets (VERCEL_TOKEN / VERCEL_ORG_ID / VERCEL_PROJECT_ID) — skipping deploy (add all three to enable)." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - uses: actions/checkout@v5
+        if: steps.guard.outputs.skip != 'true'
+        with:
+          # The snapshot reads commit metadata and check:figma verifies the
+          # stamped commit resolves; a shallow clone would give a wrong answer.
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v5
+        if: steps.guard.outputs.skip != 'true'
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        if: steps.guard.outputs.skip != 'true'
+        run: npm ci
+
+      - name: Install Vercel CLI
+        if: steps.guard.outputs.skip != 'true'
+        # Pinned major for reproducible deploys — bump intentionally.
+        run: npm install -g vercel@56
+
+      - name: Resolve target (production on main, preview otherwise)
+        if: steps.guard.outputs.skip != 'true'
+        id: target
+        run: |
+          if [ "${{ github.ref }}" = "refs/heads/main" ] && { [ "${{ github.event_name }}" = "push" ] || [ "${{ github.event_name }}" = "workflow_dispatch" ]; }; then
+            echo "env=production" >> "$GITHUB_OUTPUT"
+            echo "prod_flag=--prod" >> "$GITHUB_OUTPUT"
+          else
+            echo "env=preview" >> "$GITHUB_OUTPUT"
+            echo "prod_flag=" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Pull Vercel project settings
+        if: steps.guard.outputs.skip != 'true'
+        run: vercel pull --yes --environment=${{ steps.target.outputs.env }} --token="$VERCEL_TOKEN"
+
+      - name: Build
+        if: steps.guard.outputs.skip != 'true'
+        run: vercel build ${{ steps.target.outputs.prod_flag }} --token="$VERCEL_TOKEN"
+
+      - name: Deploy
+        if: steps.guard.outputs.skip != 'true'
+        id: deploy
+        run: |
+          set -euo pipefail
+          # --archive=tgz uploads one tarball instead of thousands of files,
+          # staying far under Vercel's 5000-uploads/24h hobby-plan cap.
+          url=$(vercel deploy --prebuilt --archive=tgz ${{ steps.target.outputs.prod_flag }} --token="$VERCEL_TOKEN")
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+          echo "Deployed (${{ steps.target.outputs.env }}) → $url" >> "$GITHUB_STEP_SUMMARY"
+
+      # One comment per PR, edited in place — not a new comment per deploy.
+      # Found by MARKER, an HTML comment that does not render. First deploy on a
+      # PR creates the comment; later ones PATCH that same id. Runs with
+      # !cancelled() rather than success() so a FAILED deploy updates the table
+      # to Error instead of leaving a stale Ready from the last push.
+      - name: Comment preview URL on PR
+        if: ${{ !cancelled() && steps.guard.outputs.skip != 'true' && github.event_name == 'pull_request' }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Passed as env, never interpolated into the script body: a branch or
+          # commit message reaching the shell directly would be an injection.
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          DEPLOY_URL: ${{ steps.deploy.outputs.url }}
+          DEPLOY_OUTCOME: ${{ steps.deploy.outcome }}
+          TARGET_ENV: ${{ steps.target.outputs.env }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          MARKER='<!-- deploy-site:preview -->'
+
+          if [ "$DEPLOY_OUTCOME" = "success" ] && [ -n "$DEPLOY_URL" ]; then
+            status='🟢 Ready'
+            preview="[Visit Preview]($DEPLOY_URL)"
+          else
+            status='🔴 Error'
+            preview="[View logs]($RUN_URL)"
+          fi
+
+          updated=$(date -u '+%b %d, %Y %-I:%M%p' | sed 's/AM$/am/; s/PM$/pm/')
+
+          body=$(cat <<EOF
+          $MARKER
+          The latest updates on your deployment. Built and deployed by [Deploy Site]($RUN_URL). Vercel's Git integration is intentionally off (see workflow header).
+
+          | Project | Deployment | Environment | Preview | Updated (UTC) |
+          | --- | --- | --- | --- | --- |
+          | mvds | $status | $TARGET_ENV | $preview | $updated |
+          EOF
+          )
+          # The heredoc is indented to match the YAML block; strip that back off.
+          body=$(printf '%s\n' "$body" | sed 's/^          //')
+
+          # --jq runs per PAGE, so a PR past 100 comments can emit one line per
+          # page; head -n1 keeps $existing a single id. Oldest match wins.
+          existing=$(gh api "repos/$REPO/issues/$PR_NUMBER/comments" --paginate \
+            --jq "map(select(.body | contains(\"$MARKER\"))) | .[0].id // empty" \
+            | head -n1)
+
+          if [ -n "$existing" ]; then
+            gh api -X PATCH "repos/$REPO/issues/comments/$existing" -f body="$body" >/dev/null
+            echo "Updated existing preview comment ($existing)." >> "$GITHUB_STEP_SUMMARY"
+          else
+            gh api -X POST "repos/$REPO/issues/$PR_NUMBER/comments" -f body="$body" >/dev/null
+            echo "Created preview comment." >> "$GITHUB_STEP_SUMMARY"
+          fi

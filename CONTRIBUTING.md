@@ -21,7 +21,10 @@ house rules). This file covers the **delivery workflow** only.
    (`npm run build:site` → `dist-site`, configured in [`vercel.json`](vercel.json)): a
    landing page at `/` linking to the sample app at `/app/` and the Storybook gallery
    at `/storybook/`, so reviewers can browse both for the branch in isolation before
-   merging. Vercel posts the preview URL on the PR.
+   merging. It is deployed by [`deploy-site.yml`](.github/workflows/deploy-site.yml)
+   (Vercel's own Git auto-deploy is off), only once the PR is **ready for review**
+   and only when something the site is built from changed. The workflow comments the
+   preview URL on the PR.
 
 ## Local gate (run before opening a PR)
 

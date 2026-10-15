@@ -3,5 +3,7 @@
   "buildCommand": "npm run build:site",
   "outputDirectory": "dist-site",
   "framework": null,
-  "ignoreCommand": "node scripts/vercel-ignore.mjs"
+  "git": {
+    "deploymentEnabled": false
+  }
 }
