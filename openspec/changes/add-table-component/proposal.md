@@ -28,15 +28,19 @@
   3. The story enumerates the five states `scale-to-the-data` names as deliberate
      cases: **empty · one row · many rows · a value longer than any sample · one
      more column than the design showed.**
-  4. **The landing page uses it.** `principles-index.tsx` currently hand-rolls a
-     table out of `Grid` (see Why); it renders real rows through `Table` instead.
-     The Component library inventory picks `Table` up on its own — that list is a
-     filesystem walk (`familyComponents` in the snapshot generator) — so the
-     inventory is not the work here; using the component is.
-  5. It is declared in `figma/components.config.mjs` and manifested in
+  4. **The landing page gains a Table surface.** The Component library inventory
+     picks `Table` up on its own — that list is a filesystem walk
+     (`familyComponents` in the snapshot generator) — so the inventory is not the
+     work; a surface that actually renders a `Table` is. **Which content it renders
+     is a design-gate decision, not settled here** (see Impact).
+  5. **The Storybook principles index stops hand-rolling a table.**
+     `principles-index.tsx` builds one out of a five-column `Grid` (see Why) and
+     renders real rows through `Table` instead. This is a Storybook surface, not
+     the landing page — the two are separate deliverables.
+  6. It is declared in `figma/components.config.mjs` and manifested in
      `figma/components/table.figma.mjs`, so `check:figma`'s census counts it rather
      than leaving it unclassified.
-  6. The full Figma cycle is on the record: `0.0 As is`, `0.5 Eval`,
+  7. The full Figma cycle is on the record: `0.0 As is`, `0.5 Eval`,
      `01.0 Propose:`, `01.5 Eval Delta`. Pushing the component set into MVDS Core is
      the last step and happens on the founder's explicit go-ahead (`docs/SYNC.md`),
      not automatically with the code.
@@ -52,9 +56,10 @@
   - **No responsive table→cards collapse.** Reshaping a table for narrow viewports
     is its own design decision; it is not smuggled in here. (It is, however, the
     live question for `principles-index` at `base` — see Impact.)
-  - **No audit of every other list on the landing page.** `principles-index` is
-    converted because it is a table pretending not to be one. `VerificationPanel`,
-    `ElementsOfMvds` and the rest are out of scope even where they look table-ish.
+  - **No wholesale conversion of the landing page's card grids.**
+    `VerificationPanel` and `PrinciplesPanel` render cards on purpose and read well
+    at six and twenty-four items respectively. At most ONE landing-page surface
+    becomes a Table, chosen at the design gate; the rest stay cards.
 
 ## Why
 
@@ -68,7 +73,7 @@ absence authored that bug as surely as the code did.
 because it is where every state arrives at once — empty, single, many, long, and
 wide all live in one component.
 
-**And we have the same bug at home.** `src/components/site/principles-index.tsx`
+**And we have the same bug at home — in Storybook.** `src/components/site/principles-index.tsx`
 renders the principles as a five-column `Grid` with a header row of `<span>`s and
 one `<Grid>` per row, separated by borders. It is a table in everything but
 structure:
@@ -85,10 +90,19 @@ structure:
   and then stacks each row's five values, so the header/value association is gone
   at exactly the width where you most need it.
 
-That surface now renders **24 principles**, and it is the page where MVDS displays
-`no-fixed-content-dimensions` and `scale-to-the-data` to the world. Converting it is
-the landing-page representation the founder asked for and the system's own
-dogfooding in the same move.
+That surface now renders **24 principles**, and it is where MVDS displays
+`no-fixed-content-dimensions` and `scale-to-the-data` to a reader. Converting it is
+the system eating its own cooking.
+
+**Correction, recorded rather than quietly fixed (2026-10-15):** an earlier draft of
+this proposal claimed principles-index was ON the landing page and that converting
+it satisfied the founder's "landing page surface" ask. It does not — `PrinciplesIndex`
+is imported nowhere but its own story. The mistake was reading `src/components/site/`
+as "the landing page" without opening `App.tsx`, which renders only SiteHero,
+PrinciplesPanel, VerificationPanel, PackageDocs, FigmaMirror and ElementsOfMvds. Both
+landing-page list sections are deliberate CARD grids, not tables in disguise. So the
+landing-page surface is a real open question (Impact), and the principles-index
+conversion is a separate Storybook deliverable that stands on its own merits.
 
 Going through the full Figma cycle is the second half of the ask. A table is the
 component most likely to be *designed* badly rather than coded badly: column
@@ -145,15 +159,23 @@ pages are how those get made on the record rather than in passing.
   baselines for its stories, and the a11y gate now runs over real table semantics —
   which should be an improvement, but it is a change to a page that is currently
   green.
+- **OPEN: which landing-page content becomes a Table.** The page has no
+  mis-rendered tabular content to rescue, so this is an additive design decision
+  rather than a fix. The strongest candidate is **`VerificationPanel`'s gates** —
+  a fixed column set (gate · command · when it runs · result) with one row per
+  gate, which is a table's exact shape even though cards work at six items. The
+  alternative is a new section whose only job is to show the component, which is
+  weaker: the landing page is a working page, not a gallery. **This belongs in the
+  `01.0 Propose` frames so it is decided by eye, not by argument.**
 - **The narrow-width question gets real.** Today the index collapses to one column
   at `base`. A `<table>` does not collapse by itself, and table→cards is explicitly
   out of scope — so design must say what the index does at S (480px): horizontal
   scroll within the table, a reduced column set, or something else. **This is the
   main open design decision and belongs in the 01.0 Propose frames.**
-- **Open input needed at discovery (0.0 As-is):** there is now a real MVDS surface
-  to evaluate — `principles-index` as it ships today. That is the stronger baseline
-  and removes the earlier open question. The parallel build's hand-rolled table is
-  still welcome as a second reference if the founder has it to hand.
+- **0.0 As-is surface:** `principles-index` as it ships today — a real MVDS
+  surface, with a running story to evaluate (the schema prefers the story as the
+  eval target and the Figma page as the visual record). If the landing-page
+  candidate is `VerificationPanel`, its current card grid is captured as-is too.
 
 ## Optional links
 
