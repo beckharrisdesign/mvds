@@ -11,6 +11,33 @@
 // Consumed by the `mvds-figma-component-sync` skill (read as guidance for
 // use_figma plugin scripts) and by scripts/check-figma-manifest.mjs (token-name
 // lint). See docs/SYNC.md.
+//
+// RULES vs. MAPPINGS — and why the difference is load-bearing.
+//
+// Some entries here are RULES over an open set: `bg-{token}` binds `Color/{token}`
+// for any color token there will ever be. A rule has nothing finite to resolve, so
+// it stays prose.
+//
+// The rest are MAPPINGS over a CLOSED set — the four chrome dimensions, the five
+// z-layers, the five tint variables, the four radius steps. Those used to be prose
+// too, written as template strings like
+//
+//   zLayers: "z-{level} → Sizing/z-{level} (Scales, scopes [] — doc-only)"
+//
+// and NO CODE READ THEM. That is how #124 happened: the code tokens were renamed
+// to `--z-index-*` (Tailwind v4 only generates a `z-<name>` utility from that
+// prefix), the sentence above kept saying `z-{level}`, every gate stayed green,
+// and the mapping pointed at tokens that no longer existed for four months.
+//
+// So every closed mapping is now a record with a resolvable `source` and `target`:
+// a pattern plus its members. check:figma expands them and checks BOTH directions
+// (M1-M6 in scripts/lib/figma-gates.mjs) — each member's CSS custom property is
+// really declared in src/index.css, each member's Figma variable is really
+// recorded in figma.lock.json, and nothing on either side is left undeclared. A
+// stale mapping is now a failing gate instead of a sentence.
+//
+// Keep that property when adding one: if the member list is finite, make it a
+// `{ source, target, members }` record, never a sentence describing it.
 
 export const conventions = {
   // ---- Color utilities → Figma color variables (Tokens collection) ----------
@@ -30,10 +57,33 @@ export const conventions = {
   // (verified 2026-06-09 sync). Derived tints are Figma-only variables in the
   // Tokens collection; their IDs are recorded in figma.lock.json.
   color: {
+    // RULES — open set (any color token), nothing finite to resolve.
     fill: "bg-{token} → fill bound to Color/{token}",
     text: "text-{token} → text fill bound to Color/{token}",
     stroke: "border-{token} → stroke bound to Color/{token}",
-    tint: "bg-{token}/N → fill bound to derived variable Color/{token}-tint (alpha-in-value per mode)",
+
+    // MAPPING — closed set. The derived tints are Figma-only variables that
+    // exist one per token, so the list is finite and checkable: M2 holds every
+    // member to a variable recorded in the lock, M4 fails an orphan tint in the
+    // lock that nothing here claims, and M5 fails a `bg-X/N` utility used in
+    // src/ whose token is neither a member nor a declared carve-out.
+    tints: {
+      source: { kind: "utility", pattern: "bg-{name}/{alpha}" },
+      target: {
+        kind: "figma-variable",
+        pattern: "Color/{name}-tint",
+        collection: "Tokens",
+      },
+      members: ["destructive", "success", "neutral", "muted", "foreground"],
+
+      // Tokens used with an alpha in code that deliberately have NO tint
+      // variable. A reason is required — this is the three-state census
+      // `notMirrored` uses elsewhere, not a silence.
+      notMirrored: {
+        input:
+          "shadcn's dark-mode field fill (dark:bg-input/30, disabled:bg-input/50, dark:disabled:bg-input/80 across input/textarea/select/checkbox/radio). The manifests mirror the LIGHT form, where a field is bg-transparent with a border-input stroke and carries no fill at all — so there is no Figma paint for a tint variable to bind.",
+      },
+    },
   },
 
   // ---- Spacing utilities → Scales variables ---------------------------------
@@ -48,6 +98,13 @@ export const conventions = {
   //
   // Values with no matching scale variable (e.g. py-0.5 = 2px on Badge) are set
   // raw — they are component-internal metrics, not layout spacing.
+  // RULE, not a mapping, and deliberately so: the step list below is finite, but
+  // the Figma side has no recorded names to resolve against — figma.lock.json
+  // records color, radius, spatial and typography variables, never the Spacing/
+  // collection. Writing it as a `{ source, target, members }` record would make
+  // M2 fail all ten steps for want of a lock entry, i.e. a gate failing because
+  // of what we have not recorded rather than what is wrong. Promote it the day a
+  // token sync records the Spacing/ variables.
   spacing: {
     unitPx: 4,
     variable: "Spacing/space-{px}",
@@ -142,17 +199,39 @@ export const conventions = {
   },
 
   // ---- Radius ----------------------------------------------------------------
-  // Only the BASE radius exists as a variable (`Sizing/radius` in Tokens, 10px). The
-  // other steps are calc() multiples in code, so they sync as raw px values.
+  // MAPPING — closed set. The ramp derives from `--radius` (0.625rem = 10px at a
+  // 16px root): `--radius-lg` IS the base, the others are calc() multiples, and
+  // all four exist in Figma as CORNER_RADIUS-scoped variables under Sizing/.
   // Radius is a dimension, not spacing — it is exempt from the 8-grid.
+  //
+  // This record claimed the opposite until 2026-10-15: that "only the BASE radius
+  // exists as a variable (`Sizing/radius`)" and the rest synced as raw px. The
+  // lock has recorded four Sizing/radius-{sm,md,lg,xl} variables since 2026-06-17
+  // and records no `Sizing/radius` at all — a target resolving to nothing, which
+  // is what prompted making these mappings resolvable in the first place. The px
+  // map also carried rounded-2xl/3xl/4xl at 18/22/26, which no code defines and
+  // nothing uses; deleted rather than deprecated (pre-1.0, see AGENTS.md).
+  //
+  // OPEN, for the next token sync to settle: the mvds-figma-token-sync skill
+  // still lists a FIFTH radius variable, a base `Sizing/radius`. CI cannot see
+  // Figma, so M2 can only say the lock does not record that name — not that the
+  // variable is absent from the file. Whoever runs the next token sync should
+  // either record it here as a member (with its own source token) or drop the
+  // claim from the skill. Until then the four derived steps are what is mapped.
+  //
+  // `px` is the raw-value fallback a sync writes where a binding is not possible.
+  // M6 recomputes each one from src/index.css, so a rebased --radius fails here
+  // instead of shipping a Figma ramp at the old proportions.
   radius: {
-    "rounded-sm": { px: 6 },
-    "rounded-md": { px: 8 },
-    "rounded-lg": { var: "Sizing/radius" }, // 10px — the one bindable step
-    "rounded-xl": { px: 14 },
-    "rounded-2xl": { px: 18 },
-    "rounded-3xl": { px: 22 },
-    "rounded-4xl": { px: 26 },
+    source: { kind: "css-var", pattern: "--radius-{name}" }, // utility: rounded-{name}
+    target: {
+      kind: "figma-variable",
+      pattern: "Sizing/radius-{name}",
+      collection: "Tokens",
+      scopes: ["CORNER_RADIUS"],
+    },
+    members: ["sm", "md", "lg", "xl"],
+    px: { sm: 6, md: 8, lg: 10, xl: 14 },
   },
 
   // ---- Spatial tokens — chrome dimensions & z-layers --------------------------
@@ -170,9 +249,34 @@ export const conventions = {
   // without it and every z-utility silently resolved to `z-index: auto`). Figma
   // has no utility generator, so its variables stay the shorter `Sizing/z-*`
   // the designer reads. Source renamed, target unchanged.
+  //
+  // MAPPINGS — both closed sets, and the pair that made the case for records:
+  // these were two sentences, the z-layer one naming a `z-{level}` source token
+  // that had been renamed to `--z-index-{level}` months earlier (#124). M1 now
+  // resolves every source against src/index.css and M3 fails any `--chrome-*` /
+  // `--z-index-*` token in code that no member claims, so neither side can move
+  // alone.
   spatial: {
-    chrome: "chrome-{edge}-{dim} → Sizing/chrome-{edge}-{dim} (Scales, WIDTH_HEIGHT)",
-    zLayers: "z-index-{level} → Sizing/z-{level} (Scales, scopes [] — doc-only)",
+    chrome: {
+      source: { kind: "css-var", pattern: "--chrome-{name}" },
+      target: {
+        kind: "figma-variable",
+        pattern: "Sizing/chrome-{name}",
+        collection: "Scales",
+        scopes: ["WIDTH_HEIGHT"],
+      },
+      members: ["top-height", "bottom-height", "left-width", "right-width"],
+    },
+    zLayers: {
+      source: { kind: "css-var", pattern: "--z-index-{name}" },
+      target: {
+        kind: "figma-variable",
+        pattern: "Sizing/z-{name}",
+        collection: "Scales",
+        scopes: [], // documentation-only: Figma expresses stacking by layer order
+      },
+      members: ["chrome", "overlay", "float", "modal", "toast"],
+    },
   },
 
   // ---- Layer naming -----------------------------------------------------------

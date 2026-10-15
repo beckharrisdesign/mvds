@@ -53,7 +53,8 @@
     "check:principles": "node scripts/check-principles.mjs",
     "check:figma": "node scripts/check-figma-manifest.mjs",
     "check:upstream-drift": "node scripts/check-upstream-drift.mjs",
-    "test": "npm run test:light && npm run test:dark",
+    "test": "npm run test:scripts && npm run test:light && npm run test:dark",
+    "test:scripts": "vitest --project scripts run",
     "test:light": "vitest --project storybook run",
     "test:dark": "VITE_SB_THEME=dark vitest --project storybook run"
   },

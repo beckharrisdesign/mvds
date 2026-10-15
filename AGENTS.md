@@ -152,12 +152,14 @@ npm run build              # tsc + vite — must pass
 npm run check:contrast     # token-level WCAG AA on every pairing, light + dark — must pass
 npm run check:principles   # machine-enforced golden rules (color/margin/flex-grid/story coverage) — must pass
 npm run check:deps         # published dependency budget (tree size + no tooling-only deps) — must pass
-npm test                   # every story in headless Chromium + axe a11y, LIGHT + DARK — must pass
+npm run check:figma        # Figma mapping + manifest drift (code ↔ conventions ↔ figma.lock.json) — must pass
+npm test                   # the gate scripts, then every story in headless Chromium + axe a11y, LIGHT + DARK
 ```
 
-`npm test` is the gate: render + interaction + **WCAG color-contrast** checks on
-every story, run in **both** modes (`test:light`, then `test:dark` via
-`VITE_SB_THEME=dark`). `npm run check:contrast` adds a token-level AA check on every
+`npm test` is the gate: `test:scripts` (the node-side checks in
+[`scripts/lib/`](scripts/lib)) first because it is fast, then render + interaction +
+**WCAG color-contrast** checks on every story, run in **both** modes (`test:light`,
+then `test:dark` via `VITE_SB_THEME=dark`). `npm run check:contrast` adds a token-level AA check on every
 foreground/background pairing — independent of whether a component renders it. Fix
 violations before shipping.
 
@@ -193,6 +195,45 @@ dependency, not a number that drifts. Vendored upstream CSS
 ([`src/shadcn-variants.css`](src/shadcn-variants.css)) is byte-compared against the
 installed devDependency by the same check, so a stale copy is caught without a
 network fetch.
+
+**A gate must be able to fail — and every check must prove it can.** This repo's
+signature defect is the *fail-open* gate: a rule that looks enforced and isn't.
+Four shapes of it, all shipped, all green at the time:
+
+- **A declaration nothing resolves.** `figma/conventions.mjs` mapped
+  `"z-{level} → Sizing/z-{level}"` as a *sentence*; code had renamed the tokens to
+  `--z-index-*` and no code read the sentence (#124). Same shape: a font-binding
+  contract that named one variable where Figma carried two (#125), a variant-order
+  claim the Plugin API cannot satisfy (#126).
+- **An output nothing consumes.** `commitsBehind` was computed, typed, and read by
+  nobody — and I twice justified a re-stamp by claiming a page rendered it (#127).
+- **A check comparing the wrong thing.** Coverage that walked the declared list
+  instead of the census (#115); T7 comparing a *resolved* font family when both
+  variables resolve to the same string.
+- **Asserting instead of evaluating.** A throwaway proof harness that asserted only
+  on exit code, and so scored a crash as a pass.
+
+So, three standing rules:
+
+1. ✅ **A finite mapping is a record, never a sentence.** If the member list is
+   closed, write `{ source, target, members }` and let the gate expand it — see the
+   `RULES vs. MAPPINGS` note in [`figma/conventions.mjs`](figma/conventions.mjs).
+   `check:figma` (M0–M6) resolves both sides against `src/index.css` and
+   `figma/figma.lock.json`, and **M0 fails an unrecognised record rather than
+   skipping it**. Rules over an open set stay prose, and say so.
+2. ✅ **Anything emitted has a reader, or a reason.** Every key the snapshot
+   generator writes must be named under `src/` or carry an entry in
+   `EMITTED_BUT_UNREAD`
+   ([`scripts/lib/snapshot-readers.mjs`](scripts/lib/snapshot-readers.mjs)) — a
+   three-state census, like `notMirrored`. It runs inside `generate:snapshot`, so
+   `npm run build` fails before an orphan reaches the committed artifact. A
+   declaration in the `.types.ts` file is **not** a reader.
+3. ✅ **A new check in `scripts/` ships with a case that fails without it.** Write
+   the check as a pure function over its inputs in
+   [`scripts/lib/`](scripts/lib) — never reading module-scope state or shelling out
+   mid-check — and add a case to the co-located `*.test.mjs` that feeds it the bug
+   it was written for. ❌ Never assert on an exit code alone: it cannot tell a
+   reported error from a crash. Assert on what the check *said*.
 
 **Isolate experiments.** Never bundle throwaway/experimental edits (a token you're
 trying out, a Chromatic probe) into a PR with real changes — put them on their own
