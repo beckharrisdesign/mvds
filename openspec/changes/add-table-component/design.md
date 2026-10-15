@@ -81,7 +81,7 @@ a single edit.
 | Delta page | `01.5 Eval Delta` — pinned duplicates of all six propose frames plus `01.5 Eval Delta — disposition ledger` (`31:599`) |
 | Samples | `02.0 Propose — Table in context: samples` (`39:4`) — billing history, team & access, a component API reference, and a plan comparison. Sample data is invented and flagged as such on the board; only the principles board renders the live manifest. |
 | Breakpoints | S · 480px (`23:101`) / L · 1024px (`23:2`, and all specimen boards at 1200) — BHD Content Types |
-| Status | iterating — `03.0` built 2026-10-15 on founder direction ("show me the component first, in light and dark mode … in the typography and spacing scales we've defined already. If we need tokens for tables, I need to know about them"); `04.0` applies the founder's answers to the three token questions (same day); `05.0` adds `rules`, `striped` and `p-16` on founder direction (same day). D17 settled by the founder the same day. Awaiting the gate call on `05.0`. See **Tokens** below. |
+| Status | iterating — `03.0` built 2026-10-15 on founder direction ("show me the component first, in light and dark mode … in the typography and spacing scales we've defined already. If we need tokens for tables, I need to know about them"); `04.0` applies the founder's answers to the three token questions (same day); `05.0` adds `rules`, `striped` and `p-16` on founder direction (same day). D17 settled by the founder the same day. **Approved at the design gate 2026-10-15 — founder: "05.0 passes the design gate."** See **Tokens** below. |
 
 **What the three new boards carry.** `17:2` renders the seven parts twice: once
 assembled into a working specimen with the parts annotated in place, and once
@@ -462,4 +462,4 @@ data and correctness bugs a Table does not fix, and they want their own change.
 
 ## Status
 
-iterating — `05.0` adds `rules`, `striped`, `p-16` (D16 · D17 · D18), all settled; awaiting the gate call on `05.0`
+approved 2026-10-15 — founder: "05.0 passes the design gate." `tasks.md` drafted; apply waits on its approval
