@@ -11,6 +11,7 @@
 // Truth per axis `source.kind`:
 //   cva        — option keys of the named cva() call's variants.<axis> object
 //   prop-union — the quoted members of the prop's TS union (size?: "a" | "b")
+//   prop-boolean — a `prop?: boolean` → ["false", "true"] (Table's `striped`)
 //   synthetic  — Figma-only axis (e.g. state), no code truth, skipped
 //   manual     — escape hatch when extraction can't parse a source; skipped
 //
@@ -66,6 +67,7 @@ import { readFileSync, readdirSync, statSync } from "node:fs"
 import { execFileSync } from "node:child_process"
 import { fileURLToPath, pathToFileURL } from "node:url"
 import { dirname, join, relative, sep } from "node:path"
+import { propBooleanOptions, propUnionOptions } from "./lib/manifest-axis-sources.mjs"
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..")
 
@@ -186,11 +188,8 @@ function cvaAxisOptions(src, exportName, axis, ctx) {
   return objectKeys(axisInner)
 }
 
-function propUnionOptions(src, prop, ctx) {
-  const m = new RegExp(`\\b${prop}\\?\\s*:\\s*((?:"[^"]+"\\s*\\|\\s*)*"[^"]+")`).exec(src)
-  if (!m) throw new Error(`${ctx}: prop union "${prop}?:" not found`)
-  return [...m[1].matchAll(/"([^"]+)"/g)].map((q) => q[1])
-}
+// propUnionOptions / propBooleanOptions live in scripts/lib/manifest-axis-sources.mjs
+// (pure over source text, proven in manifest-axis-sources.test.mjs).
 
 // --- binding lint ----------------------------------------------------------------
 const indexCss = readFileSync(join(ROOT, "src/index.css"), "utf8")
@@ -489,6 +488,8 @@ for (const m of checked) {
         truth = cvaAxisOptions(src, axis.source.export, axis.source.axis, ctx)
       } else if (axis.source.kind === "prop-union") {
         truth = propUnionOptions(src, axis.source.prop, ctx)
+      } else if (axis.source.kind === "prop-boolean") {
+        truth = propBooleanOptions(src, axis.source.prop, ctx)
       } else if (axis.source.kind === "synthetic" || axis.source.kind === "manual") {
         continue // no code truth to compare
       } else {
