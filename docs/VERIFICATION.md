@@ -111,6 +111,16 @@ library so the registry never gets a stale build. After it’s out, CI keeps
 exercising the documented install against what’s actually on npm — so we notice
 when the two-step “install and wire CSS” path stops working for a real app.
 
+Preview deploys are deliberate too. Vercel's Git auto-deploy is off
+(`git.deploymentEnabled: false` in `vercel.json`), because even a skipped
+deployment counts toward the Hobby plan's daily limit and the OpenSpec loop
+pushes a commit per artifact. [`deploy-site.yml`](../.github/workflows/deploy-site.yml)
+deploys instead: a preview when a non-draft PR changes something the site is
+built from (`openspec/`, `docs/`, `rules/`, `skills/`, agent config and root
+markdown are filtered out), production on a merge to `main`. Keeping a PR a
+draft is how you say “not yet”; marking it ready is the first test deploy. It
+stays green without doing anything until the three Vercel secrets are set.
+
 The Figma Core file stays a one-way mirror, updated when someone asks, not on
 every commit. The share check only proves the public URL still opens.
 

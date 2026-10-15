@@ -20,6 +20,16 @@ globs: []
   (`gh pr create`). Open as a **draft** while iterating; flag it **ready for
   review** once all checks come back green. The founder always gives final
   approval.
+- **Marking a PR "Ready for review" is the founder's signal that Copilot review
+  should run** — automatic review of drafts must stay off. This depends on a
+  GitHub setting agents cannot change from the repo: wherever *Automatic Copilot
+  code review* is enabled (repo Settings → Copilot → Code review, a ruleset, or
+  the founder's personal Copilot settings), **"Review draft pull requests" must
+  be unchecked** and "Review new pushes" left off. If a review ever posts on a
+  draft, that toggle regressed — flag it instead of adapting to it.
+- **"Ready for review" is also the signal for the first preview deploy.**
+  `.github/workflows/deploy-site.yml` skips drafts, so a draft PR gets no
+  Vercel preview until it is marked ready.
 - **One PR per logical unit of work.** Don't bundle unrelated changes.
 - **Never have two PRs open for the same work item.** If a PR exists for the
   current task, push follow-up commits to that branch and note them in the PR
