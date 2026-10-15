@@ -75,13 +75,13 @@ a single edit.
 | --- | --- |
 | Primary file URL | <https://www.figma.com/design/CqgZ5tesr6qApnKiAadhVb> — HF scratch file "MVDS explore: add-table-component" |
 | As-is page / frame | `0.0 As is` → `0.0 As is — Intro/Design principles (Storybook, light)` (`3:26`, 1200×917) |
-| Proposed page | `02.0 Propose: add-table-component update` — the current iteration. **`01.0` is retained untouched** per `rules/figma.mdc` ("one page per step; never overwrite a prior page"). See the correction note below. |
-| Proposed frames | `02.0 Propose — Table: parts + anatomy` (`17:2`) · `Table: compositions` (`18:2`) · `Table: the five data states` (`20:5`) · `Intro/Design principles as Table (L 1024+)` (`23:2`) · `Table: the empty state (0 rows)` (`27:2`) · `Narrow width S=480px (the decision)` (`23:101`) · `Table in context: samples` (`39:4`) |
-| Libraries / version | MVDS Core (`C20nU0mROzk3Zr0I9BELJF`) — `Color/*` and `Typography/*` variables imported **by key** via `importVariableByKeyAsync`; `Type/Heading 1·2`, `Type/Body`, `Type/Small`, `Type/Caption` text styles imported by key. No hand-mirrored hex. |
+| Proposed page | `03.0 Propose: add-table-component update` — **the current iteration: the component itself, light and dark, on MVDS Core.** `02.0` (anatomy, compositions, data states, the real surface, 480px, in-context samples) and `01.0` are retained untouched per `rules/figma.mdc` ("one page per step; never overwrite a prior page"). See the correction note below. |
+| Proposed frames | **`03.0`:** `Table: component (light)` (`46:48`) · `Table: component (dark)` (`46:422`, the same board under the Tokens collection's Dark mode) · `Tokens the Table uses` (`46:342`). **`02.0`:** `Table: parts + anatomy` (`17:2`) · `Table: compositions` (`18:2`) · `Table: the five data states` (`20:5`) · `Intro/Design principles as Table (L 1024+)` (`23:2`) · `Table: the empty state (0 rows)` (`27:2`) · `Narrow width S=480px (the decision)` (`23:101`) · `Table in context: samples` (`39:4`) |
+| Libraries / version | MVDS Core (`C20nU0mROzk3Zr0I9BELJF`), bound **by key** via `importVariableByKeyAsync` / `importStyleByKeyAsync` / `importComponentSetByKeyAsync`. On `03.0`: **Tokens** (`Color/*`, `Typography/text-small-size`, `Typography/font-sans`) and **Scales** (`Spacing/space-4·8·16·32·40`) variables on every fill, stroke, inset and gap; `Type/Heading 2·4`, `Type/Body`, `Type/Small` text styles; the **Core `Badge` component set** (`925f5b9b…`) as instances. Read back from the file after the build: 0 unbound solid fills, 0 unbound paddings or gaps, 0 text nodes without a style or a bound size. `02.0` bound colours and two text styles only — its insets were literal numbers and its badges hand-drawn. |
 | Delta page | `01.5 Eval Delta` — pinned duplicates of all six propose frames plus `01.5 Eval Delta — disposition ledger` (`31:599`) |
 | Samples | `02.0 Propose — Table in context: samples` (`39:4`) — billing history, team & access, a component API reference, and a plan comparison. Sample data is invented and flagged as such on the board; only the principles board renders the live manifest. |
 | Breakpoints | S · 480px (`23:101`) / L · 1024px (`23:2`, and all specimen boards at 1200) — BHD Content Types |
-| Status | draft — at the design gate, awaiting founder review |
+| Status | iterating — `03.0` built 2026-10-15 on founder direction ("show me the component first, in light and dark mode … in the typography and spacing scales we've defined already. If we need tokens for tables, I need to know about them"); awaiting founder review. See **Tokens** below. |
 
 **What the three new boards carry.** `17:2` renders the seven parts twice: once
 assembled into a working specimen with the parts annotated in place, and once
@@ -91,6 +91,21 @@ column, row hover — each composition adding exactly one thing and saying which
 decision that thing is. `20:5` renders all five data states at full width using
 **real records** from `principles.config.mjs`, including the actual
 190-character longest description rather than a placeholder.
+
+**What `03.0` corrects in `02.0`, found by using the real library instead of
+drawing it.** Three things only surfaced because the boards now bind to Core
+rather than imitate it: (1) the hand-drawn badges carried 4px of vertical
+padding where the Core `Badge` is 2px, and sat flush to the cell inset rather
+than on the text's line box — the founder caught the visible result ("the
+padding around text and the padding around badges is different"), now **D13**;
+(2) `02.0` bound no spacing at all — `px-16 py-8` were literal numbers, so a
+Scales change would never have reached them; (3) **D11** named a "solid
+`neutral`" badge that does not exist — Core's `neutral` is the status triad,
+which is exactly the health-state reading D11 rejects. `03.0` uses `muted` /
+`outline`. One build defect was caught by read-back rather than by eye: every
+frame `createAutoLayout` makes ships a default white fill, invisible on a light
+board and a white box on the dark one; 86 were cleared before the dark clone
+was cut, and the page now has **zero** unbound solid fills.
 
 **Known fidelity caveat, recorded rather than discovered later.** Figma
 auto-layout sizes each row independently, so hugging columns in these specimens
@@ -197,11 +212,28 @@ characters), measured, not estimated.
 decision. Not a cards collapse (out of scope), and not a one-column stack (that
 is precisely the as-is bug). The region scrolls; the page does not.
 
-**D11 · Enforcement is a category, not a health state — so no green.** The
-`enforced` badge is solid `neutral`; `guiding` is outlined. A green badge in
-this repo means a gate passed, and whether a principle is machine-checkable is
-a different fact from whether it currently passes — a fact this table does not
-report and could not back up.
+**D11 · Enforcement is a category, not a health state — so no green, and no
+triad.** The `enforced` badge is `Badge variant="muted"`; `guiding` is
+`variant="outline"`. A green badge in this repo means a gate passed, and whether
+a principle is machine-checkable is a different fact from whether it currently
+passes — a fact this table does not report and could not back up. **Corrected
+on `03.0`:** the first draft said "solid `neutral`", a variant Core does not
+have; `neutral` is the semantic triad's middle step, which would make
+enforcement read as a health state after all. `muted` is the tone variant for
+labels with no status meaning, which is what this is.
+
+**D13 · One inset per cell; inline content sits on the first line box.** Every
+`TableCell` and `TableHead` is `py-8 px-16`, and that is the only number. Text
+fills a line box (`text-body` × 1.6 = 25.6px) with its leading inside it; a
+`Badge` is inline, so it is centred on that same first line rather than pushed
+to the inset. That is what makes a badge beside a name read as the same inset
+as the name — the founder's finding on the `02.0` samples board, where the
+hand-drawn badge sat flush to the inset at 4px of its own padding. Cells are
+`align-top`, so a two-line identity cell keeps its badge on the name's line,
+not floating between the name and the e-mail. The browser does the centring
+for free (an inline-level box aligns to the line's baseline); the `03.0` board
+draws it explicitly as a 26px line-box frame so the mock shows the rule rather
+than approximates it. The shipped story for the identity row measures it.
 
 **D12 · The principles index renders four columns, not five.** The first draft
 carried both the principle `title` and its `description`, which restate one
@@ -220,6 +252,60 @@ stay.
   a behaviour, not presentation.
 - **No founder/adopted grouping heading.** The `source` column makes provenance
   visible per row; a grouping heading and a count are a separate change.
+
+## Tokens
+
+Founder direction, 2026-10-15: *"if we need tokens for tables, I need to know
+about them."* This is the census, read back from the `03.0` boards after the
+build, not from the plan. **Every token the component uses exists in MVDS Core
+today. No new token is proposed. Three questions are open, each the founder's
+call, and one of them could become a token.**
+
+| Token | Bound where | Status |
+| --- | --- | --- |
+| `Color/background` | Table surface · `TableHeader` (sticky, opaque) | exists |
+| `Color/foreground` | `TableCell` text · `TableEmpty` title | exists |
+| `Color/muted-foreground` | `TableCaption` · `TableHead` · `TableEmpty` line | exists |
+| `Color/muted` | `tbody` `TableRow` `:hover` | exists |
+| `Color/border` | `TableRow` 1px bottom rule | exists |
+| `Badge` `variant=muted` / `outline` | enforcement column (D11) | exists, component |
+| `Spacing/space-8` | `TableHead` + `TableCell` padding-y | exists |
+| `Spacing/space-16` | `TableHead` + `TableCell` padding-x · `TableCaption` padding | exists |
+| `Spacing/space-32` | `TableEmpty` padding-y | exists |
+| `Spacing/space-4` | `TableEmpty` gap, title to line | exists |
+| `Type/Body` | `TableCell` · `TableEmpty` title | exists |
+| `Type/Small` | `TableCaption` · `TableEmpty` line | exists |
+| `Typography/text-small-size` + `font-sans` | `TableHead`, weight set by hand (open 1) | exists |
+| `Type/Caption` | via the `Badge` instance | exists |
+| 1lh of `text-body` (25.6px) | the line box inline content centres on (D13) | derived from the ramp, not a token |
+
+**Open questions — founder's call.** Recorded here and on the `46:342` board.
+
+1. **`TableHead` is `text-small font-semibold`, and Core has no Semi Bold Small
+   text style.** The mock binds the size and family variables and sets the
+   weight by hand. Either add a `Type/Small Semibold` style to Core (a text
+   style, not a token; it would ride the next token sync), or accept
+   weight-by-hand as the rule for table headers. *Recommendation: accept
+   weight-by-hand. `font-semibold` on a ramp step is how Button and Card
+   headings already work in code; a dedicated style would be the first
+   weight-only style in Core and would need a sync rule of its own.*
+2. **The sticky header needs an opaque surface, and the surface is not always
+   `background`.** On `03.0` it is `Color/background`. A table inside a `Card`
+   sits on `Color/card`, which equals `background` in light mode and differs in
+   dark (`0.205` vs `0.145`), so a sticky header would show a seam as the body
+   scrolls under it. Either **(a)** Table is constrained to `background`
+   surfaces and the story says so, or **(b)** a scoped custom property
+   `--table-surface`, defaulting to `var(--background)` and set to
+   `var(--card)` by `Card`, is **the one new token this component would need**.
+   *Recommendation: (b). It is a declaration with a reader (`TableHeader`),
+   one line in `Card`, and it is how scoped theming already works in this
+   repo; (a) is a constraint nothing enforces.*
+3. **The scroll-edge affordance (D7) needs a colour to fade from.** Proposed:
+   `Color/border` fading to transparent — an edge, drawn in the token that
+   already means "edge" — so no new token. The alternative is a dedicated
+   `--scroll-edge` token. *Recommendation: `border`. It is on the AA-exempt
+   decorative side already, and it reads identically in both modes because
+   dark `border` is already a white alpha.*
 
 ## Eval Delta (1.5)
 
@@ -316,4 +402,4 @@ data and correctness bugs a Table does not fix, and they want their own change.
 
 ## Status
 
-draft — at the design gate
+iterating — `03.0` built for founder review; three token questions open
