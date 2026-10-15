@@ -85,6 +85,17 @@ unnoticed once already — so a scheduled run does the same check weekly and
 opens an issue with the diff, closing it once the copy is current again. See
 [`.upstream/`](../.upstream/README.md).
 
+**CI clones shallow, and a gate has to survive that.** Every checkout in the main
+CI workflow leaves `fetch-depth` at its default, so those jobs get a **depth-1
+clone with no history**; only the Chromatic workflow asks for `fetch-depth: 0`,
+because baselines and TurboSnap need the full graph to compare against. So a check
+that wants to ask git a question cannot assume it can. The sync-stamp gate splits
+along exactly that line: the SHA's *shape* is a pure string test and a hard error
+everywhere, while *resolvability* — does this commit exist? — is attempted only
+where the clone has the history to answer and skipped silently otherwise. A gate
+that fails in CI for environmental reasons is worse than no gate: it gets muted,
+and then it protects nothing.
+
 When we say a principle is “enforced,” we mean the static scan over source —
 patterns and required story files. Storybook in the browser is the other half:
 does it look and behave right, with real contrast in the DOM? They catch

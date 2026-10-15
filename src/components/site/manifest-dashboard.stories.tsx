@@ -116,8 +116,8 @@ export const Narrow: Story = {
 }
 
 /**
- * Expanded — the Principles disclosure open, listing all twenty principle
- * titles; the toggle mirrors to "Hide the list".
+ * Expanded — the Principles disclosure open, listing every principle title; the
+ * toggle mirrors to "Hide the list".
  */
 export const Expanded: Story = {
   play: async ({ canvas }) => {
@@ -136,8 +136,15 @@ export const Expanded: Story = {
 
 /** LiveSnapshot — the committed snapshot, exactly as the landing page ships it. */
 export const LiveSnapshot: Story = {
-  play: async ({ canvas }) => {
-    await expect(canvas.getByText(/20 principles/)).toBeInTheDocument()
+  play: async ({ args, canvas }) => {
+    // Derived from the snapshot, not written as a literal. This read `/20
+    // principles/` until 2026-10-15, when adding four principle records turned a
+    // green suite red for no reason but the number — the same brittleness the
+    // `scale-to-the-data` principle is about, in the test rather than the UI.
+    const count = args.snapshot.principles.length
+    await expect(
+      canvas.getByText(new RegExp(`${count} principles`))
+    ).toBeInTheDocument()
     await expect(
       canvas.getByRole("link", { name: "src/index.css" })
     ).toBeInTheDocument()

@@ -17,6 +17,8 @@ import { resolveManifest, selectContextLayers } from "../principles.resolve.mjs"
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..")
 
+const { scanText } = await import(pathToFileURL(join(ROOT, "scripts/lib/principle-scan.mjs")))
+
 // --- args --------------------------------------------------------------------
 const argv = process.argv.slice(2)
 const fileFlag = argv.indexOf("--file")
@@ -97,47 +99,23 @@ function filesFor(principle) {
 }
 
 // --- checks ------------------------------------------------------------------
-// Each returns findings: { file, line, snippet }[]. Line-based checks honour an
-// inline escape hatch: a `mvds-allow` comment on the line suppresses all
-// principles there; `mvds-allow: id1, id2` suppresses only the listed ones.
-function isSuppressed(text, id) {
-  const m = text.match(/mvds-allow(?::?\s*([a-z0-9,\s-]+))?/i)
-  if (!m) return false
-  if (!m[1]) return true // bare `mvds-allow` suppresses every principle on the line
-  return m[1]
-    .split(",")
-    .map((s) => s.trim())
-    .includes(id)
-}
+// Each returns findings: { file, line, snippet }[]. The line matching itself
+// lives in scripts/lib/principle-scan.mjs as a pure function over text, so a new
+// pattern can be fed its violation in a test instead of being planted in the
+// repo to see whether it fires.
+//
+// `forbid-source` and `forbid-classname` now share one matcher. They were two
+// near-identical copies differing only in whether they honoured `check.allow`;
+// the shared matcher honours it for both, which no record relies on today (only
+// forbid-classname records carry an `allow`) and is the behaviour either kind
+// would want. The two names stay distinct in the manifest because they describe
+// what the pattern is ABOUT — a source construct vs. a utility class — which is
+// what a reader and the landing page's `checkKind` are reading.
+const scanFile = (file, p) =>
+  scanText(readFileSync(join(ROOT, file), "utf8"), p).map((f) => ({ file, ...f }))
 
-function runForbidSource(file, p) {
-  const out = []
-  const src = readFileSync(join(ROOT, file), "utf8")
-  src.split("\n").forEach((text, i) => {
-    if (isSuppressed(text, p.id)) return
-    const re = new RegExp(p.check.pattern.source, p.check.pattern.flags.replace("g", "") + "g")
-    let m
-    while ((m = re.exec(text)) !== null) out.push({ file, line: i + 1, snippet: m[0] })
-  })
-  return out
-}
-
-function runForbidClassName(file, p) {
-  const allow = new Set(p.check.allow ?? [])
-  const out = []
-  const src = readFileSync(join(ROOT, file), "utf8")
-  src.split("\n").forEach((text, i) => {
-    if (isSuppressed(text, p.id)) return
-    const re = new RegExp(p.check.pattern.source, p.check.pattern.flags.replace("g", "") + "g")
-    let m
-    while ((m = re.exec(text)) !== null) {
-      const token = m[0].includes(":") ? m[0].split(":").pop() : m[0]
-      if (allow.has(token)) continue
-      out.push({ file, line: i + 1, snippet: m[0] })
-    }
-  })
-  return out
-}
+const runForbidSource = scanFile
+const runForbidClassName = scanFile
 
 function runRequireSibling(file, p) {
   const companion = p.check.companion(file)

@@ -172,6 +172,48 @@ export const baseManifest = {
       docs: "AGENTS.md (Golden rules — Never raw flex/grid utilities for layout)",
       source: FOUNDER,
     },
+
+    // --- Sizing: content decides, not a constant ---------------------------------
+    // Founder-added 2026-10-15, after hardcoded table column widths broke a
+    // parallel build. The mechanised half is deliberately narrow (an absolute px
+    // literal in a size utility, or React's bare-number style shorthand, which
+    // also means px); the judgment half is `scale-to-the-data` below, because
+    // "this will have more rows than you think" is not a regex.
+    {
+      id: "no-fixed-content-dimensions",
+      title: "Let content size itself",
+      description:
+        "No absolute pixel dimension on an axis that content flows along — column widths, cell widths, row heights. Constrain with a max, a token, or a content-relative unit instead.",
+      rationale:
+        "A pixel width is a guess about content you have not seen yet, and it is the guess that breaks first: a table column pinned at 180px clips the one customer name that is longer than the sample data, and a row pinned in px clips the moment copy wraps to two lines. Founder (2026-10-15), after hardcoded column widths tripped up a parallel build. The fix is almost always to say what you actually mean — a MAXIMUM (max-w-[60ch]), a RATIO (the Grid's columns), or a TOKEN (w-[var(--chrome-left-width)]) — all of which stay true when the content changes. Note what this does NOT forbid: control metrics on the 8-grid (h-8), icon glyph sizes (size-4), border-radius (a dimension, exempt), max-widths in rem/ch, and anything bound to a token. Hairlines are allow-listed below: a 1-2px rule is a stroke, not a size.",
+      severity: "error",
+      enabled: true,
+      // Vendored ui/ is out (shadcn re-adds its own arbitrary values on every
+      // `add`), the layout primitives are out (Container's max-width ladder and
+      // Chrome's token-bound dimensions ARE the sanctioned way to do this), and
+      // stories are out for the same reason they are for the layout rules — a
+      // specimen legitimately pins its canvas to show a narrow case. The judgment
+      // half still covers all three.
+      scope: { include: [SRC, EXAMPLES], exclude: [VENDORED_UI, LAYOUT, STORIES] },
+      check: {
+        kind: "forbid-classname",
+        pattern: new RegExp(
+          [
+            // w-[180px] · min-h-[48px] · max-w-[320px] · basis-[200px] · size-[24px],
+            // with any variant prefix (dark:, md:, hover:).
+            String.raw`(?<![\w-])(?:[a-z0-9.-]+:)*(?:min-|max-)?(?:w|h|size|basis)-\[-?\d+(?:\.\d+)?px\]`,
+            // The same thing as an inline style. A BARE NUMBER is the trap:
+            // React reads `width: 180` as 180px, so it looks unitless and is not.
+            String.raw`\b(?:width|height|minWidth|maxWidth|minHeight|maxHeight|flexBasis)\s*:\s*(?:-?\d+(?:\.\d+)?\s*[,}]|["'\x60]-?\d+(?:\.\d+)?px["'\x60])`,
+          ].join("|")
+        ),
+        // A 1-2px rule is a stroke, not a content dimension.
+        allow: ["w-[1px]", "h-[1px]", "w-[2px]", "h-[2px]"],
+      },
+      fix: "Say what you mean instead of a pixel: a max (max-w-[60ch] for a measure), a ratio (<Grid cols>/<GridItem span>), a token (w-[var(--chrome-left-width)]), an intrinsic keyword (w-full / w-fit / min-w-0 + truncate), or an on-grid control metric (h-8). For a table, let the columns size to content and cap the long one.",
+      docs: "AGENTS.md (Golden rules — Let content size itself)",
+      source: FOUNDER,
+    },
     {
       id: "story-coverage-ui",
       title: "Every UI component has a story",
@@ -458,6 +500,64 @@ export const baseManifest = {
         "Does any heading or paragraph on the surface strand a single word or short phrase on its own line (runt), or leave a lone first or last line at a break (widow/orphan)?",
       fix: "Rebreak the line: shorten or rewrite the copy, set a deliberate break, or use balanced wrapping (text-wrap: balance on headings, text-wrap: pretty on body) so no word stands alone.",
       docs: "AGENTS.md (Type via the semantic ramp)",
+      source: FOUNDER,
+    },
+
+    {
+      id: "scale-to-the-data",
+      title: "Design for n, not for the mock",
+      description:
+        "Any surface that renders a collection must hold up at 0, 1 and far more rows / columns / fields than the design showed — and with one value longer than every sample.",
+      rationale:
+        "The mock has four tidy rows; production has none, or nine thousand, or one row whose title runs to 200 characters. Founder (2026-10-15): account for dynamic content that will have more rows or columns or fields than you think. Every state is a design decision someone has to make, and if the build does not make it the data will: empty (say what is missing and how to add it, never a blank panel), one (no layout that only reads as deliberate in multiples), many (scroll or paginate on purpose, and keep the header reachable), long (wrap, or truncate with the full value still available), and WIDE — a column or field added later must not require re-deciding the layout. This is the judgment half of `no-fixed-content-dimensions`: a px width is how the wide and long cases usually break, but the empty and single cases are not detectable by any regex.",
+      severity: "error",
+      enabled: true,
+      scope: NO_FILES,
+      check: { kind: "guiding" },
+      evalLens:
+        "For each collection on the surface: what does it look like at 0 rows, at 1, at 50, with the longest plausible value in its narrowest cell, and with one more column or field than the design shows? Is each of those a decision that was made, or just what happened?",
+      fix: "Design the empty, single, many, long and wide cases explicitly. Size from content (see no-fixed-content-dimensions), cap the long cell with a max and keep the full value reachable, and let the column set come from the data rather than a fixed layout.",
+      docs: "AGENTS.md (Golden rules — Let content size itself)",
+      source: FOUNDER,
+    },
+
+    // --- Encoding intent: the two rules behind this repo's fail-open defects ------
+    // Added 2026-10-15 alongside the M0-M6 / R1-R2 gates (#128). Those gates
+    // mechanise these two rules for the Figma mapping and the manifest snapshot
+    // specifically; the records exist so the RULE is stated once, for every place
+    // an agent writes a contract or an output that no gate happens to cover.
+    {
+      id: "declarations-must-resolve",
+      title: "A declaration has to resolve to something",
+      description:
+        "Anything written down as a contract — a mapping, a token name, a reference, a stamp — must be resolvable by code against the thing it names, not merely readable by a person.",
+      rationale:
+        "MVDS exists so that intent is ENCODED. A declaration nothing resolves is the opposite: it reads as encoded intent and is actually a sentence. figma/conventions.mjs said `z-{level} → Sizing/z-{level}`; the code tokens had been renamed `--z-index-*` months earlier, no code read the sentence, and every gate stayed green (#124). The same shape produced a font-binding contract naming one variable where Figma carried two (#125) and a variant-order claim the Figma Plugin API cannot satisfy (#126). The test is not “is this true?” but “what would fail if it stopped being true?” — if the answer is nothing, it is prose wearing a contract's clothes. So a finite mapping is a record the gate expands, and an uncertainty is recorded as an open question rather than asserted.",
+      severity: "error",
+      enabled: true,
+      scope: NO_FILES,
+      check: { kind: "guiding" },
+      evalLens:
+        "Take each declaration this change adds — a mapping, a name, a reference, a provenance stamp. What code resolves it, and what fails if it stops being true? If nothing does, is it written as a rule over an open set on purpose, or is it an unchecked claim?",
+      fix: "Make it a record with a resolvable source and target and let a gate expand it (figma/conventions.mjs — RULES vs. MAPPINGS). If the member list is genuinely open, say so in the record. If you cannot verify one side, record the open question instead of asserting the answer.",
+      docs: "AGENTS.md (A gate must be able to fail — rule 1)",
+      source: FOUNDER,
+    },
+    {
+      id: "outputs-need-readers",
+      title: "Don't emit what nothing reads",
+      description:
+        "A field, prop, export or variant must have a consumer, or a written reason it is produced anyway. An unread output is not free — it is a claim about the system that no longer has to be true.",
+      rationale:
+        "`commitsBehind` was computed by the snapshot generator, declared in the types, and read by nobody — for months, through a passing build, because an unread field typechecks perfectly. Worse, it then became something to reason FROM: twice during the 2026-10-13 Figma syncs a re-stamp was justified by what “the landing page's commitsBehind” would show, about a field the page has never rendered (#127). That is the real cost — dead output quietly becomes evidence. Pre-1.0 the answer is usually to delete it (AGENTS.md: never keep a deprecated alias for compatibility); where it is produced for a reader that is not the page — a human reading a diff, an agent reading the artifact — that reason gets written down as a record, not assumed.",
+      severity: "error",
+      enabled: true,
+      scope: NO_FILES,
+      check: { kind: "guiding" },
+      evalLens:
+        "For each field, prop, export or variant this change adds or keeps: who reads it? Name the file. If nobody does, is there a written reason it is emitted anyway, or should it be deleted?",
+      fix: "Give it a reader, delete it outright (pre-1.0 — no compatibility shims), or declare it with its reason in the relevant three-state census (EMITTED_BUT_UNREAD in scripts/lib/snapshot-readers.mjs, notMirrored in the Figma configs).",
+      docs: "AGENTS.md (A gate must be able to fail — rule 2)",
       source: FOUNDER,
     },
   ],
