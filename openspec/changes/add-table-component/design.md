@@ -81,7 +81,7 @@ a single edit.
 | Delta page | `01.5 Eval Delta` — pinned duplicates of all six propose frames plus `01.5 Eval Delta — disposition ledger` (`31:599`) |
 | Samples | `02.0 Propose — Table in context: samples` (`39:4`) — billing history, team & access, a component API reference, and a plan comparison. Sample data is invented and flagged as such on the board; only the principles board renders the live manifest. |
 | Breakpoints | S · 480px (`23:101`) / L · 1024px (`23:2`, and all specimen boards at 1200) — BHD Content Types |
-| Status | iterating — `03.0` built 2026-10-15 on founder direction ("show me the component first, in light and dark mode … in the typography and spacing scales we've defined already. If we need tokens for tables, I need to know about them"); `04.0` applies the founder's answers to the three token questions (same day); `05.0` adds `rules`, `striped` and `p-16` on founder direction (same day). Awaiting the founder's call on D17, then the gate call on `05.0`. See **Tokens** below. |
+| Status | iterating — `03.0` built 2026-10-15 on founder direction ("show me the component first, in light and dark mode … in the typography and spacing scales we've defined already. If we need tokens for tables, I need to know about them"); `04.0` applies the founder's answers to the three token questions (same day); `05.0` adds `rules`, `striped` and `p-16` on founder direction (same day). D17 settled by the founder the same day. Awaiting the gate call on `05.0`. See **Tokens** below. |
 
 **What the three new boards carry.** `17:2` renders the seven parts twice: once
 assembled into a working specimen with the parts annotated in place, and once
@@ -297,7 +297,8 @@ striped** — one hover token, not one per prop. Costs named: under a brand
 preset the stripes carry the brand's faintest tint rather than a neutral grey,
 and light-mode hover darkens from `#f5f5f5` to `#e5e5e5`. The alternative is a
 new neutral pair (`--table-stripe` / `--table-hover`), which would be the first
-mode-aware neutral tint tokens in the system. **Awaiting the founder's call.**
+mode-aware neutral tint tokens in the system. **Settled — founder, 2026-10-15:
+"stripes primary-1, hover primary-2. Hover leaves muted. No new tokens."**
 
 **D18 · Cells are `p-16` on all four sides.** Founder, 2026-10-15: *"make top
 and bottom padding the same as l/r (16)."* `TableHead` and `TableCell` take
@@ -329,8 +330,7 @@ Founder direction, 2026-10-15: *"if we need tokens for tables, I need to know
 about them."* This is the census, read back from the `05.0` boards after the
 build, not from the plan. **One new token: `--table-surface` (D14). Everything
 else exists in MVDS Core today** — including stripes and hover, which use the
-gradation steps rather than a new neutral pair, pending the founder's call on
-D17. The three questions `03.0` left open were answered by the founder the
+gradation steps rather than a new neutral pair (D17, settled by the founder). The three questions `03.0` left open were answered by the founder the
 same day (D14, D15, D7); the three additions that followed are D16, D17, D18.
 
 | Token | Bound where | Status |
@@ -462,4 +462,4 @@ data and correctness bugs a Table does not fix, and they want their own change.
 
 ## Status
 
-iterating — `05.0` adds `rules`, `striped`, `p-16` (D16 · D17 · D18); awaiting the founder's call on D17's stripe/hover pair, then the gate
+iterating — `05.0` adds `rules`, `striped`, `p-16` (D16 · D17 · D18), all settled; awaiting the gate call on `05.0`
