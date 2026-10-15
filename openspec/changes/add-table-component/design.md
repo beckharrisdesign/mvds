@@ -462,4 +462,18 @@ data and correctness bugs a Table does not fix, and they want their own change.
 
 ## Status
 
-approved 2026-10-15 — founder: "05.0 passes the design gate." `tasks.md` drafted; apply waits on its approval
+applied 2026-10-15 — `tasks.md` approved ("tasks.md approved. Run /opsx-apply"); §2–§3 and 4.2 done, §1 + 4.1 are the founder's manual checks before archive.
+
+**What apply found that the boards could not show.** (1) A browser does not
+honour `max-width` on a `<td>`, so the measures in D2 sit on a block inside
+the cell (`<span class="block max-w-[60ch]">`), not on the cell — the mock's
+caveat, met in practice. (2) The four-column index wraps to fit 480px on its
+own; the contained-scroll decision (D10) engages when min-content exceeds the
+region, so the `Narrow480` story shows the six-column set. (3) The test
+harness's `userEvent.hover` dispatches events, not a CSS `:hover` state, so
+the hover assertion is structural (the body-scoped utility and its compiled
+rule) and the pointer result is recorded from the browser: `oklch(0.922 0 0)`
+= `primary-2`. (4) The `Wide` story reads `severity` and `checkKind`, which
+gave two emitted-but-unread snapshot fields their first reader; the census
+caught the stale carve-outs. Stories shipped: `Default · Empty · OneRow ·
+ManyRows · Long · Wide · Narrow480 · Rules · Striped · InlineContent · InCard`.

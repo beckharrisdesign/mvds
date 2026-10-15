@@ -23,6 +23,7 @@ import label from "./components/label.figma.mjs"
 import radioGroup from "./components/radio-group.figma.mjs"
 import select from "./components/select.figma.mjs"
 import switchComp from "./components/switch.figma.mjs"
+import table from "./components/table.figma.mjs"
 import textarea from "./components/textarea.figma.mjs"
 
 // Form components
@@ -44,7 +45,7 @@ import layer from "./components/layer.figma.mjs"
 
 export const componentManifests = [
   // UI
-  button, badge, card, checkbox, input, label, radioGroup, select, switchComp, textarea,
+  button, badge, card, checkbox, input, label, radioGroup, select, switchComp, table, textarea,
   // Forms
   dropzone, field,
   // Blocks

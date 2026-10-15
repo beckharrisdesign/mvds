@@ -20,6 +20,17 @@ const EXAMPLES = "examples/**/*.{ts,tsx}"
 const VENDORED_UI = "src/components/ui/**"
 const LAYOUT = "src/components/layout/**"
 const STORIES = "src/**/*.stories.tsx"
+// The shadcn-SOURCED files in ui/, as a closed list (a record, not a sentence):
+// `shadcn add` re-emits its own arbitrary values into these, so they sit outside
+// no-fixed-content-dimensions. A component authored in ui/ against that rule
+// (Table — openspec: add-table-component) is deliberately NOT listed, so the
+// gate really runs on it; passing because excluded would be the fail-open shape.
+const VENDORED_SHADCN =
+  "src/components/ui/{badge,button,card,checkbox,input,label,radio-group,select,switch,textarea}.tsx"
+// Stories that legitimately pin a canvas to show a case: foundation specimens,
+// the layout family's shared story, and the site's own sections. Component
+// stories (ui/, forms/, blocks/) are held to the rule like their components.
+const SPECIMEN_STORIES = "src/{foundations,components/site,components/layout}/**/*.stories.tsx"
 
 // --- provenance ----------------------------------------------------------------
 // Every principle declares WHERE IT COMES FROM. Two kinds carry very different
@@ -188,13 +199,15 @@ export const baseManifest = {
         "A pixel width is a guess about content you have not seen yet, and it is the guess that breaks first: a table column pinned at 180px clips the one customer name that is longer than the sample data, and a row pinned in px clips the moment copy wraps to two lines. Founder (2026-10-15), after hardcoded column widths tripped up a parallel build. The fix is almost always to say what you actually mean — a MAXIMUM (max-w-[60ch]), a RATIO (the Grid's columns), or a TOKEN (w-[var(--chrome-left-width)]) — all of which stay true when the content changes. Note what this does NOT forbid: control metrics on the 8-grid (h-8), icon glyph sizes (size-4), border-radius (a dimension, exempt), max-widths in rem/ch, and anything bound to a token. Hairlines are allow-listed below: a 1-2px rule is a stroke, not a size.",
       severity: "error",
       enabled: true,
-      // Vendored ui/ is out (shadcn re-adds its own arbitrary values on every
-      // `add`), the layout primitives are out (Container's max-width ladder and
-      // Chrome's token-bound dimensions ARE the sanctioned way to do this), and
-      // stories are out for the same reason they are for the layout rules — a
-      // specimen legitimately pins its canvas to show a narrow case. The judgment
-      // half still covers all three.
-      scope: { include: [SRC, EXAMPLES], exclude: [VENDORED_UI, LAYOUT, STORIES] },
+      // The shadcn-sourced ui/ files are out by name (shadcn re-adds its own
+      // arbitrary values on every `add`) — not the whole directory, so a
+      // component authored there against this rule is actually checked. The
+      // layout primitives are out (Container's max-width ladder and Chrome's
+      // token-bound dimensions ARE the sanctioned way to do this), and the
+      // specimen stories are out for the same reason — a specimen legitimately
+      // pins its canvas to show a narrow case. Component stories stay in. The
+      // judgment half still covers all of them.
+      scope: { include: [SRC, EXAMPLES], exclude: [VENDORED_SHADCN, LAYOUT, SPECIMEN_STORIES] },
       check: {
         kind: "forbid-classname",
         pattern: new RegExp(

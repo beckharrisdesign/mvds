@@ -55,7 +55,7 @@ Deliberately small, but complete enough that a first screen needs zero custom
 controls:
 
 - **Controls** (`src/components/ui/`, shadcn-sourced + MVDS-tuned) — `Button`,
-  `Badge`, `Card`, `Label`, `Input`, `Textarea`, `Select`, `Checkbox`,
+  `Badge`, `Card`, `Table`, `Label`, `Input`, `Textarea`, `Select`, `Checkbox`,
   `RadioGroup`, `Switch`.
 - **Form patterns** (`src/components/forms/`, MVDS-authored) — `Field` (the
   label/help/error scaffold every control plugs into) and `Dropzone`
