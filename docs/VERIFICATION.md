@@ -45,8 +45,19 @@ enforce the design-system rules.
 npm run build
 npm run check:contrast
 npm run check:principles
+npm run check:figma
 npm test
 ```
+
+**The checks are themselves checked.** Each system-level check lives as a pure
+function in [`scripts/lib/`](../scripts/lib) with a co-located `*.test.mjs`, and
+`npm test` runs those first — they need no browser, so a broken check reports in
+a second rather than after Chromium boots. The rule (AGENTS.md) is that a new
+check arrives with a case that fails without it: delete the check and a test goes
+red. It exists because every one of these checks was written *after* the bug it
+catches had already shipped green, and because a proof that asserts only on an
+exit code cannot tell a reported error from a crash — one of ours scored exactly
+that as a pass.
 
 ---
 

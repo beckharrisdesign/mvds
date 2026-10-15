@@ -48,6 +48,11 @@ file's structure isn't re-discovered each time.
   - Font family token → `Typography/font-sans`
   - Radius tokens → `Sizing/radius`, `Sizing/radius-sm`, `Sizing/radius-md`,
     `Sizing/radius-lg`, `Sizing/radius-xl`
+    - **Confirm the first one on this run.** `figma.lock.json` records only the
+      four derived steps; no entry has ever named a base `Sizing/radius`, and CI
+      cannot look. Either record it in the lock and add it to
+      `conventions.radius.members`, or delete it from this list — don't leave a
+      fifth variable asserted in one place and absent from the other.
   - Spacing tokens (Scales collection) → `Spacing/space-4` … `Spacing/space-96`
   - Breakpoint tokens (Scales collection) → `Sizing/breakpoint-sm` … `Sizing/breakpoint-2xl`
 - Color variable **scopes:** `["ALL_FILLS", "STROKE_COLOR"]`.

@@ -19,7 +19,19 @@ export default defineConfig({
     }
   },
   test: {
-    projects: [{
+    projects: [
+    // The node-side gate scripts. `scripts/lib/*.mjs` holds each system-level
+    // check as a pure function over its inputs so it can be exercised here
+    // directly — see AGENTS.md: a new check ships with a case that fails
+    // without it. No `extends`: these tests need neither React nor Tailwind.
+    {
+      test: {
+        name: 'scripts',
+        environment: 'node',
+        include: ['scripts/**/*.test.mjs']
+      }
+    },
+    {
       extends: true,
       plugins: [
       // The plugin will run tests for the stories defined in your Storybook config

@@ -34,6 +34,21 @@
 //     resolves to — the two are the same string while --font-heading aliases
 //     --font-sans, so resolved-value comparison alone cannot see a rebinding.
 //
+// Convention-mapping gate (M0–M6, full mode only): figma/conventions.mjs splits
+// into RULES over an open set, which stay prose, and MAPPINGS over a closed set,
+// which are `{ source, target, members }` records. Every mapping is expanded and
+// resolved in BOTH directions — each member's CSS custom property against
+// src/index.css, each member's Figma variable against figma.lock.json — plus a
+// census each way so neither side can gain a member alone. M0 FAILS a record
+// this gate does not understand rather than skipping it: a mapping nobody checks
+// is #124, where a prose mapping named `z-{level}` tokens that had been renamed
+// `--z-index-*` and no code ever read the sentence.
+//
+// All three system-level gates (T1–T8, S1–S6, M0–M6) live in
+// scripts/lib/figma-gates.mjs as pure functions over their inputs, so
+// scripts/lib/figma-gates.test.mjs can exercise each arm directly. This file
+// reads the files, answers "can this clone resolve a commit?", and calls them.
+//
 // Sync-stamp gate (S1–S6, full mode only): holds figma.lock.json's `tokenSync`
 // and `componentSync` provenance blocks to being true — shape, a `result` from a
 // fixed vocabulary, zero unresolved mismatches, a non-future ISO date, a full
@@ -50,6 +65,12 @@ import { fileURLToPath, pathToFileURL } from "node:url"
 import { dirname, join, relative, sep } from "node:path"
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..")
+
+// The system-level checks live in scripts/lib so they can be called from a test
+// with crafted inputs instead of by mutating the repo and reading an exit code.
+const { checkConventionMappings, checkSyncStamps, checkTypography } = await import(
+  pathToFileURL(join(ROOT, "scripts/lib/figma-gates.mjs"))
+)
 
 // --- args --------------------------------------------------------------------
 const argv = process.argv.slice(2)
@@ -393,25 +414,23 @@ function checkLockReconciliation(errors, warns, manifests) {
   return lock
 }
 
-// --- sync-stamp gate (full mode only) ---------------------------------------------
-// The two sync skills each write a provenance block into figma.lock.json —
-// `tokenSync` and `componentSync`. Until now NOTHING checked them: they were
-// records whose only job is to be true, with no gate holding them to it, which is
-// this repo's signature defect (#115's fail-open coverage, #121's walk-vs-check
-// count, the font binding that resolved to the same string either way). A stamp
-// nobody verifies decays into the thing it was written to prevent.
-//
-// CI runs on a DEPTH-1 clone (ci.yml's checkout sets no fetch-depth), so the
-// commit a stamp names is normally absent here. SHA *shape* is therefore a hard
-// error — a pure string check, identical everywhere — while *resolvability* is
-// attempted only when the repo has the history to answer, and skipped silently
-// otherwise. A gate that fails in CI for environmental reasons is worse than none.
-const SYNC_RESULTS = new Set(["no-op", "written"])
+// --- source text for the utility census (M5) ---------------------------------------
+// Utility-sourced mappings are checked against the code that uses them, so M5
+// needs the source files. Stories count: a specimen that reaches for a one-off
+// alpha is exactly the thing that should have to declare itself.
+function srcSources() {
+  return walkFiles("src")
+    .filter((f) => /\.(ts|tsx)$/.test(f) && !f.startsWith("src/generated/"))
+    .map((f) => ({ file: f, text: readFileSync(join(ROOT, f), "utf8") }))
+}
 
-function checkSyncStamps(errors, warns, lock) {
-  // Resolvability is only meaningful with history. `--is-shallow-repository`
-  // prints "true" on CI's depth-1 clone; anything else (or a git failure) means
-  // do not ask.
+// --- sync-stamp environment --------------------------------------------------------
+// Commit RESOLVABILITY is only meaningful where the clone has the history to
+// answer. `--is-shallow-repository` prints "true" on CI's depth-1 checkout;
+// anything else (or a git failure — no repo, no git) means do not ask, and
+// checkSyncStamps gets a null `commitExists` so S5 checks SHA shape only. A
+// gate that fails in CI for environmental reasons is worse than no gate.
+function syncStampEnv() {
   let canResolve = false
   try {
     canResolve =
@@ -423,286 +442,18 @@ function checkSyncStamps(errors, warns, lock) {
   } catch {
     canResolve = false
   }
-
-  const today = new Date().toISOString().slice(0, 10)
-
-  for (const [key, shaField] of [
-    ["tokenSync", "verifiedFromCommit"],
-    ["componentSync", null], // documents the top-level syncedFromCommit
-  ]) {
-    const b = lock[key]
-    // S1 — the block exists at all. Absent is a bootstrap state (a fresh lock,
-    // or one predating these blocks), so warn rather than fail: the same
-    // treatment T6 gives a missing typography block.
-    if (!b) {
-      warns.push({
-        component: "sync-stamp",
-        message: `S1: figma.lock.json has no \`${key}\` block — that sync has never recorded what it verified; run the matching sync skill (until then its provenance is unverified)`,
-      })
-      continue
-    }
-
-    // S2 — shape and vocabulary. `result` is an enum so it cannot drift into
-    // free text that reads fine and means nothing.
-    if (!SYNC_RESULTS.has(b.result)) {
-      errors.push({
-        component: "sync-stamp",
-        message: `S2: ${key}.result is ${JSON.stringify(b.result)}, not one of ${[...SYNC_RESULTS].join("/")} — the outcome must be a known value, not prose`,
-      })
-    }
-    const mism = b.checked?.mismatches
-    if (typeof mism !== "number") {
-      errors.push({
-        component: "sync-stamp",
-        message: `S2: ${key}.checked.mismatches is missing or not a number — a stamp must say how much disagreed, even when the answer is zero`,
-      })
-    } else if (mism !== 0) {
-      // S3 — a recorded sync that found drift and left it is a record of a known
-      // problem, parked. Either fix the drift or do not claim the sync ran.
-      errors.push({
-        component: "sync-stamp",
-        message: `S3: ${key}.checked.mismatches is ${mism}, not 0 — a stamp recording unresolved drift is a known problem left in place; re-run the sync and fix what it found`,
-      })
-    }
-
-    // S4 — the date is a real ISO day and not in the future. The shape regex
-    // alone is not enough: "2026-13-45" is digit-shaped, so it passed the
-    // pattern and then string-compared later than today, reporting a nonsense
-    // date as "in the future". Round-trip through Date so only real calendar
-    // days get that far.
-    // NB: Date.toISOString() THROWS RangeError on an Invalid Date, so the
-    // getTime() check has to come first — reaching for the round-trip directly
-    // killed the gate with a stack trace instead of reporting the bad value.
-    const dateShaped = /^\d{4}-\d{2}-\d{2}$/.test(b.verifiedAt ?? "")
-    const parsed = dateShaped ? new Date(`${b.verifiedAt}T00:00:00Z`) : null
-    const realDate =
-      parsed !== null &&
-      !Number.isNaN(parsed.getTime()) &&
-      parsed.toISOString().slice(0, 10) === b.verifiedAt
-    if (!realDate) {
-      errors.push({
-        component: "sync-stamp",
-        message: `S4: ${key}.verifiedAt is ${JSON.stringify(b.verifiedAt)}, not a real ISO YYYY-MM-DD date`,
-      })
-    } else if (b.verifiedAt > today) {
-      errors.push({
-        component: "sync-stamp",
-        message: `S4: ${key}.verifiedAt is ${b.verifiedAt}, which is in the future (today is ${today}) — a stamp cannot describe a run that has not happened`,
-      })
-    }
-
-    // S5 — the commit it names. componentSync explains the top-level stamp, so
-    // that is the SHA it is held to; tokenSync carries its own.
-    const sha = shaField ? b[shaField] : lock.syncedFromCommit
-    const label = shaField ? `${key}.${shaField}` : "syncedFromCommit"
-    if (!/^[0-9a-f]{40}$/i.test(sha ?? "")) {
-      errors.push({
-        component: "sync-stamp",
-        message: `S5: ${label} is ${JSON.stringify(sha)}, not a full 40-character SHA — an abbreviated or missing commit cannot be verified later`,
-      })
-    } else if (canResolve) {
-      let exists = true
-      try {
-        execFileSync("git", ["cat-file", "-e", `${sha}^{commit}`], {
-          cwd: ROOT,
-          stdio: "ignore",
-        })
-      } catch {
-        exists = false
-      }
-      if (!exists) {
-        errors.push({
-          component: "sync-stamp",
-          message: `S5: ${label} names ${sha.slice(0, 7)}, which is not a commit in this repository — the stamp points at nothing (same shape as the #124 mapping that named a token that no longer existed)`,
-        })
-      }
-    }
-  }
-
-  // S6 — componentSync and the top-level stamp describe ONE event, so they must
-  // agree. Divergence is exactly the #85 failure the lock's own $comment
-  // records: the Figma push happened, the stamp moved, and the map did not.
-  const cs = lock.componentSync
-  if (cs && /^\d{4}-\d{2}-\d{2}$/.test(cs.verifiedAt ?? "") && cs.verifiedAt !== lock.syncedAt) {
-    errors.push({
-      component: "sync-stamp",
-      message: `S6: componentSync.verifiedAt (${cs.verifiedAt}) disagrees with the top-level syncedAt (${lock.syncedAt}) — they record the same run, so one was moved without the other`,
-    })
-  }
-}
-
-// --- typography gate (full mode only) -------------------------------------------
-// The font family is a token: code ↔ conventions.typography ↔ figma.lock.json.
-// CI has no Figma access, so the lock is the recorded Figma reality (written by
-// the mvds-figma-token-sync skill); live hand-drift is caught at sync time.
-function checkTypography(errors, warns) {
-  const t = conventions.typography
-  // T1 — the record itself.
-  if (!t?.fontFamily || !t?.weightToFigmaStyle) {
-    errors.push({
-      component: "typography",
-      message: `T1: figma/conventions.mjs has no typography record (fontFamily + weightToFigmaStyle) — the font family must be declared, not implied`,
-    })
-    return // everything below depends on it
-  }
-  const f = t.fontFamily
-
-  // T2 — --font-sans in code matches the declared code family.
-  const sansMatch = /--font-sans:\s*['"]([^'"]+)['"]/.exec(indexCss)
-  const codeFamily = sansMatch?.[1] ?? null
-  if (codeFamily !== f.code) {
-    errors.push({
-      component: "typography",
-      message: `T2: src/index.css --font-sans is ${codeFamily ? `'${codeFamily}'` : "missing/unquoted"} but conventions.typography declares '${f.code}' — change both together (then re-run the token sync)`,
-    })
-  }
-  // --font-heading is modelled as its own token (conventions.typography.fontHeading),
-  // so it no longer aliasing font-sans is a SUPPORTED move, not a warning — that is
-  // the point of themeable-typography. What must hold is that the record keeps up:
-  // once the alias breaks, the two Figma variables carry different families and the
-  // declared `figma` value for the heading face has to say so.
-  const headingAliases = /--font-heading:\s*var\(--font-sans\)/.test(indexCss)
-  const h = t.fontHeading
-  if (!h?.figmaVariable) {
-    errors.push({
-      component: "typography",
-      message: `T2: conventions.typography has no fontHeading record — the ramp binds two font variables (see fontTokenByStep), so both must be declared`,
-    })
-  } else if (headingAliases && h.figma !== f.figma) {
-    errors.push({
-      component: "typography",
-      message: `T2: --font-heading still aliases var(--font-sans) so both faces resolve to '${f.figma}', but conventions declares the heading face as '${h.figma}' — fix the record or break the alias in src/index.css`,
-    })
-  } else if (!headingAliases && h.aliasOf) {
-    warns.push({
-      component: "typography",
-      message: `--font-heading no longer aliases var(--font-sans), but conventions.typography.fontHeading still records aliasOf: '${h.aliasOf}' — drop aliasOf and set its own \`figma\` family, then re-run the token sync`,
-    })
-  }
-
-  // T3 — the fontsource package is imported and declared.
-  if (!indexCss.includes(`@import "${f.package}"`)) {
-    errors.push({
-      component: "typography",
-      message: `T3: src/index.css does not @import "${f.package}" (the declared font package)`,
-    })
-  }
-  const pkg = JSON.parse(readFileSync(join(ROOT, "package.json"), "utf8"))
-  if (!pkg.dependencies?.[f.package] && !pkg.devDependencies?.[f.package]) {
-    errors.push({
-      component: "typography",
-      message: `T3: package.json has no dependency on ${f.package}`,
-    })
-  }
-
-  // T4 — every ramp step's weight is expressible as a Figma style.
-  const stepWeights = {} // Figma style name → weight from code
-  for (const [util, styleName] of Object.entries(conventions.textStyles)) {
-    const w = new RegExp(`--${util}--font-weight:\\s*(\\d+)`).exec(indexCss)
-    const weight = w ? Number(w[1]) : 400 // absent = CSS default 400
-    stepWeights[styleName] = weight
-    if (!(weight in t.weightToFigmaStyle)) {
-      errors.push({
-        component: "typography",
-        message: `T4: ramp step ${util} uses font-weight ${weight}, which has no entry in weightToFigmaStyle (${Object.keys(t.weightToFigmaStyle).join("/")})`,
-      })
-    }
-  }
-
-  // T6/T7 — recorded Figma reality (the lock).
-  let lock
-  try {
-    lock = JSON.parse(readFileSync(join(ROOT, "figma/figma.lock.json"), "utf8"))
-  } catch {
-    warns.push({ component: "typography", message: "figma/figma.lock.json missing or unparseable — skipping recorded-reality checks" })
-    return
-  }
-  if (!lock.typography) {
-    warns.push({
-      component: "typography",
-      message: `T6: figma.lock.json has no typography block — text-style fonts were never recorded; run the mvds-figma-token-sync skill to record them (until then, Figma's fonts are unverified)`,
-    })
-    return
-  }
-  const lockVar = lock.typography.fontFamilyVariable
-  if (lockVar?.value !== f.figma) {
-    errors.push({
-      component: "typography",
-      message: `T7: lock records font-sans variable value '${lockVar?.value}' but conventions declare '${f.figma}' — re-run the token sync`,
-    })
-  }
-  for (const styleName of Object.values(conventions.textStyles)) {
-    const entry = lock.typography.textStyles?.[styleName]
-    if (!entry) {
-      errors.push({
-        component: "typography",
-        message: `T7: lock has no recorded font for text style "${styleName}" — re-run the token sync`,
-      })
-      continue
-    }
-    if (entry.fontFamily !== f.figma) {
-      errors.push({
-        component: "typography",
-        message: `T7: "${styleName}" recorded as ${entry.fontFamily} in Figma but conventions declare ${f.figma} — Figma is stale; re-run the token sync`,
-      })
-    }
-    const expectedStyle = t.weightToFigmaStyle[stepWeights[styleName]]
-    if (expectedStyle && entry.fontStyle !== expectedStyle) {
-      errors.push({
-        component: "typography",
-        message: `T7: "${styleName}" recorded as ${entry.fontFamily} ${entry.fontStyle} but code weight ${stepWeights[styleName]} maps to ${expectedStyle} — re-run the token sync`,
-      })
-    }
-    if (entry.bound === false) {
-      warns.push({
-        component: "typography",
-        message: `"${styleName}" fontFamily is set directly, not bound to a font variable (bind failed at last sync) — rebinding is cosmetic, values still match`,
-      })
-    }
-  }
-
-  // T8 — WHICH font variable each step binds.
-  //
-  // T7 above compares the RESOLVED family, and that is not enough: --font-heading
-  // aliases --font-sans today, so both variables read "Inter" and a sync that
-  // rebound every style to font-sans would pass every check while quietly
-  // destroying the heading/body split. It would surface only once a brand gave the
-  // heading face its own family — as headings rendering in the body font, with a
-  // green gate. So compare the binding itself, by name, not the value it happens
-  // to resolve to.
-  const varByToken = { [f.token]: f.figmaVariable, [h?.token]: h?.figmaVariable }
-  for (const [util, styleName] of Object.entries(conventions.textStyles)) {
-    const wantToken = t.fontTokenByStep?.[util]
-    if (!wantToken) {
-      errors.push({
-        component: "typography",
-        message: `T8: conventions.typography.fontTokenByStep has no entry for ramp step ${util} — every step must declare which font token it binds`,
-      })
-      continue
-    }
-    const wantVar = varByToken[wantToken]
-    if (!wantVar) {
-      errors.push({
-        component: "typography",
-        message: `T8: ramp step ${util} declares font token '${wantToken}', which matches no declared font record (${Object.keys(varByToken).filter(Boolean).join("/")})`,
-      })
-      continue
-    }
-    const entry = lock.typography.textStyles?.[styleName]
-    if (!entry) continue // already reported by T7
-    if (!entry.boundVariable) {
-      warns.push({
-        component: "typography",
-        message: `T8: lock records no boundVariable for "${styleName}" — which font variable it binds is unverified; re-run the token sync`,
-      })
-      continue
-    }
-    if (entry.boundVariable !== wantVar) {
-      errors.push({
-        component: "typography",
-        message: `T8: "${styleName}" is bound to ${entry.boundVariable} in Figma but ramp step ${util} declares '${wantToken}' (${wantVar}) — the two faces resolve to the same family today, so this will NOT show up as a wrong font until the heading face diverges; re-run the token sync or fix fontTokenByStep`,
-      })
-    }
+  return {
+    today: new Date().toISOString().slice(0, 10),
+    commitExists: canResolve
+      ? (sha) => {
+          try {
+            execFileSync("git", ["cat-file", "-e", `${sha}^{commit}`], { cwd: ROOT, stdio: "ignore" })
+            return true
+          } catch {
+            return false
+          }
+        }
+      : null,
   }
 }
 
@@ -775,8 +526,16 @@ let coverage = null
 if (!singleRel) {
   coverage = checkCoverage(errors, warns, manifests)
   const lock = checkLockReconciliation(errors, warns, manifests)
-  if (lock) checkSyncStamps(errors, warns, lock)
-  checkTypography(errors, warns)
+  checkTypography(errors, warns, {
+    conventions,
+    indexCss,
+    pkg: JSON.parse(readFileSync(join(ROOT, "package.json"), "utf8")),
+    lock,
+  })
+  if (lock) {
+    checkSyncStamps(errors, warns, lock, syncStampEnv())
+    checkConventionMappings(errors, warns, { conventions, indexCss, lock, sources: srcSources() })
+  }
 }
 
 // --- report -------------------------------------------------------------------------

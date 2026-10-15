@@ -48,6 +48,22 @@ const css = readFileSync(join(ROOT, "src", "index.css"), "utf8")
 
 const principles = resolveManifest(baseManifest, selectContextLayers()).principles
 
+// --- the app's own code, for the no-orphan-output gate ---------------------------
+// Readers only: not this generator, not src/generated (the artifact itself), and
+// not manifest-snapshot.types.ts — a declaration is not a reader, which is the
+// precise reason `commitsBehind` survived typed-but-unread.
+function appSources(dir = join(ROOT, "src"), acc = []) {
+  for (const name of readdirSync(dir)) {
+    const full = join(dir, name)
+    if (statSync(full).isDirectory()) {
+      if (name !== "generated") appSources(full, acc)
+    } else if (/\.(ts|tsx)$/.test(name) && name !== "manifest-snapshot.types.ts") {
+      acc.push({ file: full.slice(ROOT.length + 1), text: readFileSync(full, "utf8") })
+    }
+  }
+  return acc
+}
+
 // --- git metadata (absent outside a repo — degrade, don't throw) ----------------
 function git(args) {
   try {
@@ -237,7 +253,7 @@ const principleRecords = principles.map((p) => ({
 // founder-authored and lives in the component; everything here is derived
 // from the repo so the section stays a projection of generated data.
 
-import { readdirSync } from "node:fs"
+import { readdirSync, statSync } from "node:fs"
 
 const pascal = (f) =>
   f
@@ -462,6 +478,23 @@ const snapshot = {
       }
     : null,
   elements,
+}
+
+// --- no-orphan-output gate (R1/R2) -----------------------------------------------
+// Emitting a field is half the job; the other half is that somebody reads it.
+// `commitsBehind` was computed here, typed in manifest-snapshot.types.ts and
+// read by nothing — tsc cannot see that, so this does. Every key must be named
+// under src/ or carry a reason in EMITTED_BUT_UNREAD. It runs BEFORE the write,
+// so an orphan never reaches the committed artifact.
+const { checkSnapshotReaders } = await import(
+  pathToFileURL(join(ROOT, "scripts", "lib", "snapshot-readers.mjs"))
+)
+const orphans = checkSnapshotReaders(snapshot, { sources: appSources() })
+if (orphans.length) {
+  console.error(`\u2717 manifest snapshot: ${orphans.length} field(s) nobody reads:\n`)
+  for (const o of orphans) console.error(`  ${o}`)
+  console.error("")
+  process.exit(1)
 }
 
 const json = JSON.stringify(snapshot, null, 2) + "\n"
