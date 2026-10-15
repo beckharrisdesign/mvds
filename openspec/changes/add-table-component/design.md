@@ -69,9 +69,10 @@ a single edit.
 | Primary file URL | <https://www.figma.com/design/CqgZ5tesr6qApnKiAadhVb> — HF scratch file "MVDS explore: add-table-component" |
 | As-is page / frame | `0.0 As is` → `0.0 As is — Intro/Design principles (Storybook, light)` (`3:26`, 1200×917) |
 | Proposed page | `01.0 Propose: add-table-component` |
-| Proposed frames | `01.0 Propose — Table: parts + anatomy` (`17:2`) · `01.0 Propose — Table: compositions` (`18:2`) · `01.0 Propose — Table: the five data states` (`20:5`) · `01.0 Propose — Intro/Design principles as Table (L 1024+)` (`7:26`) · `01.0 Propose — Table: the empty state (0 rows)` (`7:77`) · `01.0 Propose — Narrow width S=480px (the decision)` (`8:20`) |
+| Proposed frames | `01.0 Propose — Table: parts + anatomy` (`17:2`) · `01.0 Propose — Table: compositions` (`18:2`) · `01.0 Propose — Table: the five data states` (`20:5`) · `01.0 Propose — Intro/Design principles as Table (L 1024+)` (`23:2`) · `01.0 Propose — Table: the empty state (0 rows)` (`27:2`) · `01.0 Propose — Narrow width S=480px (the decision)` (`23:101`) |
 | Libraries / version | MVDS Core (`C20nU0mROzk3Zr0I9BELJF`) — `Color/*` and `Typography/*` variables imported **by key** via `importVariableByKeyAsync`; `Type/Heading 1·2`, `Type/Body`, `Type/Small`, `Type/Caption` text styles imported by key. No hand-mirrored hex. |
-| Breakpoints | S · 480px (`8:20`) / L · 1024px (`7:26`, and all specimen boards at 1200) — BHD Content Types |
+| Delta page | `01.5 Eval Delta` — pinned duplicates of all six propose frames plus `01.5 Eval Delta — disposition ledger` (`31:599`) |
+| Breakpoints | S · 480px (`23:101`) / L · 1024px (`23:2`, and all specimen boards at 1200) — BHD Content Types |
 | Status | draft — at the design gate, awaiting founder review |
 
 **What the three new boards carry.** `17:2` renders the seven parts twice: once
@@ -101,7 +102,7 @@ No Code Connect row: MVDS does not use Code Connect (`AGENTS.md`).
 | **1 · A table must actually be a table (F7)** | `<table>/<thead>/<tbody>/<tr>/<th scope="col">/<td>`, rendered in `17:2`'s assembled specimen with each element named. The a11y gate gains something to check: `scope`, row/column counts, and an accessible name that resolves. |
 | **2 · Columns must earn their width (F6, and the as-is capture)** | **D1 + D2.** The table is `w-full` so slack exists at all; prose columns take `max-w-[60ch]` / `min-w-[16ch]`; the id column takes `max-w-[32ch]` + `wrap-anywhere`. A 190-character description and a 60-pixel badge no longer share a width fraction — shown in `20:5`'s *long* state. |
 | **3 · Zero is a state, not an absence (F3, F4)** | **D8.** `TableEmpty` renders inside `<tbody>` with the headers still above it, a title and one line, at `py-32`. Rendered in `18:2` composition C and `20:5` state 0. (F3 is the VerificationPanel's green "0/0 green" — out of scope, see below.) |
-| **4 · Narrow width must be decided (F6)** | **D3 + D10.** Contained horizontal scroll: `overflow-x-auto` in a keyboard-reachable `role="region"`, header sticky to its top edge, scroll shadows showing there is more. The page never scrolls sideways; the header is never severed from its values. Frame `8:20`. |
+| **4 · Narrow width must be decided (F6)** | **D3 + D10.** Contained horizontal scroll: `overflow-x-auto` in a keyboard-reachable `role="region"`, header sticky to its top edge, scroll shadows showing there is more. The page never scrolls sideways; the header is never severed from its values. Frame `23:101`. |
 | **5 · The column set must live in one place (F22)** | **D4.** `columns` is authored once and read three times — header, body, `colSpan`. The baseline finding moved the count from `grid-template` to `colSpan`; this removes it instead. Shown in `20:5`'s *wide* state. |
 | **6 · Stories must leave today's volume (F24)** | **D9.** Five named stories at 0 / 1 / 50 / a 190-char value / six columns, each **derived from the real manifest** rather than from a hand-written fixture — which is also what stops the F21 drift class from recurring in this component. |
 
@@ -109,7 +110,7 @@ No Code Connect row: MVDS does not use Code Connect (`AGENTS.md`).
 
 - `manifest-ia` — "Principle provenance is legible" survives as a per-row
   `source` column (`MVDS` / `NN/g H…`); "Each manifest declares its enforcement
-  story" survives as the `enforcement` badge column. Both visible in `7:26`.
+  story" survives as the `enforcement` badge column. Both visible in `23:2`.
 - **No `mvds-allow` anywhere in the component.** `w-full`, `ch` measures and
   `max-h` are intrinsic keywords and content-relative maxima — the shapes
   `no-fixed-content-dimensions` explicitly sanctions — not pixel guesses.
@@ -139,16 +140,24 @@ excluded — a sticky header row is a reading affordance, not grid behaviour.
 
 **D4 · The column set is data, authored once.** Three readers, one declaration.
 
-**D5 · One authored accessible name.** `TableCaption` is the name; the scroll
-region points at it with `aria-labelledby` rather than carrying an independently
-authored `aria-label`. Two consumers, one string, so they cannot disagree and
-a screen reader does not hear the same title twice.
+**D5 · One authored accessible name, and it is required.** `TableCaption` is
+the name; the scroll region points at it with `aria-labelledby` rather than
+carrying an independently authored `aria-label`. Two consumers, one string, so
+they cannot disagree and a screen reader does not hear the same title twice.
+**Corrected after the delta:** the name is not optional. The type takes a
+caption **or** an `aria-label` and refuses both-absent — otherwise the default
+composition produces a keyboard-focusable `role="region"` whose
+`aria-labelledby` resolves to nothing, which is an unnamed landmark and a worse
+outcome than the markup it replaced.
 
-**D6 · Body cells never use `muted-foreground`.** Row hover is `bg-muted`, and
-`muted-foreground` on `bg-muted` is the single token pairing AGENTS.md exempts
-from AA. Keeping body text at `foreground` makes the hover state safe by
-construction rather than by review. Header cells use `muted-foreground` and do
-not hover.
+**D6 · Body cells never use `muted-foreground`, and hover never reaches the
+header.** Row hover is `bg-muted`, and `muted-foreground` on `bg-muted` is the
+single token pairing AGENTS.md exempts from AA. Keeping body text at
+`foreground` makes the hover state safe by construction. **Corrected after the
+delta:** `hover:bg-muted` applies to `tbody` rows **only**. Header cells do use
+`muted-foreground`, so a hover that reached the header row would produce exactly
+the failing pairing — the first draft prevented that with a sentence on a card,
+which is prevention by prose, not by construction.
 
 **D7 · The scroll region shows that it scrolls.** CSS-only scroll shadows
 (`background-attachment: local` gradients in `--background`), which appear only
@@ -170,6 +179,18 @@ characters), measured, not estimated.
 decision. Not a cards collapse (out of scope), and not a one-column stack (that
 is precisely the as-is bug). The region scrolls; the page does not.
 
+**D11 · Enforcement is a category, not a health state — so no green.** The
+`enforced` badge is solid `neutral`; `guiding` is outlined. A green badge in
+this repo means a gate passed, and whether a principle is machine-checkable is
+a different fact from whether it currently passes — a fact this table does not
+report and could not back up.
+
+**D12 · The principles index renders four columns, not five.** The first draft
+carried both the principle `title` and its `description`, which restate one
+record twice, doubled every row height, and halved how many of the 24 records
+fit on a screen. `title` goes; `id`, `what it says`, `enforcement` and `source`
+stay.
+
 **Deliberately preserved, with the cost named:**
 
 - **`tabIndex={0}` on the region unconditionally.** It is a focus stop that does
@@ -184,11 +205,68 @@ is precisely the as-is bug). The region scrolls; the page does not.
 
 ## Eval Delta (1.5)
 
-> Status: **re-running.** The first delta pass judged the `01.0` boards as they
-> stood before the parts / compositions / data-states boards were built, so its
-> verdict does not describe the page now at the gate. Rather than present a
-> stale judgement as current, the delta is being re-run against the revised
-> page; this section is filled from that run before the gate is called.
+> Re-run of the 0.5 rubric against the `01.0` boards, in an isolated context
+> holding the surfaces and `principles.config.mjs` only — no proposal
+> rationale, no prior findings, no git history. **16 findings, 4 of them High.**
+> The first delta pass was discarded rather than reported: it judged the boards
+> before the parts / compositions / data-states boards existed.
+
+**Four findings were verified before being accepted, not taken on the report's
+word** — the house rule is that an agent's findings are claims:
+
+- **F3** — `nn01-visibility-of-system-status` appeared as an id. Checked:
+  **no** record id carries an `nn` prefix and there is **no** display-id field
+  on the record at all. Confirmed; the id was invented.
+- **F8** — the data-states board asserted *"Every specimen below uses real
+  records"* while its `files` and `added later →` columns matched no field.
+  Checked: record fields are `check, description, docs, enabled, evalLens, fix,
+  id, rationale, scope, severity, source, title`. Confirmed — **a claim of mine
+  that resolved to nothing, on a board about honesty.**
+- **F12** — `judgment` on the real surface, `guiding` everywhere else. Checked:
+  `check.kind` is `guiding`. Confirmed.
+- **F1 / F2** — read out of the file directly rather than from the report. On
+  the old `7:26` the `id` header sat at x=521 over values at x=432–468, so the
+  header labelled nothing beneath it. The old `8:20` rendered exactly three
+  columns (`principle`, `id`, `enforcement`) while its own text read *"Rejected:
+  reducing the column set at S"* — **the board demonstrated the option it
+  rejects.** Both confirmed.
+
+| # | What the delta found | Rubric item | Disposition | What changed |
+| --- | --- | --- | --- | --- |
+| F1 | Header row sat over nothing on the one board showing real use | `consistency-and-standards` | **addressed** | Board rebuilt (`23:2`) with shared column widths; alignment verified by screenshot. The Figma fidelity caveat is now stated on the board, not only in this file. |
+| F2 | The 480px board showed the column reduction it says it rejects | `declarations-must-resolve` | **addressed** | Rebuilt (`23:101`): all four columns present, clipped by a 480px viewport, with a proportional scrollbar. |
+| F3 | An id that resolves to no record | `declarations-must-resolve` | **addressed** | Real machine ids. Verified against source. |
+| F4 | Scroll region clipped with no affordance — two truncated letters were the cue | `recognition-rather-than-recall` | **addressed** | Persistent scrollbar rendered on the board; CSS-only edge shadow is **D7**. |
+| F5 | The 50-rows state asserted a max-height and sticky header but showed neither | `visibility-of-system-status` | **addressed** | Specimen reparented into a clipped 240px viewport with a proportional thumb. The prose stand-in is deleted — the frame performs the behaviour. |
+| F6 | Real surface rendered 5 of 24 records, no count, no overflow cue | `scale-to-the-data` | **addressed** | Caption reads *24 records · 8 shown*. |
+| F7 | Empty copy asserted a cause it cannot know | `error-recovery` | **addressed** | Copy is *"Nothing matched."* **D8** now says out loud that loading and failed-to-load are the consumer's states, and the board carries that note. |
+| F8 | "Real records" claim while two columns were invented | `declarations-must-resolve` | **addressed** | Claim corrected to name which columns are real and why the wide case needs a field the manifest does not have. The columns stay synthetic — deliberately, and now said so. |
+| F9 | Row hover made the one AA-failing pairing reachable on the header | `error-prevention` | **addressed** | **D6** corrected: hover is `tbody`-only. Structural, not a sentence. |
+| F10 | `aria-labelledby` pointed at a caption two real boards omitted | `error-prevention` | **addressed** | **D5** corrected: caption **or** `aria-label` required by the type. Captions added to both real-use boards. |
+| F11 | `principle` and `what it says` restate one record twice | `aesthetic-and-minimalist-design` | **addressed** | **D12**: the `title` column goes. |
+| F12 | `judgment` vs `guiding` | `consistency-and-standards` | **addressed** | One vocabulary, matching `check.kind`. |
+| F13 | `enforced` painted green, which here means "a gate passed" | `match-system-and-real-world` | **addressed** | **D11**: solid neutral = has a machine check, outlined = none. |
+| F14 | Runts, loudest on a display heading | `no-runts` | **partly addressed** | Heading constrained. Body-copy runts inside specimens persist — an artifact of the mock's pinned widths, not of the component. |
+| F15 | Two different empty messages, one naming no file | `help-and-documentation` | **addressed** | Unified. |
+| F16 | `TableCaption` declared essential, used in 1 of 5 compositions and neither real board | `outputs-need-readers` | **addressed** | Rendered on both real-use boards; required by the type (F10). Composition A still ships without one **by design** — that is the `aria-label` path, not an omission. |
+
+**Rubric items the delta found clear:** `flexibility-and-efficiency-of-use`
+(the excluded behaviours are named and their home given, so the plain path is
+not buried by a half-built accelerator). **N/A:** `user-control-and-freedom` —
+a presentational table has nothing to undo or cancel.
+
+**What this section is and is not.** It records what the delta found and what
+changed in response. It is **not** a re-judgement of the result: the fixes came
+after the run. The fixes themselves are evidenced — F3, F8 and F12 against
+source; F1, F2 and F5 by reading geometry, column counts and screenshots out of
+the file — but a further delta would be needed to judge the boards as they now
+stand. Calling that is the founder's at this gate.
+
+**Carried forward, untouched by this change.** From the 0.5 baseline: **F5**
+(the sort helper drops a third `source.kind` silently) and **F8** (five record
+fields accepted and never rendered, with `severity` constant at `"error"`
+across all 24 records), plus the seven VerificationPanel findings. These are
+data and correctness bugs a Table does not fix, and they want their own change.
 
 ## Risks / Trade-offs
 
@@ -207,7 +285,10 @@ is precisely the as-is bug). The region scrolls; the page does not.
   knowing.
 - **The mock is not evidence about column behaviour.** See the fidelity caveat
   above. Anyone reading these frames for width intent is reading the one thing
-  they cannot show.
+  they cannot show. This is not theoretical: the delta's two highest findings
+  were both boards whose annotation claimed an outcome the frame did not
+  produce — the repo's own fail-open defect, committed in Figma instead of in
+  code, by me. The caveat now lives on the boards themselves for that reason.
 - **Out of scope but real.** Seven VerificationPanel findings (F1, F2, F3, F9,
   F10, F11, F21) and two principles-index data findings (F5 — a third
   `source.kind` is dropped silently; F8 — five record fields accepted and never
