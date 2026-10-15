@@ -75,13 +75,13 @@ a single edit.
 | --- | --- |
 | Primary file URL | <https://www.figma.com/design/CqgZ5tesr6qApnKiAadhVb> — HF scratch file "MVDS explore: add-table-component" |
 | As-is page / frame | `0.0 As is` → `0.0 As is — Intro/Design principles (Storybook, light)` (`3:26`, 1200×917) |
-| Proposed page | `04.0 Propose: add-table-component update` — **the current iteration: `03.0` with the founder's three answers applied** (first-letter-capital headers on `Type/Caption`, `--table-surface` as the one new token, `border` for the scroll edge). `03.0` (the component on Core, light and dark, first cut), `02.0` (anatomy, compositions, data states, the real surface, 480px, in-context samples) and `01.0` are retained untouched per `rules/figma.mdc` ("one page per step; never overwrite a prior page"). See the correction note below. |
-| Proposed frames | **`04.0`:** `Table: component (light)` (`48:15`) · `Table: component (dark)` (`48:243`, the same board under the Tokens collection's Dark mode) · `Tokens the Table uses` (`48:159`). **`03.0`:** `46:48` · `46:422` · `46:342`. **`02.0`:** `Table: parts + anatomy` (`17:2`) · `Table: compositions` (`18:2`) · `Table: the five data states` (`20:5`) · `Intro/Design principles as Table (L 1024+)` (`23:2`) · `Table: the empty state (0 rows)` (`27:2`) · `Narrow width S=480px (the decision)` (`23:101`) · `Table in context: samples` (`39:4`) |
+| Proposed page | `05.0 Propose: add-table-component update` — **the current iteration: `04.0` plus the founder's three additions** (`rules` with vertical lines, `striped`, cells `p-16` on all four sides) and the one decision they force (stripes and hover step on the gradation, D17). `04.0` (the three token answers: first-letter-capital headers on `Type/Caption`, `--table-surface`, `border` for the scroll edge), `03.0` (the component on Core, light and dark, first cut), `02.0` (anatomy, compositions, data states, the real surface, 480px, in-context samples) and `01.0` are retained untouched per `rules/figma.mdc` ("one page per step; never overwrite a prior page"). See the correction note below. |
+| Proposed frames | **`05.0`:** `Table: component (light)` (`51:18`, with section *5 · Options — rules and striping*) · `Table: component (dark)` (`51:375`, the same board under the Tokens collection's Dark mode) · `Tokens the Table uses` (`51:162`). **`04.0`:** `48:15` · `48:243` · `48:159`. **`03.0`:** `46:48` · `46:422` · `46:342`. **`02.0`:** `Table: parts + anatomy` (`17:2`) · `Table: compositions` (`18:2`) · `Table: the five data states` (`20:5`) · `Intro/Design principles as Table (L 1024+)` (`23:2`) · `Table: the empty state (0 rows)` (`27:2`) · `Narrow width S=480px (the decision)` (`23:101`) · `Table in context: samples` (`39:4`) |
 | Libraries / version | MVDS Core (`C20nU0mROzk3Zr0I9BELJF`), bound **by key** via `importVariableByKeyAsync` / `importStyleByKeyAsync` / `importComponentSetByKeyAsync`. On `03.0`: **Tokens** (`Color/*`, `Typography/text-small-size`, `Typography/font-sans`) and **Scales** (`Spacing/space-4·8·16·32·40`) variables on every fill, stroke, inset and gap; `Type/Heading 2·4`, `Type/Body`, `Type/Small` text styles; the **Core `Badge` component set** (`925f5b9b…`) as instances. Read back from the file after the build: 0 unbound solid fills, 0 unbound paddings or gaps, 0 text nodes without a style or a bound size. `02.0` bound colours and two text styles only — its insets were literal numbers and its badges hand-drawn. |
 | Delta page | `01.5 Eval Delta` — pinned duplicates of all six propose frames plus `01.5 Eval Delta — disposition ledger` (`31:599`) |
 | Samples | `02.0 Propose — Table in context: samples` (`39:4`) — billing history, team & access, a component API reference, and a plan comparison. Sample data is invented and flagged as such on the board; only the principles board renders the live manifest. |
 | Breakpoints | S · 480px (`23:101`) / L · 1024px (`23:2`, and all specimen boards at 1200) — BHD Content Types |
-| Status | iterating — `03.0` built 2026-10-15 on founder direction ("show me the component first, in light and dark mode … in the typography and spacing scales we've defined already. If we need tokens for tables, I need to know about them"); `04.0` applies the founder's answers to the three token questions (same day). Awaiting the founder's gate call on `04.0`. See **Tokens** below. |
+| Status | iterating — `03.0` built 2026-10-15 on founder direction ("show me the component first, in light and dark mode … in the typography and spacing scales we've defined already. If we need tokens for tables, I need to know about them"); `04.0` applies the founder's answers to the three token questions (same day); `05.0` adds `rules`, `striped` and `p-16` on founder direction (same day). Awaiting the founder's call on D17, then the gate call on `05.0`. See **Tokens** below. |
 
 **What the three new boards carry.** `17:2` renders the seven parts twice: once
 assembled into a working specimen with the parts annotated in place, and once
@@ -184,7 +184,8 @@ composition produces a keyboard-focusable `role="region"` whose
 outcome than the markup it replaced.
 
 **D6 · Body cells never use `muted-foreground`, and hover never reaches the
-header.** Row hover is `bg-muted`, and `muted-foreground` on `bg-muted` is the
+header.** *(Hover's fill moves from `muted` to `primary-2` in **D17**; the rest
+of D6 stands.)* Row hover is `bg-muted`, and `muted-foreground` on `bg-muted` is the
 single token pairing AGENTS.md exempts from AA. Keeping body text at
 `foreground` makes the hover state safe by construction. **Corrected after the
 delta:** `hover:bg-muted` applies to `tbody` rows **only**. Header cells do use
@@ -227,7 +228,7 @@ enforcement read as a health state after all. `muted` is the tone variant for
 labels with no status meaning, which is what this is.
 
 **D13 · One inset per cell; inline content sits on the first line box.** Every
-`TableCell` and `TableHead` is `py-8 px-16`, and that is the only number. Text
+`TableCell` and `TableHead` is `p-16` (D18), and that is the only number. Text
 fills a line box (`text-body` × 1.6 = 25.6px) with its leading inside it; a
 `Badge` is inline, so it is centred on that same first line rather than pushed
 to the inset. That is what makes a badge beside a name read as the same inset
@@ -268,6 +269,42 @@ ramp's label step with weight 500 authored into it. `TableHead` therefore uses
 `text-caption text-muted-foreground` and nothing else — no hand-set weight, no
 new text style, and the `03.0` spec line `text-small · semibold` is superseded.
 
+**D16 · `rules` — where the 1px rules go.** Founder, 2026-10-15: *"make
+vertical lines an option in the component, not just horizontal."* A `rules`
+prop on `Table`: `"horizontal"` (the default, and every board before `05.0`),
+`"vertical"`, `"both"`, `"none"`. Horizontal is `border-b` on every `TableRow`;
+vertical is `border-r` on every `TableHead`/`TableCell` except the last in its
+row; both is both; none removes them. All rules are `Color/border` at 1px,
+inside. There is no outer frame — a `Card` supplies one when a table needs it,
+so a bordered table is a composition, not a fifth option. Shown on `51:18`
+section 5 as `rules="vertical"` and `rules="both"`.
+
+**D17 · `striped` — and the one decision it forces.** Founder, 2026-10-15:
+*"allow me to turn striping on and off."* A boolean `striped` on `Table` paints
+even `tbody` rows. A stripe and a hover must differ from each other **in both
+modes**, and that is where the token layer pushes back: under the default
+brand `muted` is `#f5f5f5` in light and `#262626` in dark, `primary-1` is
+`#f5f5f5` / `#171717`, `primary-2` is `#e5e5e5` / `#262626` — so `muted`
+**equals `primary-1` in light and `primary-2` in dark**, and no pair that
+includes `muted` differs in both modes (measured from the Core variables, not
+the plan). The one existing pair that does is stepping on the gradation:
+**stripes `bg-primary-1`, hover `bg-primary-2`** — which is also what
+`step-on-color-gradations` asks for by default. Both are steps 1–2, the
+text-safe tint roles, and `foreground` on step-1 and step-2 is already in the
+`check:contrast` pairing list (stepped-scales D4), so no new pairing. Hover
+therefore moves from `muted` (D6) to `primary-2` **whether or not the table is
+striped** — one hover token, not one per prop. Costs named: under a brand
+preset the stripes carry the brand's faintest tint rather than a neutral grey,
+and light-mode hover darkens from `#f5f5f5` to `#e5e5e5`. The alternative is a
+new neutral pair (`--table-stripe` / `--table-hover`), which would be the first
+mode-aware neutral tint tokens in the system. **Awaiting the founder's call.**
+
+**D18 · Cells are `p-16` on all four sides.** Founder, 2026-10-15: *"make top
+and bottom padding the same as l/r (16)."* `TableHead` and `TableCell` take
+`Spacing/space-16` on every side; `space-8` drops out of the component. A
+one-line row is 58px (16 + 25.6 + 16). `TableCaption` keeps `px-16 pb-16`,
+`TableEmpty` keeps `py-32`.
+
 **D12 · The principles index renders four columns, not five.** The first draft
 carried both the principle `title` and its `description`, which restate one
 record twice, doubled every row height, and halved how many of the 24 records
@@ -289,10 +326,12 @@ stay.
 ## Tokens
 
 Founder direction, 2026-10-15: *"if we need tokens for tables, I need to know
-about them."* This is the census, read back from the `04.0` boards after the
+about them."* This is the census, read back from the `05.0` boards after the
 build, not from the plan. **One new token: `--table-surface` (D14). Everything
-else exists in MVDS Core today.** The three questions `03.0` left open were
-answered by the founder the same day; the answers are D14, D15 and D7.
+else exists in MVDS Core today** — including stripes and hover, which use the
+gradation steps rather than a new neutral pair, pending the founder's call on
+D17. The three questions `03.0` left open were answered by the founder the
+same day (D14, D15, D7); the three additions that followed are D16, D17, D18.
 
 | Token | Bound where | Status |
 | --- | --- | --- |
@@ -300,11 +339,13 @@ answered by the founder the same day; the answers are D14, D15 and D7.
 | `Color/background` | Table surface · the default value of `--table-surface` | exists |
 | `Color/foreground` | `TableCell` text · `TableEmpty` title | exists |
 | `Color/muted-foreground` | `TableCaption` · `TableHead` · `TableEmpty` line | exists |
-| `Color/muted` | `tbody` `TableRow` `:hover` | exists |
-| `Color/border` | `TableRow` 1px bottom rule · scroll-edge fade (D7) | exists |
+| `Color/primary-1` | `striped`: even `tbody` rows (D17) | exists |
+| `Color/primary-2` | `tbody` `TableRow` `:hover`, striped or not (D17 amends D6) | exists |
+| `Color/muted` | no longer used — hover moved to `primary-2` so it can differ from a stripe in both modes (D17) | superseded |
+| `Color/border` | `TableRow` bottom rule (`rules=horizontal\|both`) · `TableCell` right rule (`rules=vertical\|both`) · scroll-edge fade (D7) | exists |
 | `Badge` `variant=muted` / `outline` | enforcement column (D11) | exists, component |
-| `Spacing/space-8` | `TableHead` + `TableCell` padding-y | exists |
-| `Spacing/space-16` | `TableHead` + `TableCell` padding-x · `TableCaption` padding | exists |
+| `Spacing/space-8` | no longer used — cells are `p-16` on all four sides (D18) | superseded |
+| `Spacing/space-16` | `TableHead` + `TableCell` padding, all four sides (D18) · `TableCaption` padding | exists |
 | `Spacing/space-32` | `TableEmpty` padding-y | exists |
 | `Spacing/space-4` | `TableEmpty` gap, title to line | exists |
 | `Type/Body` | `TableCell` · `TableEmpty` title | exists |
@@ -421,4 +462,4 @@ data and correctness bugs a Table does not fix, and they want their own change.
 
 ## Status
 
-iterating — `04.0` carries the founder's three answers (D7 · D14 · D15); awaiting the gate call on `04.0`
+iterating — `05.0` adds `rules`, `striped`, `p-16` (D16 · D17 · D18); awaiting the founder's call on D17's stripe/hover pair, then the gate
