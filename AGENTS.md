@@ -32,6 +32,26 @@ generate must follow the system, not generic shadcn/Tailwind habits.
   inner inset (Card, Container), never to separate siblings. So spacing is always
   one number in one place — easy to read, easy to debug. (Only sanctioned margin:
   `mx-auto` to center a Container.)
+- ✅ **Let content size itself.** No absolute pixel dimension on an axis content
+  flows along — a table column, a cell, a row height. Say what you actually mean:
+  a **max** (`max-w-[60ch]` for a measure), a **ratio** (`<Grid cols>` /
+  `<GridItem span>`), a **token** (`w-[var(--chrome-left-width)]`), or an
+  **intrinsic** keyword (`w-full`, `w-fit`, `min-w-0` + `truncate`). ❌ Never
+  `w-[180px]` on a column — a pixel width is a guess about content you haven't
+  seen, and it's the guess that breaks first. ❌ And never `style={{ width: 180 }}`:
+  React reads a bare number as px, so it *looks* unitless and isn't. (Control
+  metrics on the 8-grid (`h-8`), icon glyph sizes (`size-4`) and border-radius are
+  dimensions, not content sizing — they stay. A 1–2px rule is a stroke.) Enforced
+  as `no-fixed-content-dimensions`.
+- ✅ **Design for n, not for the mock.** Anything rendering a collection must hold
+  up at **0**, at **1**, and at far more rows / columns / fields than the design
+  showed — plus one value longer than every sample. Each of those is a decision
+  someone has to make, and if the build doesn't make it the data will: **empty**
+  (say what's missing and how to add it — never a blank panel), **one** (no layout
+  that only reads as deliberate in multiples), **many** (scroll or paginate on
+  purpose, header still reachable), **long** (wrap, or truncate with the full value
+  still available), **wide** (a column or field added later must not force a layout
+  re-decision). Judgment, not a regex — `scale-to-the-data`.
 - ✅ **Type via the semantic ramp** — `text-display`, `text-h1`…`text-h4`,
   `text-body-lg`, `text-body`, `text-small`, `text-caption`. ❌ Never ad-hoc
   `text-2xl font-bold`.
@@ -234,6 +254,30 @@ So, three standing rules:
    mid-check — and add a case to the co-located `*.test.mjs` that feeds it the bug
    it was written for. ❌ Never assert on an exit code alone: it cannot tell a
    reported error from a crash. Assert on what the check *said*.
+
+**Working discipline.** Two rules about how the work gets done, both earned the
+same way the gate rules were:
+
+- ✅ **Verify, don't assert.** A number you write down is a measurement, not an
+  impression — so compute it. A `componentSync` stamp went in claiming *150
+  variants / 24 axes*; the real figures were **140 / 21**, eyeballed and wrong in a
+  record whose whole job is to be true. A claim about a system you cannot see from
+  here — Figma, the rendered page, CI's environment — is either checked against a
+  primary source or **written down as an open question**, never filled in with the
+  likely answer. (A re-stamp was twice justified by what "the landing page's
+  `commitsBehind`" would show, about a field the page has never rendered.) ❌ Never
+  report a check as passing from its exit code alone; read what it actually said.
+  When a verification is genuinely out of reach, say so in the file and name who
+  settles it — see the base-`Sizing/radius` note in
+  [`figma/conventions.mjs`](figma/conventions.mjs).
+- ✅ **Never destroy uncommitted work.** `git checkout -- <file>`, `git restore`,
+  `git stash drop` and a plain overwrite all discard working-tree state with no
+  undo, and a `git checkout figma/conventions.mjs` mid-test did exactly that to an
+  hour of unstaged edits. Before any command that can discard the working tree,
+  copy what it would destroy into the session scratchpad — and prefer not touching
+  the repo at all: the pure functions in [`scripts/lib/`](scripts/lib) exist so a
+  check can be exercised with crafted inputs instead of by mutating the repo and
+  putting it back.
 
 **Isolate experiments.** Never bundle throwaway/experimental edits (a token you're
 trying out, a Chromatic probe) into a PR with real changes — put them on their own
