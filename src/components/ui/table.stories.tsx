@@ -253,8 +253,9 @@ export const ManyRows: Story = {
   play: async ({ canvas, canvasElement }) => {
     const region = canvas.getByRole("region")
     const thead = canvasElement.querySelector("thead") as HTMLElement
+    // Setting scrollTop and reading a rect forces layout synchronously — no
+    // frame needed, and Chromatic's capture freezes requestAnimationFrame.
     region.scrollTop = 240
-    await new Promise((r) => requestAnimationFrame(() => r(null)))
     await expect(region.scrollTop).toBeGreaterThan(0)
     // The sticky header is still at the region's top edge after scrolling.
     const regionTop = region.getBoundingClientRect().top
@@ -351,8 +352,16 @@ export const Striped: Story = {
   ),
   play: async ({ canvasElement }) => {
     const rows = Array.from(canvasElement.querySelectorAll("tbody tr")) as HTMLElement[]
-    const step1 = getComputedStyle(document.documentElement).getPropertyValue("--primary-1").trim()
     const bg = (el: HTMLElement) => getComputedStyle(el).backgroundColor
+    // Compare computed colour to computed colour: a probe painted with the same
+    // token, so the browser's own serialisation is on both sides. (Chromatic's
+    // Chrome failed a raw `--primary-1` string compare that passed locally.)
+    const probe = document.createElement("span")
+    probe.style.backgroundColor = "var(--primary-1)"
+    canvasElement.appendChild(probe)
+    const step1 = bg(probe)
+    probe.remove()
+    await expect(step1).not.toBe("rgba(0, 0, 0, 0)")
     // Even rows paint primary-1; odd rows stay transparent; the header never stripes.
     await expect(bg(rows[1])).toBe(step1)
     await expect(bg(rows[3])).toBe(step1)
