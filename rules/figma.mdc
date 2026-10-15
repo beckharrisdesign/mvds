@@ -26,18 +26,30 @@ Design-gate scratch files (the as-is + proposed pairs below) are **HF — "High
 Fidelity" — artifacts** (founder naming, 2026-08-23), and an HF file **ingests
 the system's scales instead of hand-mirroring them**:
 
-1. Read variable names + keys from MVDS Core (`C20nU0mROzk3Zr0I9BELJF`):
+1. **Library enabled first.** Immediately after the scratch file is created,
+   the **founder** enables MVDS Core (`C20nU0mROzk3Zr0I9BELJF`) in the file's
+   Assets panel (Libraries). The Plugin API has no call to enable a library, so
+   this is a human step the agent **asks for, not performs** — ask before the
+   first board is built.
+2. Read variable names + keys from MVDS Core (`C20nU0mROzk3Zr0I9BELJF`):
    collections **Tokens** (Light/Dark), **Scales**, **Customize Here** —
    `getLocalVariableCollectionsAsync()` in the Core file, `variable.key` per
    variable.
-2. In the scratch file, `figma.variables.importVariableByKeyAsync(key)` and
+3. In the scratch file, `figma.variables.importVariableByKeyAsync(key)` and
    bind fills / text / gaps to the imported variables. Dark boards flip via
    the collection's variable **mode** — never a second hand-painted set.
-3. **Gotcha:** `teamLibrary.getAvailableLibraryVariableCollectionsAsync()`
-   lists only libraries *enabled in that file's UI* and returns `[]` in fresh
-   drafts. That does **not** mean MVDS Core is unpublished — import-by-key
-   works regardless. Do not fall back to hand-mirrored hex on an empty
-   listing.
+4. **Gotcha:** import-by-key works whether or not the library is enabled, which
+   is exactly why it hides a missing step. Before building any board, run
+   `figma.teamLibrary.getAvailableLibraryVariableCollectionsAsync()`. If it
+   returns `[]`, **stop and ask the founder to enable MVDS Core** — an empty
+   listing is not expected, it is the library not being enabled. Do not fall
+   back to hand-mirrored hex either. (2026-10-15: the `add-table-component` HF
+   file, `CqgZ5tesr6qApnKiAadhVb`, went through five propose pages with the
+   library never enabled — both sessions imported by key and this rule
+   normalised the empty listing — until the founder noticed and enabled it by
+   hand. The earlier claim in that file's commit history that
+   "`Color/destructive` is not importable" was a lookup failure from the same
+   blind spot.)
 
 Hand-mirrored values are the exception, not the default: allowed only for a
 token Core doesn't carry yet (e.g. proposed-but-unshipped tokens), flagged as
@@ -73,6 +85,7 @@ Then the **Visual design / Figma** table records:
 - Primary Figma file URL (MVDS Core and/or scratch)
 - **As-is page / frame** and **proposed page / frame**, by name
 - Libraries **and version** (MVDS Core Tokens/Scales/components; key or `@beckharrisdesign/mvds@x.y.z`)
+  — and that the library is **enabled in the file** (the `getAvailableLibraryVariableCollectionsAsync()` collection names), not only that keys were imported
 - Breakpoints (S=480 / L=1024 unless Storybook-only)
 - Status (draft / iterating / ready for apply)
 
