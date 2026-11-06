@@ -9,18 +9,23 @@ import { existsSync, readFileSync, readdirSync } from "node:fs"
 import { fileURLToPath } from "node:url"
 import { dirname, join } from "node:path"
 import { oklchStrToRgb, contrastRatio } from "./color.mjs"
+import { resolveTokenAliases } from "./lib/token-aliases.mjs"
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..")
 const css = readFileSync(join(ROOT, "src/index.css"), "utf8")
 
-// Pull `--name: oklch(...)` declarations from a `:root { ... }` / `.dark { ... }` block.
+// Pull every `--name: value` declaration from a `:root { ... }` / `.dark { ... }`
+// block — not only oklch ones, because `--table-surface: var(--background)` is an
+// alias and `--font-heading: var(--font-sans)` aliases a non-colour. Aliases are
+// resolved per brand below, after the preset merge, so an alias follows the
+// brand's own target; only the AA pairs' members are ever read as colours.
 function parseBlock(selector) {
   const re = new RegExp(`${selector.replace(".", "\\.")}\\s*\\{([^}]*)\\}`)
   const block = css.match(re)
   if (!block) throw new Error(`Could not find ${selector} block in src/index.css`)
   const tokens = {}
   for (const line of block[1].split("\n")) {
-    const m = line.match(/--([a-z0-9-]+):\s*(oklch\([^;]+\))/i)
+    const m = line.match(/^\s*--([a-z0-9-]+):\s*([^;]+)/i)
     if (m) tokens[m[1]] = m[2].trim()
   }
   return tokens
@@ -47,7 +52,7 @@ if (existsSync(themesDir)) {
     for (const m of themeCss.matchAll(/([^{}]+)\{([^}]*)\}/g)) {
       const target = /\.dark/.test(m[1]) ? dark : light
       for (const line of m[2].split("\n")) {
-        const d = line.match(/--([a-z0-9-]+):\s*(oklch\([^;]+\))/i)
+        const d = line.match(/^\s*--([a-z0-9-]+):\s*([^;]+)/i)
         if (d) target[d[1]] = d[2].trim()
       }
     }
@@ -79,6 +84,11 @@ const AA_PAIRS = [
   ["neutral-foreground", "neutral"],
   ["muted-foreground", "background"],
   ["muted-foreground", "card"],
+  // Table's sticky-header surface (openspec: add-table-component, D14) — an
+  // alias of background in :root; resolved before pairing so a brand that
+  // re-points background is checked on what the alias actually renders.
+  ["foreground", "table-surface"],
+  ["muted-foreground", "table-surface"],
   // status colors used AS text on the page background
   ["success", "background"],
   ["destructive", "background"],
@@ -106,8 +116,15 @@ let checked = 0
 
 failures.push(...completenessFailures)
 for (const [brand, modes] of Object.entries(BRANDS)) {
-  for (const [mode, tokens] of Object.entries(modes)) {
+  for (const [mode, rawTokens] of Object.entries(modes)) {
     const label = brand === "default" ? mode : `${brand}/${mode}`
+    let tokens
+    try {
+      tokens = resolveTokenAliases(rawTokens)
+    } catch (e) {
+      failures.push(`${label}: ${e.message}`)
+      continue
+    }
     for (const [fg, bg] of AA_PAIRS) {
       if (!tokens[fg] || !tokens[bg]) {
         failures.push(`${label}: missing token ${tokens[fg] ? bg : fg}`)
