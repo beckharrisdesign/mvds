@@ -35,16 +35,18 @@ export const EMITTED_BUT_UNREAD = {
   syncedFromCommit:
     "The commit the Figma mirror reflects, carried through from figma.lock.json. The page renders only `syncedAt` (figma-mirror.tsx), because a date is what a visitor can use; the SHA is for whoever wants to diff code against the mirror, and check:figma's S5 holds it to being a real commit.",
 
-  // The three principle fields the cards deliberately do not show. The reason
-  // is already written in prose at the top of principles-panel.tsx: these are
-  // data for their consumers — docs, agents, the discovery eval — not card
-  // copy. The snapshot is a committed artifact, not only page input.
+  // The principle field the cards deliberately do not show. The reason is
+  // already written in prose at the top of principles-panel.tsx: it is data
+  // for its consumers — docs, agents, the discovery eval — not card copy. The
+  // snapshot is a committed artifact, not only page input.
+  //
+  // `severity` and `checkKind` sat here until 2026-10-15: the Table story's
+  // "one more column than the design showed" case (openspec:
+  // add-table-component, D4) now reads both, so they have a reader under src/
+  // and R2 would fail a stale carve-out — exactly the three-state census doing
+  // its job.
   rationale:
     "Per-principle WHY, published for docs and agents rather than rendered. principles-panel.tsx states this outright: `rationale` and `evalLens` are data for their consumers, not card copy — a card that recited both would bury the rule it is there to state.",
-  severity:
-    "The manifest's error/warn/off level. The page shows the honest distinction a reader can act on — `enforcement`: automated (a check fails the build) vs judgment — and severity is the gate's own dial, read by principles.config.mjs and check:principles, not by a visitor.",
-  checkKind:
-    "Which machine check backs a principle (forbid-source, forbid-classname, require-sibling-file, guiding). Published so an agent can tell a regex-enforced rule from a guiding one without loading the manifest; the page says automated-vs-judgment instead, which is the same split in the reader's terms.",
 }
 
 /** Every distinct key name anywhere in the snapshot. */

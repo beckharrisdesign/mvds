@@ -29,6 +29,17 @@ export {
   SelectTrigger,
   SelectValue,
 } from "./components/ui/select";
+export {
+  Table,
+  TableCaption,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+  TableEmpty,
+  TableScrollRegion,
+} from "./components/ui/table";
 export { Field, Dropzone } from "./components/forms";
 export * from "./components/layout";
 export * from "./components/blocks";

@@ -85,6 +85,10 @@
     --color-card: var(--card);
     --color-foreground: var(--foreground);
     --color-background: var(--background);
+    /* Scoped surface for Table's sticky header (openspec: add-table-component,
+     * D14): :root points it at background, Card re-points it at card, so a
+     * header stays opaque on whichever surface the table sits on. */
+    --color-table-surface: var(--table-surface);
     /* ---- Radius ramp — one base dimension drives every corner -----------------
      * Border-radius is a dimension, not spacing (exempt from the 8-grid). The
      * whole ramp derives from --radius (see :root) so the corner language stays
@@ -219,6 +223,10 @@
     --border: oklch(0.922 0 0);
     --input: oklch(0.922 0 0);
     --ring: oklch(0.708 0 0);
+    /* The surface under a Table's sticky header — an alias, re-pointed by
+     * Card ([--table-surface:var(--card)]). check:contrast resolves the alias
+     * and gates foreground + muted-foreground on it. */
+    --table-surface: var(--background);
     --radius: 0.625rem;
     /* ---- Typography — runtime tokens (openspec: themeable-typography) --------
      * Faces and per-step sizes are the ramp's SKIN: override in plain CSS,
@@ -319,6 +327,7 @@
     --border: oklch(1 0 0 / 10%);
     --input: oklch(1 0 0 / 15%);
     --ring: oklch(0.556 0 0);
+    --table-surface: var(--background);
     /* gray-* is NOT re-declared here (fixed ladder — see the :root comment).
      * The gradation scale IS authored per mode: 1 stays the faintest tint
      * against THIS mode's background, 5 the strongest. Usage never flips. */
@@ -337,6 +346,23 @@
     --elevation-sm: 0 1px 2px 0 oklch(0 0 0 / 0.45);
     --elevation-md: 0 2px 4px -1px oklch(0 0 0 / 0.45), 0 4px 8px -2px oklch(0 0 0 / 0.55);
     --elevation-lg: 0 4px 8px -4px oklch(0 0 0 / 0.55), 0 12px 24px -4px oklch(0 0 0 / 0.65);
+}
+
+/* Scroll-edge affordance for TableScrollRegion (openspec: add-table-component,
+ * D7): CSS-only edges that show there is more content to the left or right
+ * and vanish at the ends. Two cover gradients in the table surface scroll WITH
+ * the content (attachment: local) over two edge gradients in --border that
+ * stay put, so an edge is visible exactly when content continues past it. */
+@utility scroll-edges-x {
+  background-image:
+    linear-gradient(to right, var(--table-surface) 50%, transparent),
+    linear-gradient(to left, var(--table-surface) 50%, transparent),
+    linear-gradient(to right, var(--border), transparent),
+    linear-gradient(to left, var(--border), transparent);
+  background-position: left center, right center, left center, right center;
+  background-repeat: no-repeat;
+  background-size: 2.5rem 100%, 2.5rem 100%, 1rem 100%, 1rem 100%;
+  background-attachment: local, local, scroll, scroll;
 }
 
 @layer base {

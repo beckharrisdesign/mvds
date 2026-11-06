@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-10-15T09:17:39-05:00",
-  "commit": "f03d873",
+  "generatedAt": "2026-10-15T15:05:44-05:00",
+  "commit": "dec206f",
   "dirty": true,
   "lock": {
     "fileKey": "C20nU0mROzk3Zr0I9BELJF",
@@ -14,7 +14,7 @@
       "detail": "Every foreground/background pairing at WCAG AA 4.5:1, light + dark.",
       "command": "npm run check:contrast",
       "verifiedAt": "build",
-      "result": "104 token pairings meet WCAG AA 4.5:1 in light + dark across 2 brands.",
+      "result": "112 token pairings meet WCAG AA 4.5:1 in light + dark across 2 brands.",
       "status": {
         "level": "success",
         "label": "passing"
@@ -26,7 +26,7 @@
       "detail": "The golden rules, machine-enforced from the principle manifest.",
       "command": "npm run check:principles",
       "verifiedAt": "build",
-      "result": "75 files clear 10 enforced MVDS principles (light + dark) (+14 guiding, by judgment).",
+      "result": "77 files clear 10 enforced MVDS principles (light + dark) (+14 guiding, by judgment).",
       "status": {
         "level": "success",
         "label": "passing"
@@ -38,7 +38,7 @@
       "detail": "Declared component axes checked against their real code sources.",
       "command": "npm run check:figma",
       "verifiedAt": "build",
-      "result": "19 mirrored · 6 excluded · 25 classified match their code sources (axes + bindings).",
+      "result": "passed",
       "status": {
         "level": "success",
         "label": "passing"
@@ -556,15 +556,15 @@
       "tally": [
         {
           "label": "color utilities",
-          "value": 44
+          "value": 45
         },
         {
           "label": "light tokens",
-          "value": 63
+          "value": 64
         },
         {
           "label": "dark overrides",
-          "value": 36
+          "value": 37
         },
         {
           "label": "spacing steps",
@@ -660,7 +660,7 @@
         },
         {
           "label": "ui components",
-          "value": 10
+          "value": 11
         },
         {
           "label": "blocks",
@@ -698,6 +698,7 @@
             "RadioGroup",
             "Select",
             "Switch",
+            "Table",
             "Textarea"
           ]
         },
@@ -729,12 +730,12 @@
       "name": "Figma library",
       "tally": [
         {
-          "label": "of 25 components mirrored",
-          "value": 19
+          "label": "of 26 components mirrored",
+          "value": 20
         },
         {
           "label": "declared variants",
-          "value": 143
+          "value": 151
         },
         {
           "label": "text styles",
@@ -766,6 +767,7 @@
             "RadioGroupItem",
             "Select",
             "Switch",
+            "Table",
             "Textarea",
             "Dropzone",
             "Field",

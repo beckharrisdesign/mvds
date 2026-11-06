@@ -21,11 +21,20 @@ export const Default: Story = {
     await expect(
       canvas.getByRole("heading", { name: "Design principles" })
     ).toBeInTheDocument()
-    await expect(canvas.getByText("human title")).toBeInTheDocument()
+    // Real table semantics (openspec: add-table-component): the caption names
+    // the table, every header cell is a column header, 24 live rows render.
     await expect(
-      canvas.getByText("Don’t drift from the color tokens")
+      canvas.getByRole("table", { name: /MVDS design principles · 24 records/ })
     ).toBeInTheDocument()
+    await expect(canvas.getAllByRole("columnheader").map((th) => th.textContent)).toEqual([
+      "ID",
+      "What it says",
+      "Enforcement",
+      "Source",
+    ])
     await expect(canvas.getByText("no-hardcoded-color")).toBeInTheDocument()
+    await expect(canvas.getAllByText("enforced").length).toBeGreaterThan(0)
+    await expect(canvas.getAllByText("guiding").length).toBeGreaterThan(0)
     // NN/g display id prefix (machine id unchanged in the gate)
     await expect(
       canvas.getByText("nn01-visibility-of-system-status")
