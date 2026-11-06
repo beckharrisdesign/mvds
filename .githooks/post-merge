@@ -36,7 +36,15 @@
 #
 # Everything else is the safe form (`git branch -d` for true merges, non-forced
 # worktree remove); nothing unmerged or uncommitted can be lost — a dirty
-# worktree is warned about, never removed.
+# worktree is warned about, never removed. A worktree that can't be read counts
+# as dirty: a failed `git status` prints nothing, which must not read as clean.
+#
+# This hook never runs `git worktree prune`. Git can't tell a deleted worktree
+# from a moved one, and pruning a moved one cuts its folder off from git, with
+# any uncommitted work still inside. That happened to six worktrees when the
+# repo moved, so a registration with no folder is reported for a person to
+# settle. (`git gc` can still expire one on its own schedule; see
+# gc.worktreePruneExpire.)
 
 branch="$(git symbolic-ref --short HEAD 2>/dev/null)"
 [ "$branch" = "main" ] || exit 0
@@ -61,7 +69,8 @@ squash_merged() { # $1 = branch name; ≥1 commit whose work is on main by patch
   [ "$(git cherry main "$synth" 2>/dev/null)" = "- $synth" ]
 }
 
-# Worktrees on merged branches: remove if clean, warn if dirty.
+# Worktrees on merged branches: remove if clean, warn if dirty or unreadable.
+# Registrations with no folder: warn, and leave them registered.
 # Porcelain output is parsed line-by-line in shell so paths with spaces survive.
 git worktree list --porcelain | while IFS= read -r line; do
   case "$line" in
@@ -69,16 +78,19 @@ git worktree list --porcelain | while IFS= read -r line; do
     "branch refs/heads/main") ;;
     "branch refs/heads/"*)
       wt_branch="${line#branch refs/heads/}"
+      [ -d "$wt" ] || continue # no folder to inspect; reported on its "prunable" line
       genuinely_merged "$(git rev-parse "$wt_branch" 2>/dev/null)" || squash_merged "$wt_branch" || continue
-      if [ -z "$(git -C "$wt" status --porcelain 2>/dev/null)" ]; then
+      if wt_status="$(git -C "$wt" status --porcelain 2>/dev/null)" && [ -z "$wt_status" ]; then
         git worktree remove "$wt" && echo "✔ removed merged worktree $wt ($wt_branch)"
       else
-        echo "⚠ worktree $wt ($wt_branch) is merged but has uncommitted changes — review and remove manually." >&2
+        echo "⚠ worktree $wt ($wt_branch) is merged but has uncommitted changes or can't be read — review and remove manually." >&2
       fi
+      ;;
+    "prunable "*)
+      echo "⚠ worktree $wt is registered but its folder is gone. If it moved: git worktree repair <new path>. If it was deleted: git worktree prune." >&2
       ;;
   esac
 done
-git worktree prune
 
 # Local branches genuinely merged into main (skips main and anything still
 # checked out in a worktree).
