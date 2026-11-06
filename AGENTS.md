@@ -310,7 +310,9 @@ from the experiment-hub rules — keep the two in sync.)
    `chore(scope): …`). ❌ Never commit straight to `main`.
 2. ✅ **You create and push the PR** for the branch (`gh pr create`), with the
    branch's naming convention carried into the PR title. Open it as a **draft**
-   while iterating and flag it ready once checks are green. ❌ **Never two open
+   while iterating and flag it ready once checks are green — ready is also the
+   signal for Copilot review and for the first Vercel preview deploy (drafts get
+   neither). ❌ **Never two open
    PRs for the same work item** — follow-ups push to the existing branch and get
    noted in the PR description, until the founder merges.
 3. ✅ **Write a PR description that has both:** (a) a list of **all** the code
