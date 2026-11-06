@@ -40,11 +40,13 @@ the system's scales instead of hand-mirroring them**:
    the collection's variable **mode** — never a second hand-painted set.
 4. **Gotcha:** import-by-key works whether or not the library is enabled, which
    is exactly why it hides a missing step. Before building any board, run
-   `figma.teamLibrary.getAvailableLibraryVariableCollectionsAsync()`. If it
-   returns `[]`, **stop and ask the founder to enable MVDS Core** — an empty
-   listing is not expected, it is the library not being enabled. Do not fall
-   back to hand-mirrored hex either. (2026-10-15: the `add-table-component` HF
-   file, `CqgZ5tesr6qApnKiAadhVb`, went through five propose pages with the
+   `figma.teamLibrary.getAvailableLibraryVariableCollectionsAsync()` and match
+   the returned `key`s against each collection's `key` from step 2. If any of
+   the three is missing, **stop and ask the founder to enable MVDS Core**, then
+   run the check again. A non-empty listing proves nothing, since another
+   enabled library can fill it, and a missing collection means MVDS Core isn't
+   enabled. Do not fall back to hand-mirrored hex either. (2026-10-15: the
+   `add-table-component` HF file, `CqgZ5tesr6qApnKiAadhVb`, went through five propose pages with the
    library never enabled — both sessions imported by key and this rule
    normalised the empty listing — until the founder noticed and enabled it by
    hand. The earlier claim in that file's commit history that
@@ -85,7 +87,7 @@ Then the **Visual design / Figma** table records:
 - Primary Figma file URL (MVDS Core and/or scratch)
 - **As-is page / frame** and **proposed page / frame**, by name
 - Libraries **and version** (MVDS Core Tokens/Scales/components; key or `@beckharrisdesign/mvds@x.y.z`)
-  — and that the library is **enabled in the file** (the `getAvailableLibraryVariableCollectionsAsync()` collection names), not only that keys were imported
+  — and that the library is **enabled in the file** (the `getAvailableLibraryVariableCollectionsAsync()` listing matched all three Core collection keys), not only that keys were imported
 - Breakpoints (S=480 / L=1024 unless Storybook-only)
 - Status (draft / iterating / ready for apply)
 
