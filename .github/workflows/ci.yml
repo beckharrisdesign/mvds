@@ -17,7 +17,10 @@ concurrency:
 
 jobs:
   build-and-test:
-    runs-on: ubuntu-latest
+    # Pinned, not ubuntu-latest: `playwright install --with-deps` only runs on
+    # OS versions the installed Playwright knows, and 1.60.0 rejects ubuntu-26.04,
+    # which is what ubuntu-latest now resolves to.
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v5
