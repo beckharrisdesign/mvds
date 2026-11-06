@@ -348,8 +348,12 @@ from the experiment-hub rules — keep the two in sync.)
    non-forced worktree remove), so a worktree with uncommitted changes is
    *warned about, never deleted*; inspect those by hand (uncommitted work in a
    "merged" worktree is usually a stale regen of a generated file, but confirm
-   before forcing). ❌ Never leave merged branches/worktrees to accumulate —
-   stale checkouts hide unshipped work and made this rule necessary.
+   before forcing). A worktree it can't read counts as uncommitted, and a
+   registration whose folder is gone is *reported, never pruned*: git can't tell
+   a deleted worktree from a moved one, so settle it by hand with
+   `git worktree repair <new path>` or `git worktree prune`. ❌ Never leave merged
+   branches/worktrees to accumulate — stale checkouts hide unshipped work and
+   made this rule necessary.
 
 ## Map of intent
 
