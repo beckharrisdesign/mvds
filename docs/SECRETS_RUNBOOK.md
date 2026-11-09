@@ -51,15 +51,20 @@ flowchart LR
 
 ## One-time setup
 
-Create these items in **BHD Labs**. The field names must match the manifest's
-`op://` references exactly.
+Create these items in **BHD Labs** as **API Credential** items. The secret goes
+in the template's own `credential` field; the ids are custom text fields whose
+labels must match the manifest's `op://` references exactly.
 
 | Item | Field | Value from |
 | --- | --- | --- |
-| `Chromatic mvds` | `project token` | Chromatic → the mvds project's settings (see below) |
-| `Vercel mvds` | `token` | [vercel.com/account/settings/tokens](https://vercel.com/account/settings/tokens) — a new token for MVDS, not the hub's |
+| `Chromatic mvds` | `credential` | Chromatic → the mvds project's settings (see below) |
+| `Vercel mvds` | `credential` | [vercel.com/account/settings/tokens](https://vercel.com/account/settings/tokens) — a new token for MVDS, not the hub's |
 | `Vercel mvds` | `org id` | Vercel team settings → Team ID (`team_…`) |
 | `Vercel mvds` | `project id` | the mvds project → Settings → General → Project ID (`prj_…`) |
+
+A field the manifest names but the item lacks shows as `?` in the preview —
+1Password reports it as *"does not have a field"*, and the sync treats that the
+same as an empty field.
 
 Then preview, check every row reads `+`, and apply. The first apply over
 `CHROMATIC_PROJECT_TOKEN` warns that it replaces a hand-set value; that is
