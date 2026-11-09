@@ -226,6 +226,11 @@ export const Empty: Story = {
   play: async ({ canvas }) => {
     await expect(canvas.getByText("Nothing matched.")).toBeInTheDocument()
     await expect(canvas.getAllByRole("columnheader")).toHaveLength(COLUMNS.length)
+    // The empty row spans every column, reading the same list as the header (D4).
+    await expect(canvas.getByRole("cell")).toHaveAttribute(
+      "colspan",
+      String(COLUMNS.length)
+    )
   },
 }
 
@@ -302,6 +307,43 @@ export const Wide: Story = {
       {...args}
     />
   ),
+  play: async ({ canvas, canvasElement }) => {
+    // The added columns reach the header and every body row, in order (D4).
+    const labels = WIDE_COLUMNS.map((c) => c.label)
+    await expect(
+      canvas.getAllByRole("columnheader").map((th) => th.textContent)
+    ).toEqual(labels)
+    const bodyRows = Array.from(canvasElement.querySelectorAll("tbody tr"))
+    await expect(bodyRows).toHaveLength(five.length)
+    for (const row of bodyRows) {
+      await expect(row.querySelectorAll("td")).toHaveLength(labels.length)
+    }
+    // Nothing re-decides a width for the new columns: no cell carries one.
+    for (const cell of Array.from(canvasElement.querySelectorAll("th, td"))) {
+      await expect((cell as HTMLElement).style.width).toBe("")
+      await expect(cell.hasAttribute("width")).toBe(false)
+    }
+  },
+}
+
+/** Zero rows with the added columns: the empty row spans all six, read from the same list (D4, D8). */
+export const WideEmpty: Story = {
+  render: (args) => (
+    <PrinciplesTable
+      rows={[]}
+      columns={WIDE_COLUMNS}
+      caption="MVDS design principles · six columns, 0 records"
+      {...args}
+    />
+  ),
+  play: async ({ canvas }) => {
+    await expect(canvas.getAllByRole("columnheader")).toHaveLength(WIDE_COLUMNS.length)
+    // Six, not the default four: a colSpan hardcoded to the base column set fails here.
+    await expect(canvas.getByRole("cell")).toHaveAttribute(
+      "colspan",
+      String(WIDE_COLUMNS.length)
+    )
+  },
 }
 
 /**

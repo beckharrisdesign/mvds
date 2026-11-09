@@ -33,3 +33,7 @@ storybook-static
 # so its lockfile is deliberately not committed — a stale lock would hide exactly
 # the registry/version drift the check exists to catch.
 examples/starter/package-lock.json
+
+# scripts/sync-secrets.mjs records a SHA-256 per secret it last wrote — hashes
+# only, never a value — but it is per-machine state, not source.
+.secrets-sync-state

@@ -350,8 +350,12 @@ from the experiment-hub rules — keep the two in sync.)
    non-forced worktree remove), so a worktree with uncommitted changes is
    *warned about, never deleted*; inspect those by hand (uncommitted work in a
    "merged" worktree is usually a stale regen of a generated file, but confirm
-   before forcing). ❌ Never leave merged branches/worktrees to accumulate —
-   stale checkouts hide unshipped work and made this rule necessary.
+   before forcing). A worktree it can't read counts as uncommitted, and a
+   registration whose folder is gone is *reported, never pruned*: git can't tell
+   a deleted worktree from a moved one, so settle it by hand with
+   `git worktree repair <new path>` or `git worktree prune`. ❌ Never leave merged
+   branches/worktrees to accumulate — stale checkouts hide unshipped work and
+   made this rule necessary.
 
 ## Map of intent
 
@@ -361,6 +365,11 @@ from the experiment-hub rules — keep the two in sync.)
 - [`src/components/ui/`](src/components/ui) — vendored shadcn (don't hand-edit).
 - [`docs/SYNC.md`](docs/SYNC.md) — code→Figma workflow & Pro-tier constraints.
 - [`docs/VERIFICATION.md`](docs/VERIFICATION.md) — How we enforce (plan → code → test → world).
+- [`docs/SECRETS_RUNBOOK.md`](docs/SECRETS_RUNBOOK.md) — GitHub Actions secrets: the
+  1Password `BHD Labs` vault is the master copy, `npm run sync:secrets` pushes it
+  out, [`scripts/secrets.manifest.mjs`](scripts/secrets.manifest.mjs) is the
+  registry. ❌ Never set a secret in GitHub's UI by hand — add a manifest row and
+  a vault item.
 - [`openspec/`](openspec/) — propose → specs → discovery (eval) → design
   (Figma + eval delta) → tasks → apply loop (`mvds-default`, forked from the
   hub's `experiment-hub-lite`, which remains as the archived mirror; see

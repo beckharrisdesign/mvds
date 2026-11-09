@@ -17,9 +17,9 @@ concurrency:
 
 jobs:
   build-and-test:
-    # Pinned, not ubuntu-latest: `playwright install --with-deps` only runs on
-    # OS versions the installed Playwright knows, and 1.60.0 rejects ubuntu-26.04,
-    # which is what ubuntu-latest now resolves to.
+    # Pinned, not ubuntu-latest, which now resolves to ubuntu-26.04. Playwright
+    # 1.60.0 rejected 26.04 when this step still ran `--with-deps`. Whether the
+    # plain install below accepts it is untested, so the pin stays.
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     steps:
@@ -36,8 +36,16 @@ jobs:
 
       # Storybook's addon-vitest runs stories as tests in real Chromium via
       # Playwright — the browser binary must be present in CI.
+      #
+      # No `--with-deps`. On this image it only ever installed nine font
+      # packages: CJK, Thai and fallback faces plus X font tools. The stories
+      # don't use them, since Inter ships from npm, but the download came from
+      # the Ubuntu mirror on every run and took 2–9 minutes when the mirror was
+      # slow. The runner image already has every system library Chromium needs.
+      # If a future image drops one, Chromium fails to launch and the test step
+      # goes red; put `--with-deps` back then.
       - name: Install Playwright Chromium
-        run: npx playwright install --with-deps chromium
+        run: npx playwright install chromium
 
       - name: Build (tsc + vite)
         run: npm run build

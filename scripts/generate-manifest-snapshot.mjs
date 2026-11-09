@@ -37,6 +37,9 @@ const { default: conventions } = await import(
   pathToFileURL(join(ROOT, "figma", "conventions.mjs"))
 )
 const lock = JSON.parse(readFileSync(join(ROOT, "figma", "figma.lock.json"), "utf8"))
+const { figmaMirrorInventory } = await import(
+  pathToFileURL(join(ROOT, "scripts", "lib", "figma-mirror.mjs"))
+)
 // Checked-in Figma mirror previews — metadata only (the PNGs are imported as
 // Vite assets by the component). Absent is fine: the section presence-gates on
 // it, so it simply doesn't render rather than 404-ing.
@@ -330,10 +333,9 @@ const componentInventoryTotal =
   blockComponents.length +
   formComponents.length
 
-const declaredTotal = componentManifests.reduce(
-  (n, m) => n + m.axes.reduce((v, a) => v * a.options.length, 1),
-  0
-)
+// The Figma card states what the file holds, so it counts what the lock
+// records a sync for — not every manifest, which only says what should appear.
+const figmaMirror = figmaMirrorInventory(componentManifests, lock)
 const STAGES =
   "proposal \u00b7 specs \u00b7 discovery (as-is, eval, summary) \u00b7 design (propose, eval delta) \u00b7 tasks"
 
@@ -405,9 +407,9 @@ const elements = [
       // card's own inventory, so the figure now reads as a subset of it.
       {
         label: `of ${componentInventoryTotal} components mirrored`,
-        value: componentManifests.length,
+        value: figmaMirror.mirrored.length,
       },
-      { label: "declared variants", value: declaredTotal },
+      { label: "declared variants", value: figmaMirror.mirroredVariants },
       { label: "text styles", value: Object.keys(conventions.textStyles).length },
       { label: "pages", value: Object.keys(lock.pages ?? {}).length },
     ],
@@ -416,7 +418,12 @@ const elements = [
         label: "Collections",
         items: ["Tokens (Light / Dark)", "Scales", "Customize Here"],
       },
-      { label: "Components", items: componentManifests.map((m) => m.name) },
+      { label: "Components", items: figmaMirror.mirrored },
+      // Listed only when there is one: an empty "Not yet synced" row would be
+      // noise on every page that is fully in sync.
+      ...(figmaMirror.notYetSynced.length
+        ? [{ label: "Not yet synced", items: figmaMirror.notYetSynced }]
+        : []),
       { label: "Pages", items: Object.keys(lock.pages ?? {}) },
     ],
     action: { label: "figma/", kind: "repo-dir", path: "figma" },
