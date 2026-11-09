@@ -11,7 +11,7 @@
 // in scripts/lib/secret-sync.mjs, and this file only touches the world.
 //
 // The state file (.secrets-sync-state, gitignored) holds a SHA-256 per secret
-// of what was last written, never a value. It lives in the MAIN checkout, so a
+// and target of what was last written there, never a value. It lives in the MAIN checkout, so a
 // run from any worktree reads the same record. Its honest limitation: a value
 // changed in GitHub's UI directly is invisible here, and keeps reporting
 // "unchanged" until the vault value moves. Don't edit secrets there by hand.
@@ -137,7 +137,7 @@ writeFileSync(statePath, serializeState(result.state))
 if (result.failed) {
   fail(
     `${result.failed.name} → ${result.failed.target} failed: ${result.failed.message}\n` +
-      `      Recorded ${result.written.length} row(s) that fully succeeded; re-run to retry the rest.`,
+      `      ${result.written.length} write(s) before it succeeded and are recorded; re-run to retry the rest.`,
   )
 }
-console.log(`\n  Wrote ${result.written.length} secret(s). GitHub values take effect on the next workflow run.`)
+console.log(`\n  Made ${result.written.length} write(s). GitHub values take effect on the next workflow run.`)

@@ -40,10 +40,11 @@ flowchart LR
 | Mark | Means | Do |
 | --- | --- | --- |
 | `+` added | never written by this sync | apply |
-| `~` updated | the vault value (or its targets) moved since the last write | apply |
+| `~` updated | the vault value moved, the row gained a target, or a secret this sync wrote is missing from GitHub | apply — only the targets listed are written |
 | `=` unchanged | what GitHub has is what the vault has | nothing |
 | `?` not in vault | the vault field is missing, empty, or a placeholder (`PASTE_VALUE_HERE`) | fill the item |
-| `! already set … replaces it for good` | first write over a secret someone set by hand | make sure the vault holds the value you want **before** applying — GitHub can't give the old one back |
+| `! already set … replaces it for good` | first write to that target over a secret someone set by hand — including a target a row just gained | make sure the vault holds the value you want **before** applying — GitHub can't give the old one back |
+| `! missing from … — restoring` | someone deleted a secret this sync wrote | apply puts it back; if the deletion was deliberate, remove the row or target instead |
 | `! no workflow reads secrets.X` | the manifest manages a secret nothing uses yet | expected for the Vercel rows until #133 merges; otherwise, remove the row |
 | `! X — in gh, not in the manifest` | an orphan | find out whether anything uses it, then add a row or delete it |
 | `! X — read by …, but the manifest does not manage it` | a workflow depends on a secret with no master copy | add a row and a vault item |
@@ -111,7 +112,9 @@ Reference for Claude; the human playbook ends above this line.
   PAT that is `Secrets: Read and write`; `Actions` permission isn't enough.
 - **`op item create` writes epoch dates.** Set `valid from`/`expires` explicitly,
   or 1Password badges the item as expired since 1969.
-- **The state file is per machine.** `.secrets-sync-state` (hashes only,
-  gitignored) lives in the main checkout, so every worktree on this machine
+- **The state file is per machine, and per target.** `.secrets-sync-state`
+  (hashes only, gitignored) records what this sync last wrote to each target,
+  so a write that fails part-way leaves an accurate record. It lives in the
+  main checkout, so every worktree on this machine
   shares it; another machine starts empty and sees every row as `+` with
   `replaces` warnings. That is safe as long as the vault is current.

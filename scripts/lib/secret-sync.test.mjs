@@ -27,58 +27,78 @@ function plan({
   return planSync({ manifest, values, state, deployed, workflows })
 }
 
+// A state record: this sync last wrote `value` to `target`.
+const wrote = (...records) =>
+  parseState(records.map(([name, target, value]) => `${name}\t${target}\t${fingerprint(value)}`).join("\n"))
+const present = (byTarget) => new Map(Object.entries(byTarget).map(([t, names]) => [t, new Set(names)]))
+
 describe("planSync", () => {
   it("treats vault placeholders as unfilled, never as values to push", () => {
     for (const placeholder of ["PASTE_VALUE_HERE", "[SENSITIVE]", "", undefined]) {
       const { rows } = plan({ values: new Map([["TOKEN", placeholder]]) })
       expect(rows[0].action).toBe("unfilled")
+      expect(rows[0].writes).toEqual([])
     }
   })
 
-  it("reports a value it wrote before, still the same in the vault, as unchanged", () => {
-    const { rows } = plan({ state: new Map([["TOKEN", fingerprint("v1", ["gh"])]]) })
+  it("reports a value it wrote, still in the vault and still in GitHub, as unchanged", () => {
+    const { rows } = plan({ state: wrote(["TOKEN", "gh", "v1"]), deployed: present({ gh: ["TOKEN"] }) })
     expect(rows[0].action).toBe("unchanged")
+    expect(rows[0].writes).toEqual([])
   })
 
   it("reports a value that moved in the vault as updated", () => {
-    const { rows } = plan({ state: new Map([["TOKEN", fingerprint("v0", ["gh"])]]) })
+    const { rows } = plan({ state: wrote(["TOKEN", "gh", "v0"]), deployed: present({ gh: ["TOKEN"] }) })
     expect(rows[0].action).toBe("updated")
+    expect(rows[0].writes).toEqual([{ target: "gh", kind: "update", replaces: false }])
   })
 
-  it("writes a row again when only its targets changed", () => {
-    // The hub hashed the value alone, so adding a target was a silent no-op.
-    const state = new Map([["TOKEN", fingerprint("v1", ["gh"])]])
-    const { rows } = plan({ manifest: [entry("TOKEN", ["gh", "gh-env:Production"])], state })
+  it("restores a secret it wrote that was then deleted from GitHub", () => {
+    // Copilot on #139: the record alone said "unchanged", so --apply never
+    // put the workflow's credential back.
+    const { rows } = plan({ state: wrote(["TOKEN", "gh", "v1"]), deployed: present({ gh: [] }) })
     expect(rows[0].action).toBe("updated")
+    expect(rows[0].writes).toEqual([{ target: "gh", kind: "restore", replaces: false }])
+  })
+
+  it("writes only the target a row gained, leaving the unchanged one alone", () => {
+    // The hub hashed the value alone, so adding a target was a silent no-op.
+    const { rows } = plan({
+      manifest: [entry("TOKEN", ["gh", "gh-env:Production"])],
+      state: wrote(["TOKEN", "gh", "v1"]),
+      deployed: present({ gh: ["TOKEN"], "gh-env:Production": [] }),
+    })
+    expect(rows[0].action).toBe("updated")
+    expect(rows[0].writes).toEqual([{ target: "gh-env:Production", kind: "add", replaces: false }])
+  })
+
+  it("warns before replacing a hand-set secret in a target the row just gained", () => {
+    // Copilot on #139: with one hash per name, this was "updated" and silent.
+    const { rows } = plan({
+      manifest: [entry("TOKEN", ["gh", "gh-env:Production"])],
+      state: wrote(["TOKEN", "gh", "v0"]),
+      deployed: present({ gh: ["TOKEN"], "gh-env:Production": ["TOKEN"] }),
+    })
+    expect(rows[0].writes).toEqual([
+      { target: "gh", kind: "update", replaces: false },
+      { target: "gh-env:Production", kind: "add", replaces: true },
+    ])
   })
 
   it("warns before a first write replaces a secret set by hand", () => {
-    const { rows } = plan({ deployed: new Map([["gh", new Set(["TOKEN"])]]) })
+    const { rows } = plan({ deployed: present({ gh: ["TOKEN"] }) })
     expect(rows[0].action).toBe("added")
-    expect(rows[0].replaces).toEqual(["gh"])
-  })
-
-  it("does not warn about replacing a secret this sync wrote itself", () => {
-    const { rows } = plan({
-      state: new Map([["TOKEN", fingerprint("v0", ["gh"])]]),
-      deployed: new Map([["gh", new Set(["TOKEN"])]]),
-    })
-    expect(rows[0].replaces).toEqual([])
+    expect(rows[0].writes).toEqual([{ target: "gh", kind: "add", replaces: true }])
   })
 
   it("reports a deployed secret with no manifest row as an orphan, with who reads it", () => {
     // NPM_TOKEN in this repo: set 2026-07-15, unread since publish moved to OIDC.
-    const { orphans } = plan({ deployed: new Map([["gh", new Set(["TOKEN", "NPM_TOKEN"])]]) })
+    const { orphans } = plan({ deployed: present({ gh: ["TOKEN", "NPM_TOKEN"] }) })
     expect(orphans).toEqual([{ target: "gh", name: "NPM_TOKEN", readBy: [] }])
   })
 
   it("reports an orphan per target, not per name", () => {
-    const { orphans } = plan({
-      deployed: new Map([
-        ["gh", new Set(["TOKEN"])],
-        ["gh-env:Production", new Set(["TOKEN"])],
-      ]),
-    })
+    const { orphans } = plan({ deployed: present({ gh: ["TOKEN"], "gh-env:Production": ["TOKEN"] }) })
     expect(orphans).toEqual([{ target: "gh-env:Production", name: "TOKEN", readBy: ["ci.yml"] }])
   })
 
@@ -89,26 +109,45 @@ describe("planSync", () => {
 })
 
 describe("applyPlan", () => {
-  it("records a row only after every target succeeded, so a failure retries", () => {
+  it("records each target the moment it is written, and only then", () => {
     const manifest = [entry("A"), entry("B", ["gh", "gh-env:Production"])]
     const values = new Map([["A", "a"], ["B", "b"]])
     const p = plan({ manifest, values, workflows: workflowReading("A", "B") })
     const calls = []
     const result = applyPlan(p, values, new Map(), (name, value, target) => {
-      calls.push(`${name}@${target}`)
+      calls.push(`${name} → ${target}`)
       if (target === "gh-env:Production") throw new Error("HTTP 503")
     })
-    expect(calls).toEqual(["A@gh", "B@gh", "B@gh-env:Production"])
-    expect(result.written).toEqual(["A"])
-    expect([...result.state.keys()]).toEqual(["A"])
+    expect(calls).toEqual(["A → gh", "B → gh", "B → gh-env:Production"])
+    expect(result.written).toEqual(["A → gh", "B → gh"])
+    expect(result.state).toEqual(wrote(["A", "gh", "a"], ["B", "gh", "b"]))
     expect(result.failed).toEqual({ name: "B", target: "gh-env:Production", message: "HTTP 503" })
+  })
+
+  it("keeps a failed update correct when the vault is rolled back afterwards", () => {
+    // Copilot on #139: v0 → v1 reached gh, failed for the environment, and the
+    // record still said v0 everywhere — so rolling the vault back to v0 read
+    // as "unchanged" and left gh holding v1.
+    const manifest = [entry("TOKEN", ["gh", "gh-env:Production"])]
+    const deployed = present({ gh: ["TOKEN"], "gh-env:Production": ["TOKEN"] })
+    const before = wrote(["TOKEN", "gh", "v0"], ["TOKEN", "gh-env:Production", "v0"])
+
+    const v1 = new Map([["TOKEN", "v1"]])
+    const failedRun = applyPlan(plan({ manifest, values: v1, state: before, deployed }), v1, before, (n, v, target) => {
+      if (target === "gh-env:Production") throw new Error("HTTP 503")
+    })
+    expect(failedRun.failed?.target).toBe("gh-env:Production")
+
+    const v0 = new Map([["TOKEN", "v0"]])
+    const rollback = plan({ manifest, values: v0, state: failedRun.state, deployed })
+    expect(rollback.rows[0].writes).toEqual([{ target: "gh", kind: "update", replaces: false }])
   })
 
   it("writes nothing for unchanged or unfilled rows", () => {
     const manifest = [entry("SAME"), entry("EMPTY")]
     const values = new Map([["SAME", "s"], ["EMPTY", "PASTE_VALUE_HERE"]])
-    const state = new Map([["SAME", fingerprint("s", ["gh"])]])
-    const p = plan({ manifest, values, state, workflows: workflowReading("SAME", "EMPTY") })
+    const state = wrote(["SAME", "gh", "s"])
+    const p = plan({ manifest, values, state, deployed: present({ gh: ["SAME"] }), workflows: workflowReading("SAME", "EMPTY") })
     const calls = []
     applyPlan(p, values, state, (name) => calls.push(name))
     expect(calls).toEqual([])
@@ -120,8 +159,8 @@ describe("formatPlan", () => {
     const secret = "sk-test-DO-NOT-PRINT-9f3a"
     const manifest = [entry("NEW"), entry("MOVED"), entry("SAME")]
     const values = new Map([["NEW", secret], ["MOVED", secret], ["SAME", secret]])
-    const state = new Map([["MOVED", fingerprint("old", ["gh"])], ["SAME", fingerprint(secret, ["gh"])]])
-    const p = plan({ manifest, values, state, deployed: new Map([["gh", new Set(["NEW", "STRAY"])]]) })
+    const state = wrote(["MOVED", "gh", "old"], ["SAME", "gh", "sk-gone"])
+    const p = plan({ manifest, values, state, deployed: present({ gh: ["NEW", "STRAY"] }) })
     for (const apply of [true, false]) {
       const out = formatPlan(p, { apply })
       expect(out).not.toContain(secret)
@@ -159,9 +198,10 @@ describe("validateManifest", () => {
 })
 
 describe("state file", () => {
-  it("round-trips, sorted, and ignores blank or partial lines", () => {
-    const state = parseState("B bbb\n\nA aaa\nBROKEN\n")
-    expect([...state]).toEqual([["B", "bbb"], ["A", "aaa"]])
-    expect(serializeState(state)).toBe("A aaa\nB bbb\n")
+  it("round-trips per target, sorted, and keeps an environment name with spaces", () => {
+    const text = "B\tgh\tbbb\n\nA\tgh-env:Production – mvds\taaa\nBROKEN\n"
+    const state = parseState(text)
+    expect(state.size).toBe(2)
+    expect(serializeState(state)).toBe("A\tgh-env:Production – mvds\taaa\nB\tgh\tbbb\n")
   })
 })

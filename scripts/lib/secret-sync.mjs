@@ -63,31 +63,40 @@ export function validateManifest(manifest) {
 }
 
 /**
- * What decides "changed". GitHub secrets are write-only, so the target cannot
- * be read back to compare. Instead the sync records this hash of what it last
- * wrote, and a row is unchanged when the vault still hashes the same.
- *
- * The targets are hashed with the value. Hashing the value alone (the hub's
- * first version) made adding a target to an existing row a silent no-op: the
- * value had not moved, so the row said "unchanged" and the new target was
- * never written.
+ * What decides "changed". GitHub secrets are write-only, so a target cannot be
+ * read back to compare. Instead the sync records this hash of what it last
+ * wrote, and a target is unchanged when the vault still hashes the same.
  */
-export function fingerprint(value, targets) {
-  return createHash("sha256").update(`${value}|${targets.join(",")}`).digest("hex")
+export function fingerprint(value) {
+  return createHash("sha256").update(String(value)).digest("hex")
 }
 
-/** `NAME <sha256>` per line. Hashes only — the file never holds a value. */
+/**
+ * The state is kept per secret AND per target: a record says what this sync
+ * last wrote to that one place. The first version kept one hash per secret,
+ * which cannot tell targets apart, and that showed up three ways (Copilot on
+ * #139): a target added to a row was either skipped or overwritten without
+ * the replace warning, and a write that failed part-way left the record
+ * claiming every target held the old value.
+ */
+const key = (name, target) => `${name}\t${target}`
+
+/**
+ * `NAME<TAB>target<TAB>sha256` per line. Tabs, because an environment name can
+ * hold spaces (the hub has "Production – experiment-hub"). Hashes only — the
+ * file never holds a value.
+ */
 export function parseState(text) {
   const state = new Map()
   for (const line of String(text ?? "").split("\n")) {
-    const [name, hash] = line.trim().split(/\s+/)
-    if (name && hash) state.set(name, hash)
+    const [name, target, hash] = line.split("\t")
+    if (name && target && hash) state.set(key(name, target), hash.trim())
   }
   return state
 }
 
 export function serializeState(state) {
-  return [...state].sort(([a], [b]) => a.localeCompare(b)).map(([n, h]) => `${n} ${h}`).join("\n") + "\n"
+  return [...state].sort(([a], [b]) => a.localeCompare(b)).map(([k, h]) => `${k}\t${h}`).join("\n") + "\n"
 }
 
 /** Names a workflow reads as `secrets.NAME`. */
@@ -96,12 +105,29 @@ export function secretsReadBy(workflowText) {
 }
 
 /**
+ * What one target needs, given what this sync last wrote there and whether the
+ * secret is there now.
+ *
+ *   add      never written here by this sync
+ *   update   written before, and the vault value has moved since
+ *   restore  written before with this very value, but it is gone from GitHub —
+ *            deleted by hand. A record alone would call it unchanged and leave
+ *            the workflow without its credential.
+ *   null     unchanged
+ */
+function targetNeeds(prev, hash, present) {
+  if (!prev) return "add"
+  if (prev !== hash) return "update"
+  return present ? null : "restore"
+}
+
+/**
  * Decide what a sync would do, without doing it.
  *
  * @param {object} input
  * @param {{ name: string, ref: string, targets: string[] }[]} input.manifest
  * @param {Map<string, string | undefined>} input.values  vault value per name; undefined when unreadable
- * @param {Map<string, string>} input.state               last-written fingerprints
+ * @param {Map<string, string>} input.state               last-written hash per name+target (parseState)
  * @param {Map<string, Set<string>>} input.deployed       secret names present per target ("gh", "gh-env:X")
  * @param {Map<string, string>} input.workflows           workflow path → its text
  */
@@ -117,18 +143,26 @@ export function planSync({ manifest, values, state, deployed, workflows }) {
   const rows = manifest.map((entry) => {
     const value = values.get(entry.name)
     const readBy = readers.get(entry.name) ?? []
+    const base = { name: entry.name, ref: entry.ref, targets: entry.targets, readBy }
     if (value === undefined || value === "" || NOT_A_VALUE.includes(value)) {
-      return { name: entry.name, ref: entry.ref, targets: entry.targets, action: "unfilled", replaces: [], readBy }
+      return { ...base, action: "unfilled", writes: [] }
     }
-    const hash = fingerprint(value, entry.targets)
-    const prev = state.get(entry.name)
-    const action = prev === hash ? "unchanged" : prev ? "updated" : "added"
-    // With no record of ever writing this name, a secret already sitting in a
-    // target was set some other way — by hand, usually. It cannot be read back,
-    // so writing over it destroys it for good. Say so before it happens.
-    const replaces =
-      action === "added" ? entry.targets.filter((t) => deployed.get(t)?.has(entry.name)) : []
-    return { name: entry.name, ref: entry.ref, targets: entry.targets, action, hash, replaces, readBy }
+    const hash = fingerprint(value)
+    const writes = []
+    for (const target of entry.targets) {
+      const present = deployed.get(target)?.has(entry.name) ?? false
+      const kind = targetNeeds(state.get(key(entry.name, target)), hash, present)
+      // With no record of writing this target, a secret already sitting there
+      // was set some other way — by hand, usually. It cannot be read back, so
+      // writing over it destroys it for good. Say so before it happens. This
+      // holds per target: a row that gains one is a first write THERE.
+      if (kind) writes.push({ target, kind, replaces: kind === "add" && present })
+    }
+    const action =
+      writes.length === 0 ? "unchanged"
+      : writes.length === entry.targets.length && writes.every((w) => w.kind === "add") ? "added"
+      : "updated"
+    return { ...base, action, hash, writes }
   })
 
   // Reported, never deleted: a secret with no manifest row may still be read by
@@ -153,9 +187,11 @@ export function planSync({ manifest, values, state, deployed, workflows }) {
 }
 
 /**
- * Write what the plan says to write. Stops at the first failure, and records a
- * row's fingerprint only after every one of its targets succeeded, so a
- * partial failure is retried next run instead of reported "unchanged".
+ * Write what the plan says to write. Each target is recorded the moment its
+ * write succeeds, and only then, so the state always says what each target
+ * actually holds. Stops at the first failure: a failed target keeps its old
+ * record and is retried next run, while the targets already written are not
+ * written twice.
  *
  * @param {ReturnType<typeof planSync>} plan
  * @param {Map<string, string>} values
@@ -166,16 +202,15 @@ export function applyPlan(plan, values, state, setSecret) {
   const next = new Map(state)
   const written = []
   for (const row of plan.rows) {
-    if (row.action !== "added" && row.action !== "updated") continue
-    for (const target of row.targets) {
+    for (const { target } of row.writes) {
       try {
         setSecret(row.name, values.get(row.name), target)
       } catch (error) {
         return { state: next, written, failed: { name: row.name, target, message: String(error?.message ?? error) } }
       }
+      next.set(key(row.name, target), row.hash)
+      written.push(`${row.name} → ${target}`)
     }
-    next.set(row.name, row.hash)
-    written.push(row.name)
   }
   return { state: next, written, failed: null }
 }
@@ -189,10 +224,13 @@ export function formatPlan(plan, { apply }) {
     const detail =
       row.action === "unfilled" ? `not filled in the vault yet (${row.ref})`
       : row.action === "unchanged" ? "unchanged"
-      : `${row.action} → ${row.targets.join(", ")}`
+      : `${row.action} → ${row.writes.map((w) => w.target).join(", ")}`
     lines.push(`  ${MARK[row.action]} ${row.name} — ${detail}`)
-    for (const t of row.replaces) {
-      lines.push(`      ! already set in ${t} by something other than this sync — it cannot be read back, so this write replaces it for good`)
+    for (const w of row.writes) {
+      if (w.replaces) {
+        lines.push(`      ! already set in ${w.target} by something other than this sync — it cannot be read back, so this write replaces it for good`)
+      }
+      if (w.kind === "restore") lines.push(`      ! missing from ${w.target} although this sync wrote it — restoring`)
     }
     if (row.readBy.length === 0) lines.push("      ! no workflow reads secrets." + row.name + " yet")
   }
