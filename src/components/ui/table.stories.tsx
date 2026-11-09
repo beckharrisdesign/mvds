@@ -326,6 +326,26 @@ export const Wide: Story = {
   },
 }
 
+/** Zero rows with the added columns: the empty row spans all six, read from the same list (D4, D8). */
+export const WideEmpty: Story = {
+  render: (args) => (
+    <PrinciplesTable
+      rows={[]}
+      columns={WIDE_COLUMNS}
+      caption="MVDS design principles · six columns, 0 records"
+      {...args}
+    />
+  ),
+  play: async ({ canvas }) => {
+    await expect(canvas.getAllByRole("columnheader")).toHaveLength(WIDE_COLUMNS.length)
+    // Six, not the default four: a colSpan hardcoded to the base column set fails here.
+    await expect(canvas.getByRole("cell")).toHaveAttribute(
+      "colspan",
+      String(WIDE_COLUMNS.length)
+    )
+  },
+}
+
 /**
  * At S (480px) a table wider than its region scrolls, the page does not, and a
  * keyboard user can reach the region (D10). The four-column set wraps to fit
