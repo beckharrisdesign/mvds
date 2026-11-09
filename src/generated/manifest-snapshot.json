@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-10-15T15:05:44-05:00",
-  "commit": "dec206f",
+  "generatedAt": "2026-11-09T09:42:35-06:00",
+  "commit": "8589e61",
   "dirty": true,
   "lock": {
     "fileKey": "C20nU0mROzk3Zr0I9BELJF",
@@ -731,11 +731,11 @@
       "tally": [
         {
           "label": "of 26 components mirrored",
-          "value": 20
+          "value": 19
         },
         {
           "label": "declared variants",
-          "value": 151
+          "value": 143
         },
         {
           "label": "text styles",
@@ -767,7 +767,6 @@
             "RadioGroupItem",
             "Select",
             "Switch",
-            "Table",
             "Textarea",
             "Dropzone",
             "Field",
@@ -778,6 +777,12 @@
             "Chrome",
             "Section",
             "Layer"
+          ]
+        },
+        {
+          "label": "Not yet synced",
+          "items": [
+            "Table"
           ]
         },
         {
