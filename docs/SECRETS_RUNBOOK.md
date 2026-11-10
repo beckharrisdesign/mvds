@@ -58,7 +58,7 @@ labels must match the manifest's `op://` references exactly.
 | Item | Field | Value from |
 | --- | --- | --- |
 | `Chromatic mvds` | `credential` | [Manage → Configure](https://www.chromatic.com/manage?appId=6a21ed23c5118f5eb3d9be54&view=configure) → **Copy to clipboard** beside the project token. Copy it; don't **Reset token** (see below) |
-| `Vercel mvds` | `credential` | [vercel.com/account/settings/tokens](https://vercel.com/account/settings/tokens) — a new token for MVDS, not the hub's |
+| `Vercel mvds` | `credential` | [vercel.com/account/settings/tokens](https://vercel.com/account/settings/tokens) — a new token for MVDS, not the hub's, **team-scoped** (see below) |
 | `Vercel mvds` | `org id` | Vercel team settings → Team ID (`team_…`) |
 | `Vercel mvds` | `project id` | the mvds project → Settings → General → Project ID (`prj_…`) |
 
@@ -75,7 +75,7 @@ expected, as long as the vault holds the current token.
 | Vault item | You rotate at | Watch out |
 | --- | --- | --- |
 | Chromatic mvds | [Manage → Configure](https://www.chromatic.com/manage?appId=6a21ed23c5118f5eb3d9be54&view=configure) → **Reset token**. **Manage** is the bottom icon of the project's narrow left rail (Builds, Reviews, Library, Manage) | **Unverified:** whether regenerating revokes the old token at once. If it does, steps 3 and 5 happen together — push in the same sitting. Whoever rotates it first, record the answer here. |
-| Vercel mvds — token | [account → tokens](https://vercel.com/account/settings/tokens) | tokens are never re-viewable; scope it to the team |
+| Vercel mvds — token | [account → tokens](https://vercel.com/account/settings/tokens) | tokens are never re-viewable. Scope it to the **team**, not the project: a project-scoped token reads the project but gets 403 `team_unauthorized` on the team, and `vercel pull` fails with *"Could not retrieve Project Settings"* (seen 2026-11-10) |
 | Vercel mvds — ids | nowhere — they don't rotate | they change only if the project is recreated |
 
 Verification after a push is Claude's job — just ask **"verify the ⟨vendor⟩ credential."**
