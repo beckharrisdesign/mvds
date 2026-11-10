@@ -21,14 +21,18 @@ export const REPO = "beckharrisdesign/mvds"
 
 /** Shared with experiment-hub. Items are per-project (`Vercel mvds`, not the
  *  hub's `Vercel`): the two sites are separate Vercel projects, and separate
- *  tokens can be rotated without breaking the other. */
+ *  tokens can be rotated without breaking the other.
+ *
+ *  Items are 1Password's API Credential type, so the secret itself sits in the
+ *  template's `credential` field — the hub's convention too
+ *  (`op://BHD Labs/OpenAI/credential`). Anything else is a custom field. */
 export const VAULT = "BHD Labs"
 
 export const SECRETS = [
   {
     // Visual regression (.github/workflows/chromatic.yml).
     name: "CHROMATIC_PROJECT_TOKEN",
-    ref: "op://BHD Labs/Chromatic mvds/project token",
+    ref: "op://BHD Labs/Chromatic mvds/credential",
     targets: ["gh"],
   },
   // The Vercel deploy (.github/workflows/deploy-site.yml, PR #133). Org and
@@ -38,7 +42,7 @@ export const SECRETS = [
   // live in the vault").
   {
     name: "VERCEL_TOKEN",
-    ref: "op://BHD Labs/Vercel mvds/token",
+    ref: "op://BHD Labs/Vercel mvds/credential",
     targets: ["gh"],
   },
   {
