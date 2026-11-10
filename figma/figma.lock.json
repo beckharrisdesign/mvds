@@ -1,24 +1,25 @@
 {
   "$comment": "Machine-recorded Figma reality — node IDs written by the mvds-figma-component-sync skill after each run (manifests are the human-reviewed intent; this is the package-lock analog). componentSetId null means either not yet adopted/created (for multi-variant components) OR a deliberate single-component with no variant axes (Label/Textarea/Blockquote — check for a sibling componentId field). The sync's inspect phase resolves by name as a self-healing fallback and repairs this file if nodes were moved or renamed in Figma. Top-level syncedAt/syncedFromCommit record the last COMPONENT sync - the mvds-figma-component-sync skill owns them (step 7) and the token-sync skill deliberately does not touch them, so they describe the code revision the component mirror reflects, not the most recent sync of any kind. They read 2026-07-29/8f791b1 until 2026-10-06 even though the Input and Dropzone component sets had been pushed on 2026-08-23 - that run updated Figma but neither this stamp nor the components map, so the landing page reported the mirror ~14 commits further behind than it was. Corrected to 4bbd49a, the commit whose Input/Dropzone those sets mirror (#85); the gradationVariables/typography blocks carry their own provenance and are unaffected (and since 2026-10-13 the `tokenSync` block below holds the one structured token-layer stamp). Figma-side note: on 2026-10-06 the Foundations documentation board was repaired separately (the --primary-*/--secondary-* steps specimens still rendered 11 swatches bound to the deleted 50...950 variables, and the layer diagram still taught primary-600/primary-400); no variables changed.",
   "fileKey": "C20nU0mROzk3Zr0I9BELJF",
-  "syncedAt": "2026-10-13",
-  "syncedFromCommit": "330abf256475d9bd8779dced973a793b84eafb99",
+  "syncedAt": "2026-11-10",
+  "syncedFromCommit": "7d2f58aa4fa5c36f6382e202031a2327dab538de",
   "componentSync": {
     "$comment": "What the syncedAt/syncedFromCommit stamp above actually verified, recorded by the mvds-figma-component-sync skill — the component counterpart to tokenSync. `checked` counts what the run COMPARED, not what the file contains. A `no-op` result means every mirrored component already matched its manifest, so nothing was written to Figma and there is nothing for the founder to publish: an unpublished sync is an open PR, and this run opened none. The stamp still moves, because the mirror is verified current at that commit — that is the whole point of re-stamping after a no-op. `commitsBehind` used to be mentioned here; it has since been DELETED from the generator and the snapshot types. It was computed as syncedFromCommit..HEAD and rendered nowhere — the only lock value the landing page shows is syncedAt (src/components/site/figma-mirror.tsx), which is why re-stamping produced exactly two Chromatic diffs (FigmaMirror/Default, light + dark) rather than none. It also could not be stated truthfully in a checked-in file: 0 held only AT the stamped commit, so every later commit including the merge put it above zero. Freshness is this stamp, and check:figma's S1-S6 now hold the stamp itself to being true. (The first draft of `checked` carried 150 variants and 24 axes — both eyeballed and both wrong, against a real 140 and 21. Caught by computing them instead of trusting the tally, which is the same discipline the counts are here to serve.)",
-    "verifiedAt": "2026-10-13",
-    "result": "no-op",
+    "verifiedAt": "2026-11-10",
+    "result": "written",
     "checked": {
-      "componentsResolvedById": 19,
-      "componentSets": 16,
+      "componentsResolvedById": 20,
+      "componentSets": 17,
       "singleComponents": 3,
-      "variantsCounted": 140,
-      "axesCompared": 21,
-      "writes": 0,
+      "variantsCounted": 148,
+      "axesCompared": 23,
+      "writes": 1,
       "mismatches": 0
     },
-    "method": "Every component in figma/components.config.mjs resolved by the node ID recorded here (getNodeByIdAsync) and checked for type, name and page — no adoption-by-name fallback was needed. Variant counts compared per set, then every axis's option list compared against the manifest. Bindings spot-checked on the cases conventions.mjs flags as tricky: Button default fill/padding/gap/height/radius, the Button sm raw-radius cap, Badge destructive's derived -tint variable (paint opacity 1, alpha in the variable), Input's border-input stroke, disabled opacity 0.5, every text node's bound Type/* style, and Card Footer's nested Button instance (main 3:102).",
+    "method": "Every component in figma/components.config.mjs resolved by the node ID recorded here (getNodeByIdAsync) and checked for name, type and page; variant counts compared against the product of each manifest's axes, and every axis's option set compared (order reported separately). `variantsCounted` counts set variants only (the 3 single components are not variants), which is why 140 + Table's 8 = 148. Table's bindings were probed on its base variant before cloning (header fill, row stroke weights, all four paddings, both text styles and fills, cell stretch to row height), and dark mode was checked on instances of two variants in a temporary frame with the Tokens collection set to Dark, then removed.",
     "knownUnfixable": "Three axis option ORDERINGS differ from the manifest: Button variant (Figma default,secondary,outline,… vs code default,outline,secondary,…), Button size and Input size (Figma default,sm,lg vs code sm,default,lg). Every option EXISTS and is correctly named in all three — only the picker sequence differs. This sync cannot fix it: ComponentSetNode.componentPropertyDefinitions is readonly, editComponentProperty does not accept a value order (and rejects defaultValue for VARIANT properties outright), and the order is NOT derived from child order — Button's children sit in a scrambled order while its reported variantOptions stays tidy, which disproves the obvious workaround. Reordering children would therefore change which variant a designer gets when dragging the set from Assets while leaving the picker untouched: strictly worse. Fixable only by hand in Figma's properties panel, which is a founder action, not an API one.",
-    "textStyleExceptions": "Button's Label and the Button instance inside Card Footer carry no textStyleId by necessity, not by drift: both need font-medium over text-small, and Figma drops the style link when fontName is overridden. Their resolved font (Inter/Medium 14) matches Type/Small's metrics with the mapped weight. Every other text node is style-bound."
+    "textStyleExceptions": "Button's Label and the Button instance inside Card Footer carry no textStyleId by necessity, not by drift: both need font-medium over text-small, and Figma drops the style link when fontName is overridden. Their resolved font (Inter/Medium 14) matches Type/Small's metrics with the mapped weight. Every other text node is style-bound.",
+    "written": "Table (730:347): new set, 8 variants (rules × striped), built from figma/components/table.figma.mjs and checked against src/components/ui/table.tsx. Every fill, stroke, padding and text style is bound — no raw values. The set sits outside the Components grid frame (292:4), below Layer, with the other wide sets, on a Color/background backdrop: the table is transparent, so the shared muted-foreground backdrop made its muted-foreground caption invisible."
   },
   "tokenSync": {
     "$comment": "Provenance for the TOKEN layer, owned by the mvds-figma-token-sync skill — deliberately separate from the top-level syncedAt/syncedFromCommit above, which record the last COMPONENT sync and which this skill never touches. Before this block each token run left only prose inside the block it happened to touch, so completeness varied: gradationVariables carried a date AND a commit, spatialVariables a date only, radiusRamp and derivedVariables neither, and typography's own comment had no date at all (only its nested fontHeadingVariable mentioned one). That prose is kept as narrative; this is the one structured record. `checked` counts what the run actually COMPARED, not what happens to exist in the file — the distinction that mattered in #121, where a gate reported the size of its walk instead of the size of its check and the number drifted with local build state. A `no-op` result is a real outcome, not a skipped run: it means every compared token already agreed, so nothing was written to Figma. This run wrote nothing to Figma but DID correct the contract: reading each style's bound variable (not just its resolved family) showed conventions.mjs and the token-sync skill still saying every Type/* style binds font-sans, which a faithful sync would have enforced by rebinding the five heading steps off font-heading. Both now carry fontTokenByStep, and check:figma T8 compares the binding by name.",
@@ -333,6 +334,20 @@
         "state=dragging": "690:29",
         "state=disabled": "690:32"
       }
+    },
+    "Table": {
+      "componentSetId": "730:347",
+      "pageId": "95:4",
+      "variants": {
+        "rules=horizontal, striped=false": "730:19",
+        "rules=horizontal, striped=true": "730:60",
+        "rules=vertical, striped=false": "730:101",
+        "rules=vertical, striped=true": "730:142",
+        "rules=both, striped=false": "730:183",
+        "rules=both, striped=true": "730:224",
+        "rules=none, striped=false": "730:265",
+        "rules=none, striped=true": "730:306"
+      }
     }
   },
   "typography": {
@@ -504,7 +519,8 @@
     "2026-07-15": "477:2",
     "2026-07-15-2": "485:39",
     "2026-07-15-3": "490:41",
-    "2026-07-29": "575:41"
+    "2026-07-29": "575:41",
+    "2026-11-10": "731:17"
   },
   "gradationVariables": {
     "$comment": "Authored gradation steps (stepped-scales #82) synced 2026-08-23 from main 9d5f5c3; replaced the removed Color/primary|secondary-50...950 derived ramps. Light+dark values authored in src/index.css.",
