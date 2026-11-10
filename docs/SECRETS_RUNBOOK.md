@@ -57,7 +57,7 @@ labels must match the manifest's `op://` references exactly.
 
 | Item | Field | Value from |
 | --- | --- | --- |
-| `Chromatic mvds` | `credential` | Chromatic → the mvds project's settings (see below) |
+| `Chromatic mvds` | `credential` | [Manage → Configure](https://www.chromatic.com/manage?appId=6a21ed23c5118f5eb3d9be54&view=configure) → **Copy to clipboard** beside the project token. Copy it; don't **Reset token** (see below) |
 | `Vercel mvds` | `credential` | [vercel.com/account/settings/tokens](https://vercel.com/account/settings/tokens) — a new token for MVDS, not the hub's |
 | `Vercel mvds` | `org id` | Vercel team settings → Team ID (`team_…`) |
 | `Vercel mvds` | `project id` | the mvds project → Settings → General → Project ID (`prj_…`) |
@@ -74,7 +74,7 @@ expected, as long as the vault holds the current token.
 
 | Vault item | You rotate at | Watch out |
 | --- | --- | --- |
-| Chromatic mvds | the mvds project on [chromatic.com](https://www.chromatic.com/start) → Manage → Configure | **Unverified:** whether regenerating revokes the old token at once. If it does, steps 3 and 5 happen together — push in the same sitting. Whoever rotates it first, record the answer here. |
+| Chromatic mvds | [Manage → Configure](https://www.chromatic.com/manage?appId=6a21ed23c5118f5eb3d9be54&view=configure) → **Reset token**. **Manage** is the bottom icon of the project's narrow left rail; on a narrow window the rail folds behind the ☰ at top left | **Unverified:** whether regenerating revokes the old token at once. If it does, steps 3 and 5 happen together — push in the same sitting. Whoever rotates it first, record the answer here. |
 | Vercel mvds — token | [account → tokens](https://vercel.com/account/settings/tokens) | tokens are never re-viewable; scope it to the team |
 | Vercel mvds — ids | nowhere — they don't rotate | they change only if the project is recreated |
 
