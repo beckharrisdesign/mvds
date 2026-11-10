@@ -74,7 +74,7 @@ expected, as long as the vault holds the current token.
 
 | Vault item | You rotate at | Watch out |
 | --- | --- | --- |
-| Chromatic mvds | [Manage → Configure](https://www.chromatic.com/manage?appId=6a21ed23c5118f5eb3d9be54&view=configure) → **Reset token**. **Manage** is the bottom icon of the project's narrow left rail; on a narrow window the rail folds behind the ☰ at top left | **Unverified:** whether regenerating revokes the old token at once. If it does, steps 3 and 5 happen together — push in the same sitting. Whoever rotates it first, record the answer here. |
+| Chromatic mvds | [Manage → Configure](https://www.chromatic.com/manage?appId=6a21ed23c5118f5eb3d9be54&view=configure) → **Reset token**. **Manage** is the bottom icon of the project's narrow left rail (Builds, Reviews, Library, Manage) | **Unverified:** whether regenerating revokes the old token at once. If it does, steps 3 and 5 happen together — push in the same sitting. Whoever rotates it first, record the answer here. |
 | Vercel mvds — token | [account → tokens](https://vercel.com/account/settings/tokens) | tokens are never re-viewable; scope it to the team |
 | Vercel mvds — ids | nowhere — they don't rotate | they change only if the project is recreated |
 
