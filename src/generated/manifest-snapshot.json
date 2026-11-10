@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-11-09T09:42:35-06:00",
-  "commit": "8589e61",
+  "generatedAt": "2026-11-10T12:18:05-06:00",
+  "commit": "dae12d7",
   "dirty": true,
   "lock": {
     "fileKey": "C20nU0mROzk3Zr0I9BELJF",
-    "syncedAt": "2026-10-13",
-    "syncedFromCommit": "330abf256475d9bd8779dced973a793b84eafb99"
+    "syncedAt": "2026-11-10",
+    "syncedFromCommit": "7d2f58aa4fa5c36f6382e202031a2327dab538de"
   },
   "gates": [
     {
@@ -38,7 +38,7 @@
       "detail": "Declared component axes checked against their real code sources.",
       "command": "npm run check:figma",
       "verifiedAt": "build",
-      "result": "passed",
+      "result": "20 mirrored · 6 excluded · 26 classified match their code sources (axes + bindings).",
       "status": {
         "level": "success",
         "label": "passing"
@@ -731,11 +731,11 @@
       "tally": [
         {
           "label": "of 26 components mirrored",
-          "value": 19
+          "value": 20
         },
         {
           "label": "declared variants",
-          "value": 143
+          "value": 151
         },
         {
           "label": "text styles",
@@ -767,6 +767,7 @@
             "RadioGroupItem",
             "Select",
             "Switch",
+            "Table",
             "Textarea",
             "Dropzone",
             "Field",
@@ -777,12 +778,6 @@
             "Chrome",
             "Section",
             "Layer"
-          ]
-        },
-        {
-          "label": "Not yet synced",
-          "items": [
-            "Table"
           ]
         },
         {
