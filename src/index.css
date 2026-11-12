@@ -209,7 +209,10 @@
     --secondary: oklch(0.97 0 0);
     --secondary-foreground: oklch(0.205 0 0);
     --muted: oklch(0.97 0 0);
-    --muted-foreground: oklch(0.556 0 0);
+    /* 0.545, not shadcn's 0.556 (= gray-500): 0.556 renders #737373, which is
+     * 4.34:1 on --muted and fails AA. 0.545 renders #707070 — three sRGB steps
+     * darker — and clears 4.54:1 on --muted and 4.96:1 on --background. */
+    --muted-foreground: oklch(0.545 0 0);
     --accent: oklch(0.97 0 0);
     --accent-foreground: oklch(0.205 0 0);
     /* Status / intent colors — good · neutral · bad (each usable as text,

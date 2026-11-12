@@ -70,8 +70,9 @@ if (existsSync(themesDir)) {
 }
 
 // Intended TEXT pairings that must meet WCAG AA 4.5:1 (normal text). [fg, bg].
-// muted-foreground is the documented exception — AA only on background/card,
-// never on muted — so it is checked on background/card, not on muted.
+// muted-foreground is checked on muted too: secondary text sits on bg-muted in
+// practice (tab lists, locked steps), and axe failed it there at 4.34:1 before
+// the light value moved from 0.556 to 0.545.
 const AA_PAIRS = [
   ["foreground", "background"],
   ["card-foreground", "card"],
@@ -84,6 +85,7 @@ const AA_PAIRS = [
   ["neutral-foreground", "neutral"],
   ["muted-foreground", "background"],
   ["muted-foreground", "card"],
+  ["muted-foreground", "muted"],
   // Table's sticky-header surface (openspec: add-table-component, D14) — an
   // alias of background in :root; resolved before pairing so a brand that
   // re-points background is checked on what the alias actually renders.

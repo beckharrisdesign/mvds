@@ -73,8 +73,8 @@ generate must follow the system, not generic shadcn/Tailwind habits.
 - ♿ **Contrast (WCAG AA):** every token foreground/background pairing must clear
   **4.5:1 in both modes** — including each status color solid with its
   `-foreground`, and `text-success`/`text-destructive` etc. as text on
-  `background`. The one exception is `muted-foreground`: AA only on
-  `background`/`card`, ❌ never on `bg-muted`. Enforced by `npm run check:contrast`
+  `background`, and `muted-foreground` on `background`, `card` **and** `bg-muted`
+  (no exceptions). Enforced by `npm run check:contrast`
   (token-level) **and** the a11y gate on stories.
 - ✅ **Add UI components via `npx shadcn@latest add <name>`, then tune their
   internals to the 8-grid.** shadcn ships off-grid metrics (`px-2.5`=10, `h-7`=28,
